@@ -1,8 +1,27 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {ApplicationConfig, provideZoneChangeDetection} from '@angular/core';
+import {provideRouter} from '@angular/router';
 
-import { routes } from './app.routes';
+import {routes} from './app.routes';
+import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
+
+import {getFirestore, provideFirestore} from '@angular/fire/firestore';
+import {provideHttpClient} from '@angular/common/http';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDW5NiM16RpmnaXpuK3LSVhIToNW-EigyM',
+  authDomain: 'wot-blitz-statistics.firebaseapp.com',
+  projectId: 'wot-blitz-statistics',
+  storageBucket: 'wot-blitz-statistics.firebasestorage.app',
+  messagingSenderId: '16894861011',
+  appId: '1:16894861011:web:484ef3fa5e7d5ab5e73e26'
+};
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes)]
+  providers: [
+    provideZoneChangeDetection({eventCoalescing: true}),
+    provideRouter(routes),
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
+    provideHttpClient()
+  ]
 };
