@@ -1,20 +1,28 @@
-<div *ngIf="playerService.playerInfo() as player; else loading">
-  <h1>Общая статистика игрока</h1>
-  <p><strong>Никнейм:</strong> {{ player.nickname }}</p>
-  <p><strong>Дата создания аккаунта:</strong> {{ playerService.accountCreationDate() }}</p>
-  <p><strong>Боёв:</strong> {{ player.statistics.all.battles }}</p>
-  <p><strong>Победы:</strong> {{ player.statistics.all.wins }}</p>
-  <p><strong>Процент побед:</strong> {{ playerService.winRate() | number: '1.2-2' }}%</p>
-</div>
+<div>
+  <form (ngSubmit)="onSearch()">
+    <input [(ngModel)]="searchQuery" name="query" placeholder="Введите ник / ID игрока" required/>
+    <button type="submit">Поиск</button>
+  </form>
 
-<div *ngIf="playerService.clanInfo() as clanInfo">
-  <h2>Информация о клане</h2>
-  <p><strong>Название:</strong> {{ clanInfo.tag }} - {{ clanInfo.name }}</p>
-  <p><strong>Описание:</strong> {{ clanInfo.description || 'Описание отсутствует' }}</p>
-  <p><strong>Количество игроков:</strong> {{ clanInfo.members_count }}</p>
-  <p><strong>Создан:</strong> {{ clanInfo.created_at | date }}</p>
-</div>
+  <!-- Информация об игроке -->
+  <div *ngIf="playerInfo() as player; else loading">
+    <h2>Общая статистика игрока</h2>
+    <p><b>Никнейм:</b> {{ player.nickname }}</p>
+    <p><b>ID:</b> {{ player.account_id }}</p>
+    <p><b>Дата создания аккаунта</b> {{ getDate(player.created_at) }}</p>
+    <p><b>Количество боев:</b> {{ player.statistics.all.battles }}</p>
+    <p><b>Процент побед:</b> {{ getWinRate() }}%</p>
+    <p><b>Максимально убил в бою:</b> {{ player.statistics.all.max_frags }} танков противника</p>
+    <p><b>Максимальный опыт за бой:</b> {{ player.statistics.all.max_xp }} </p>
+    <p><b>Точность стрельбы:</b> {{ getAccuracy() }}%</p>
+    <p><b>Выжил в боях:</b> {{ getSurvivalRate() }}%</p>
+  </div>
 
-<ng-template #loading>
-  <p>Загрузка данных игрока...</p>
-</ng-template>
+  <div *ngIf="errorMessage() as error" class="error">
+    {{ error }}
+  </div>
+
+  <ng-template #loading>
+    <p>Загрузка информации об игроке...</p>
+  </ng-template>
+</div>
