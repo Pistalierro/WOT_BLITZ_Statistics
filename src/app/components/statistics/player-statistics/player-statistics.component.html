@@ -1,0 +1,20 @@
+<div *ngIf="playerService.playerInfo() as player; else loading">
+  <h1>Общая статистика игрока</h1>
+  <p><strong>Никнейм:</strong> {{ player.nickname }}</p>
+  <p><strong>Дата создания аккаунта:</strong> {{ playerService.accountCreationDate() }}</p>
+  <p><strong>Боёв:</strong> {{ player.statistics.all.battles }}</p>
+  <p><strong>Победы:</strong> {{ player.statistics.all.wins }}</p>
+  <p><strong>Процент побед:</strong> {{ playerService.winRate() | number: '1.2-2' }}%</p>
+</div>
+
+<div *ngIf="playerService.clanInfo() as clanInfo">
+  <h2>Информация о клане</h2>
+  <p><strong>Название:</strong> {{ clanInfo.tag }} - {{ clanInfo.name }}</p>
+  <p><strong>Описание:</strong> {{ clanInfo.description || 'Описание отсутствует' }}</p>
+  <p><strong>Количество игроков:</strong> {{ clanInfo.members_count }}</p>
+  <p><strong>Создан:</strong> {{ clanInfo.created_at | date }}</p>
+</div>
+
+<ng-template #loading>
+  <p>Загрузка данных игрока...</p>
+</ng-template>
