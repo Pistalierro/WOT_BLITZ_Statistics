@@ -9,6 +9,7 @@
     <h2>Общая статистика игрока</h2>
     <p><b>Никнейм:</b> {{ player.nickname }}</p>
     <p><b>ID:</b> {{ player.account_id }}</p>
+    <p><b>Клан:</b> {{ clanInfo()?.name }} </p>
     <p><b>Дата создания аккаунта</b> {{ getDate(player.created_at) }}</p>
     <p><b>Количество боев:</b> {{ player.statistics.all.battles }}</p>
     <p><b>Процент побед:</b> {{ getWinRate() }}%</p>

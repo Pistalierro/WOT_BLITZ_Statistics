@@ -2,6 +2,7 @@ import {Component, effect, inject} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {ClanService} from '../../../services/clan.service';
 
 @Component({
   selector: 'app-player-statistics',
@@ -18,13 +19,19 @@ export class PlayerStatisticsComponent {
 
   searchQuery: string = 'PISTALIERRO';
   playerService = inject(PlayerService);
+  clanService = inject(ClanService);
   playerInfo = this.playerService.playerInfo;
+  clanInfo = this.clanService.clanInfo;
   errorMessage = this.playerService.error;
 
   constructor() {
     effect(() => {
       const accountId = this.playerService.playerId();
-      if (accountId) this.playerService.getPlayerInfo(accountId);
+      if (accountId) {
+        this.playerService.getPlayerInfo(accountId);
+        this.clanService.getClanId(accountId);
+      }
+
     });
   }
 
@@ -57,7 +64,7 @@ export class PlayerStatisticsComponent {
     }
     return new Date(timestamp * 1000).toLocaleDateString();
   }
-  
+
 
   getAccuracy(): string {
     const player = this.playerInfo();

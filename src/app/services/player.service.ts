@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
-import {PlayerInfoInterface} from '../models/player-response.model';
+import {AccountListResponse, PlayerApiResponse, PlayerInfoInterface} from '../models/player-response.model';
 
 
 @Injectable({
@@ -16,36 +16,33 @@ export class PlayerService {
 
   searchPlayer(nickName: string): void {
     const url = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickName}`;
-    this.http.get<any>(url).subscribe({
-      next: res => {
-        if (res.meta?.count > 0 && res.data.length > 0) {
-          this.playerId.set(res.data[0].account_id); // Сохраняем ID первого игрока
+    this.http.get<AccountListResponse>(url).subscribe({
+      next: (res) => {
+        const accountId = Object.values(res.data)[0]?.account_id;
+        if (accountId) {
+          this.playerId.set(Number(accountId)); // Преобразуем ID в число
         } else {
           console.error('Игрок с таким никнеймом не найден.');
           this.playerId.set(null); // Очищаем ID
         }
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Ошибка поиска игрока:', err);
         this.error.set('Ошибка поиска игрока.');
       },
     });
   }
 
-
   getPlayerInfo(accountId: number): void {
     const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${accountId}`;
-    this.http.get<any>(url).subscribe({
-      next: res => {
-        console.log(res);
-        this.playerInfo.set(res.data[accountId]);
+    this.http.get<PlayerApiResponse>(url).subscribe({
+      next: (res) => {
+        this.playerInfo.set(res.data[accountId]); // Сохраняем данные игрока
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Ошибка получения информации об игроке:', err);
         this.error.set('Ошибка получения информации об игроке.');
       },
     });
   }
-
-
 }
