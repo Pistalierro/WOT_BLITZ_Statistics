@@ -1,0 +1,7 @@
+@use "variables" as *;
+
+%container {
+  width: min(100% - 40px, $container-width);
+  padding: 20px;
+  margin-inline: auto;
+}

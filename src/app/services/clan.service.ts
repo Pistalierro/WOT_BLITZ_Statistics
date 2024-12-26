@@ -17,9 +17,8 @@ export class ClanService {
     this.http.get<ClanInfoResponseInterface>(url).subscribe({
       next: (res: ClanInfoResponseInterface) => {
         const clanData = res.data[clanId];
-        if (clanData) {
-          this.clanInfo.set({name: clanData.name, tag: clanData.tag});
-        } else {
+        if (clanData) this.clanInfo.set({name: clanData.name, tag: clanData.tag});
+        else {
           console.warn('Данные о клане отсутствуют.');
           this.clanInfo.set(null);
         }
@@ -36,10 +35,8 @@ export class ClanService {
     this.http.get<ClanAccountInfoResponseInterface>(url).subscribe({
       next: (res: ClanAccountInfoResponseInterface) => {
         const clanId = res.data[accountId]?.clan_id;
-        if (clanId) {
-          console.log('ID клана:', clanId);
-          this.getClanInfo(clanId);
-        } else {
+        if (clanId) this.getClanInfo(clanId);
+        else {
           console.warn('Игрок не состоит в клане.');
           this.clanInfo.set(null);
         }

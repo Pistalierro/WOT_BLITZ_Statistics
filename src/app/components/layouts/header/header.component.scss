@@ -1,0 +1,51 @@
+@use "../../../../styles/extends" as *;
+@use "../../../../styles/variables" as *;
+
+.custom-toolbar {
+  background-color: #1a1a1a; // Чёрный фон
+  color: #fff;
+  padding: 0;
+
+  .container {
+    @extend %container;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    img {
+      height: $gap-lg; // Размер логотипа
+      margin-right: 10px;
+    }
+
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      margin: 0;
+    }
+  }
+
+  .navigation {
+    display: flex;
+    gap: $gap; // Расстояние между кнопками
+
+    button {
+      color: #fff;
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      transition: color 0.3s, background-color 0.3s;
+
+      &:hover {
+        background-color: #ff4f00; // Акцентный цвет при наведении
+        color: #000;
+      }
+    }
+  }
+}
+

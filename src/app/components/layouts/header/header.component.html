@@ -1,1 +1,17 @@
-<p>header works!</p>
+<mat-toolbar class="custom-toolbar">
+  <div class="container">
+    <div class="logo">
+      <img alt="WOT Blitz Logo" src="/images/logo.png"/>
+      <h1 class="site-title">WOT Blitz Statistics</h1>
+    </div>
+    <nav class="navigation">
+      <button mat-button routerLink="/home">Главная</button>
+      <button mat-button routerLink="/players">Игроки</button>
+      <button mat-button routerLink="/clans">Кланы</button>
+      <button mat-button routerLink="/session">Сессия</button>
+      <button mat-button routerLink="/history">История</button>
+    </nav>
+  </div>
+</mat-toolbar>
+
+<router-outlet></router-outlet>
