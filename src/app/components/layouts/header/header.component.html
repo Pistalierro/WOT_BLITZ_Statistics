@@ -11,7 +11,23 @@
       <button mat-button routerLink="/session">Сессия</button>
       <button mat-button routerLink="/history">История</button>
     </nav>
+    <button (click)="toggleSidenav()" aria-label="Open menu" class="hamburger-menu" mat-icon-button>
+      <svg height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M120 816v-60h720v60H120Zm0-180v-60h720v60H120Zm0-180v-60h720v60H120Z"/>
+      </svg>
+    </button>
   </div>
 </mat-toolbar>
 
-<router-outlet></router-outlet>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over">
+    <nav class="mobile-navigation">
+      <button (click)="closeSidenav()" mat-button routerLink="/home">Главная</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/players">Игроки</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/clans">Кланы</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/session">Сессия</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/history">История</button>
+    </nav>
+  </mat-sidenav>
+  <router-outlet></router-outlet>
+</mat-sidenav-container>

@@ -1,0 +1,19 @@
+$font-main: "PT Sans", sans-serif;
+$font-header: "PT Serif", serif;
+
+$font-size: 16px;
+
+$container-size: 1300px;
+$xl: 1200px;
+$lg: 992px;
+$md: 768px;
+$sm: 576px;
+$gap: 20px;
+
+$gap-xs: $gap * 0.25; /* 5px */
+$gap-sm: $gap * 0.5; /* 10px */
+$gap-lg: $gap-xs * 3; /* 15px */
+$gap-x2: $gap * 2; /* 40px */
+$gap-x3: $gap * 3; /* 60px */
+$gap-x4: $gap * 4; /* 80px */
+$gap-x5: $gap * 5; /* 100px */

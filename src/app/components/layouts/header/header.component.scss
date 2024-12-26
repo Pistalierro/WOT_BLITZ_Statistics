@@ -1,10 +1,9 @@
-@use "../../../../styles/extends" as *;
-@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/presets/variables" as *;
 
 .custom-toolbar {
   background-color: #1a1a1a; // Чёрный фон
   color: #fff;
-  padding: 0;
 
   .container {
     @extend %container;
@@ -18,7 +17,7 @@
     align-items: center;
 
     img {
-      height: $gap-lg; // Размер логотипа
+      height: $gap-x3; // Размер логотипа
       margin-right: 10px;
     }
 
@@ -46,6 +45,38 @@
         color: #000;
       }
     }
+  }
+
+  .hamburger-menu {
+    display: none;
+  }
+}
+
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #1a1a1a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  .mobile-navigation button {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navigation {
+    display: none;
+  }
+
+  .hamburger-menu {
+    display: inline-flex;
   }
 }
 

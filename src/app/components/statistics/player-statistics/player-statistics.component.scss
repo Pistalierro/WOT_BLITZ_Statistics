@@ -1,4 +1,4 @@
-@use "../../../../styles/extends" as *;
+@use "../../../../styles/mixins/extends" as *;
 
 .container {
   @extend %container;

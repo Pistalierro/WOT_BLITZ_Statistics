@@ -1,5 +1,55 @@
-@use "../../../styles/extends";
+@use "../../../styles/mixins/extends" as *;
+@use "../../../styles/presets/variables" as *;
+
 
 .container {
   @extend %container;
+  padding-top: $gap-x3;
+  padding-bottom: $gap-x3;
+
+  .welcome-section {
+    text-align: center;
+    margin-bottom: $gap-x2;
+
+    h1 {
+      font-size: 2.5rem;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #666;
+    }
+  }
+
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $gap;
+
+    .stat-card {
+      mat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        mat-icon {
+          font-size: 2rem;
+          color: #ff4f00;
+        }
+      }
+
+      mat-card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: $gap-x2;
+      }
+
+      mat-card-content {
+        font-size: 1rem;
+        color: #666;
+      }
+    }
+  }
 }
+

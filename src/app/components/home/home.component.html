@@ -1,3 +1,38 @@
 <div class="container">
-  <h2>Главная страница</h2>
+  <div class="welcome-section">
+    <h1>Добро пожаловать в WOT Blitz Statistics</h1>
+    <p>Исследуйте статистику игроков, кланов и турниров, чтобы стать лучше в World of Tanks Blitz!</p>
+  </div>
+
+  <div class="stats-section">
+    <mat-card @fadeIn class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Самые популярные игроки</mat-card-title>
+        <mat-icon>stars</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Список игроков с самым высоким рейтингом.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card @fadeIn class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Топ кланов</mat-card-title>
+        <mat-icon>groups</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Кланы с лучшими результатами.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card @fadeIn class="stat-card">
+      <mat-card-header>
+        <mat-card-title>Последние турниры</mat-card-title>
+        <mat-icon>emoji_events</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <p>События и результаты последних турниров.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
