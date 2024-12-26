@@ -1,9 +1,13 @@
 @use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/mixins/mixins-media" as *;
 @use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
 
 .custom-toolbar {
-  background-color: #1a1a1a; // Чёрный фон
-  color: #fff;
+  background-color: $color-deep-dark;
+  color: $color-light;
+  height: $gap-x3;
+  padding: 0;
 
   .container {
     @extend %container;
@@ -17,66 +21,107 @@
     align-items: center;
 
     img {
-      height: $gap-x3; // Размер логотипа
-      margin-right: 10px;
+      height: $gap-sm * 5; // Размер логотипа
+      margin-right: $gap-sm;
     }
 
     .site-title {
-      font-size: 1.5rem;
+      @include lg-min {
+        font-size: 1.5rem;
+
+      }
       font-weight: bold;
-      color: #fff;
+      color: $color-light;
       margin: 0;
     }
   }
 
   .navigation {
-    display: flex;
-    gap: $gap; // Расстояние между кнопками
+    @include lg-min {
+      display: flex;
+    }
+    @include lg {
+      display: none;
+    }
+    gap: $gap;
 
     button {
-      color: #fff;
+      color: $color-light;
       font-size: 1rem;
       text-transform: uppercase;
       font-weight: bold;
       transition: color 0.3s, background-color 0.3s;
 
-      &:hover {
-        background-color: #ff4f00; // Акцентный цвет при наведении
-        color: #000;
+      &:hover,
+      &:focus, {
+        background-color: $color-accent;
+        color: $color-black;
       }
     }
   }
 
   .hamburger-menu {
-    display: none;
+    @include lg-min {
+      display: none;
+    }
+    @include lg {
+      display: block;
+    }
+
+
+    svg {
+      margin-top: -4px;
+      margin-left: -4px;
+      height: 2rem;
+      width: 2rem;
+    }
   }
 }
 
 .sidenav-container {
-  height: 100vh;
+  height: calc(100vh - $gap-x3);
 }
 
 .sidenav {
-  width: 250px;
-  background-color: #1a1a1a;
-  color: #fff;
+  width: $gap-x5 * 2;
+  background-color: $color-deep-dark;
+  color: $color-light;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: $gap;
 
-  .mobile-navigation button {
-    margin-bottom: 15px;
-    text-align: left;
+  .mobile-navigation {
+
+    button {
+      width: 100%;
+      display: block;
+      margin-bottom: $gap-xs * 3;
+      text-align: center;
+      color: $color-light;
+    }
   }
 }
 
-@media (max-width: 1024px) {
-  .navigation {
-    display: none;
-  }
+.content-container {
+  position: relative;
+  min-height: calc(100vh - $gap-x3);
+  padding-top: $gap-x3;
+  padding-bottom: $gap-x3;
+  background-color: $color-dark;
+  overflow: hidden;
+  z-index: -2;
 
-  .hamburger-menu {
-    display: inline-flex;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("/images/bg.webp");
+    background-position: 50% 50%;
+    background-size: cover;
+    filter: blur(5px); /* Применяем размытие */
+    z-index: -1;
   }
 }
+
+
 

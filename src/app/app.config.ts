@@ -24,8 +24,8 @@ export const apiConfig = {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
+    provideZoneChangeDetection({eventCoalescing: true}),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
     provideHttpClient(), provideAnimationsAsync(),

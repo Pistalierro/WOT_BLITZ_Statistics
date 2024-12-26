@@ -5,29 +5,36 @@
       <h1 class="site-title">WOT Blitz Statistics</h1>
     </div>
     <nav class="navigation">
-      <button mat-button routerLink="/home">Главная</button>
-      <button mat-button routerLink="/players">Игроки</button>
-      <button mat-button routerLink="/clans">Кланы</button>
-      <button mat-button routerLink="/session">Сессия</button>
-      <button mat-button routerLink="/history">История</button>
+      <button mat-button routerLink="/home" routerLinkActive="active">Главная</button>
+      <button mat-button routerLink="/players" routerLinkActive="active">Игроки</button>
+      <button mat-button routerLink="/clans" routerLinkActive="active">Кланы</button>
+      <button mat-button routerLink="/tournaments" routerLinkActive="active">Турниры</button>
+      <button mat-button routerLink="/session" routerLinkActive="active">Сессия</button>
+      <button mat-button routerLink="/history" routerLinkActive="active">История</button>
     </nav>
-    <button (click)="toggleSidenav()" aria-label="Open menu" class="hamburger-menu" mat-icon-button>
-      <svg height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+    <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
+      <svg *ngIf="!isSidenavOpen" height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
         <path d="M120 816v-60h720v60H120Zm0-180v-60h720v60H120Zm0-180v-60h720v60H120Z"/>
+      </svg>
+      <svg *ngIf="isSidenavOpen" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 10l5 5 5-5H7z"/>
       </svg>
     </button>
   </div>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over">
+  <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over" position="end">
     <nav class="mobile-navigation">
       <button (click)="closeSidenav()" mat-button routerLink="/home">Главная</button>
       <button (click)="closeSidenav()" mat-button routerLink="/players">Игроки</button>
       <button (click)="closeSidenav()" mat-button routerLink="/clans">Кланы</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/tournaments">Турниры</button>
       <button (click)="closeSidenav()" mat-button routerLink="/session">Сессия</button>
       <button (click)="closeSidenav()" mat-button routerLink="/history">История</button>
     </nav>
   </mat-sidenav>
-  <router-outlet></router-outlet>
+  <div class="content-container">
+    <router-outlet></router-outlet>
+  </div>
 </mat-sidenav-container>
