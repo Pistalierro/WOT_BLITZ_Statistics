@@ -3,6 +3,7 @@ import {PlayerService} from '../../../services/player.service';
 import {NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ClanService} from '../../../services/clan.service';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-player-player',
@@ -10,6 +11,7 @@ import {ClanService} from '../../../services/clan.service';
   imports: [
     NgIf,
     FormsModule,
+    RouterOutlet,
 
   ],
   templateUrl: './player-statistics.component.html',
@@ -33,21 +35,6 @@ export class PlayerStatisticsComponent {
       }
 
     });
-  }
-
-  onSearch(): void {
-    const query = this.searchQuery.trim();
-    if (!query) {
-      this.errorMessage.set('Введите ник или ID игрока.');
-      return;
-    }
-    this.errorMessage.set(null);
-
-    if (/^\d+$/.test(query)) {
-      this.playerService.playerId.set(+query);
-    } else {
-      this.playerService.searchPlayer(query);
-    }
   }
 
   getWinRate(): string {

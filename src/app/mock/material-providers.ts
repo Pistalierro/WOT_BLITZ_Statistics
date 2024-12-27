@@ -9,6 +9,8 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {FormsModule} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 export const MATERIAL_MODULES = [
   MatToolbarModule,
@@ -22,4 +24,6 @@ export const MATERIAL_MODULES = [
   MatPaginatorModule,
   MatSortModule,
   MatSidenavModule,
+  MatFormFieldModule,
+  FormsModule,
 ];

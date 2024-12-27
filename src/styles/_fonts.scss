@@ -5,5 +5,21 @@
 
 @font-face {
   font-family: "Fira Sans";
+  src: url("/fonts/FiraSans-Regular.ttf") format("truetype");
+  font-weight: 400; /* Обычный вес (Regular) */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Fira Sans";
   src: url("/fonts/FiraSans-Bold.ttf") format("truetype");
+  font-weight: 700; /* Жирный (Bold) */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Fira Sans";
+  src: url("/fonts/FiraSans-Thin.ttf") format("truetype");
+  font-weight: 100; /* Тонкий (Thin) */
+  font-style: normal;
 }

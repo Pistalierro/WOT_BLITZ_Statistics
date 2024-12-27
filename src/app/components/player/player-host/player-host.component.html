@@ -1,1 +1,36 @@
-<p>player-host works!</p>
+<div class="container">
+  <h2>Поиск игрока</h2>
+  <p>Введите никнейм или ID игрока, чтобы увидеть его статистику, технику и достижения.</p>
+
+  <div class="grid-layout">
+    <!-- Левый блок: форма -->
+    <div class="form-block">
+      <!-- Предположим, что вы добавите класс "custom-input" на форму или на mat-form-field, чтобы проще выделять нужное поле стилями -->
+      <form (ngSubmit)="onSearch()" class="form custom-input">
+        <mat-form-field appearance="outline">
+          <mat-label>Укажите Никнейм / ID игрока</mat-label>
+          <input [(ngModel)]="searchQuery" matInput name="player" type="text">
+          <button aria-label="Search" color="primary" mat-icon-button matSuffix type="submit">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+
+    </div>
+
+
+    <!-- Правый блок: меню и router-outlet -->
+    <div class="content-block">
+      <div *ngIf="isPlayerSelected()">
+        <mat-toolbar>
+          <nav>
+            <a mat-button routerLink="statistics" routerLinkActive="active-link">Статистика</a>
+            <a mat-button routerLink="vehicles" routerLinkActive="active-link">Техника</a>
+            <a mat-button routerLink="achievements" routerLinkActive="active-link">Достижения</a>
+          </nav>
+        </mat-toolbar>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

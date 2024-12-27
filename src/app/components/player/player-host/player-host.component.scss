@@ -1,0 +1,150 @@
+@use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/mixins/mixins-media" as *;
+@use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
+
+.container {
+  @extend %container;
+  color: $color-gray;
+
+  h2 {
+    @include lg-min {
+      font-size: 2.5rem;
+    }
+    @include lg-md {
+      font-size: 2.25rem;
+    }
+    @include md {
+      font-size: 2rem;
+    }
+    margin-bottom: $gap;
+  }
+
+  p {
+    @include md-min {
+      font-size: 1.5rem;
+    }
+    @include md-sm {
+      font-size: 1.25rem;
+    }
+    @include sm {
+      font-size: 1rem;
+    }
+    font-weight: 100;
+  }
+}
+
+.grid-layout {
+  display: grid;
+  @include md-min {
+    grid-template-columns: 1fr 3fr; // Два столбца: форма и контент
+  }
+  @include md {
+    grid-template-columns: 1fr;
+  }
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+
+  input {
+    background-color: $color-dark !important;
+    padding-left: 1rem;
+  }
+}
+
+.content-block {
+  margin: $gap-x2 0;
+  border-radius: 8px;
+
+  mat-toolbar {
+    background-color: $color-deep-dark;
+    height: 58px;
+    border-radius: 4px;
+
+    nav {
+      display: flex;
+      gap: $gap;
+      width: 100%;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    a {
+      color: $color-accent;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.active-link {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+:host ::ng-deep .custom-input {
+  /* 1) Скрыть блок для ошибок/подсказок внизу */
+
+  margin: $gap-x2 0;
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  /* 2) Фон, на котором лежит инпут */
+  .mat-mdc-form-field-flex {
+    background-color: $color-deep-dark !important; /* темно-серый фон */
+  }
+
+  /* 3) Цвет рамки (outline).
+     В MDC outline состоит из нескольких элементов:
+       - .mdc-notched-outline__leading
+       - .mdc-notched-outline__notch
+       - .mdc-notched-outline__trailing
+     Для надёжности переопределяем сразу все,
+     чтобы при фокусе/hover всё было #ff4f00.
+  */
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: $color-accent !important;
+  }
+
+  /* 4) Цвет текста внутри инпута */
+  .mat-mdc-form-field-input-control {
+    color: $color-accent !important;
+  }
+
+  /* 5) Цвет лейбла (Label).
+     При outline-режиме надпись всплывает наверх —
+     отвечает класс .mat-mdc-floating-label.
+  */
+  .mat-mdc-floating-label {
+    color: $color-accent !important;
+  }
+
+  /* 6) Цвет иконки (search) */
+  .mat-icon {
+    color: $color-accent !important;
+  }
+
+  .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
+    padding-left: 0;
+  }
+
+  .mat-mdc-form-field-infix {
+    background-color: $color-deep-dark !important;
+  }
+
+  .mat-mdc-form-field-input-element,
+  .mdc-text-field__input {
+    background-color: $color-deep-dark !important;
+  }
+}
+
+
+
+
+
+

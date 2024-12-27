@@ -1,11 +1,5 @@
 <div class="container">
-  <form (ngSubmit)="onSearch()">
-    <input [(ngModel)]="searchQuery" name="query" placeholder="Введите ник / ID игрока" required/>
-    <button type="submit">Поиск</button>
-  </form>
-
-  <!-- Информация об игроке -->
-  <div *ngIf="playerInfo() as player; else loading">
+  <div *ngIf="playerInfo() as player">
     <h2>Общая статистика игрока</h2>
     <p><b>Никнейм:</b> {{ player.nickname }}</p>
     <p><b>ID:</b> {{ player.account_id }}</p>
@@ -23,7 +17,7 @@
     {{ error }}
   </div>
 
-  <ng-template #loading>
-    <p>Загрузка информации об игроке...</p>
-  </ng-template>
+  <!--  <ng-template #loading>-->
+  <!--    <p>Загрузка информации об игроке...</p>-->
+  <!--  </ng-template>-->
 </div>
