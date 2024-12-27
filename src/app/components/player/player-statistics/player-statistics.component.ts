@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {ClanService} from '../../../services/clan.service';
 
 @Component({
-  selector: 'app-player-statistics',
+  selector: 'app-player-player',
   standalone: true,
   imports: [
     NgIf,

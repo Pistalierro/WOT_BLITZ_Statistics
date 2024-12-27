@@ -1,14 +1,7 @@
 @use "styles/presets";
 @use "styles/mixins";
 @use "styles/common";
+@use "styles/fonts";
 
-@font-face {
-  font-family: "Exo 2";
-  src: url("/assets/fonts/Exo2-Bold.ttf") format("truetype");
-}
 
-@font-face {
-  font-family: "Fira Sans";
-  src: url("/assets/fonts/FiraSans-Bold.ttf") format("truetype");
-}
 

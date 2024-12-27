@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: 'players',
     loadComponent: () =>
-      import('./components/statistics/player-statistics/player-statistics.component').then(
+      import('./components/player/player-statistics/player-statistics.component').then(
         (m) => m.PlayerStatisticsComponent
       ),
     title: 'WOT Blitz Statistics'

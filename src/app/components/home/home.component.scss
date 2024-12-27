@@ -39,7 +39,12 @@
 
   .stats-section {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    @include md-min {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include md {
+      grid-template-columns: 1fr;
+    }
     gap: $gap;
 
     .stat-card {
@@ -60,22 +65,31 @@
       }
 
       mat-card-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: $gap-x2;
+        @include lg-min {
+          font-size: 1.5rem;
+        }
+        @include lg-md {
+          font-size: 1.25rem;
+        }
       }
 
-      mat-card-content {
-        display: flex;
-        align-items: center;
-        height: 100%;
-        justify-content: center;
+      @include md {
         font-size: 1rem;
-        text-align: center;
       }
+      font-weight: bold;
+    }
+
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      justify-content: center;
+      font-size: 1rem;
+      text-align: center;
     }
   }
 }
+
 
 .mat-icon {
   overflow: visible;
@@ -87,7 +101,18 @@
 
   &-title {
     text-align: center;
-    font-size: 1.75rem;
+
+    @include lg-min {
+      font-size: 1.75rem;
+    }
+
+    @include lg-md {
+      font-size: 1.5rem;
+    }
+
+    @include md {
+      font-size: 1.25rem;
+    }
     margin-bottom: 20px;
   }
 
@@ -95,11 +120,20 @@
     list-style: none;
     display: flex;
     gap: 20px;
-    margin: 40px 0 0 0;
+    margin: $gap-x2 0 0 0;
     padding: 0;
     width: 100%;
     justify-content: center;
-    font-size: 1.2rem;
+
+    @include lg-min {
+      font-size: 1.2rem;
+    }
+    @include lg-md {
+      font-size: 1rem;
+    }
+    @include md {
+      font-size: 0.75rem;
+    }
   }
 }
 

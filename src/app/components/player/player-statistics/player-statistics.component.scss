@@ -1,8 +1,10 @@
 @use "../../../../styles/mixins/extends" as *;
 @use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
 
 .container {
   @extend %container;
   padding-top: $gap-x3;
   padding-bottom: $gap-x3;
+  color: $color-light;
 }
