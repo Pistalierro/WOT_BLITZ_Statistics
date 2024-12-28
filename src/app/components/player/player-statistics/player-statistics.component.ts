@@ -3,7 +3,6 @@ import {PlayerService} from '../../../services/player.service';
 import {NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ClanService} from '../../../services/clan.service';
-import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-player-player',
@@ -11,7 +10,7 @@ import {RouterOutlet} from '@angular/router';
   imports: [
     NgIf,
     FormsModule,
-    RouterOutlet,
+
 
   ],
   templateUrl: './player-statistics.component.html',
@@ -19,11 +18,10 @@ import {RouterOutlet} from '@angular/router';
 })
 export class PlayerStatisticsComponent {
 
-  searchQuery: string = 'PISTALIERRO';
-  playerService = inject(PlayerService);
-  clanService = inject(ClanService);
-  playerInfo = this.playerService.playerInfo;
+  private clanService = inject(ClanService);
   clanInfo = this.clanService.clanInfo;
+  private playerService = inject(PlayerService);
+  playerInfo = this.playerService.playerInfo;
   errorMessage = this.playerService.error;
 
   constructor() {

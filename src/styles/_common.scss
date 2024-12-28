@@ -1,4 +1,5 @@
 @use 'presets/variables' as *;
+@use 'mixins/mixins-media' as *;
 
 * {
   box-sizing: border-box;
@@ -16,4 +17,28 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-header !important;
+}
+
+h2 {
+  @include lg-min {
+    font-size: 2.5rem !important;
+  }
+  @include lg-md {
+    font-size: 2.25rem !important;
+  }
+  @include md {
+    font-size: 2rem !important;
+  }
+}
+
+p {
+  @include md-min {
+    font-size: 1.5rem !important;
+  }
+  @include md-sm {
+    font-size: 1.25rem !important;
+  }
+  @include sm {
+    font-size: 1rem !important;
+  }
 }

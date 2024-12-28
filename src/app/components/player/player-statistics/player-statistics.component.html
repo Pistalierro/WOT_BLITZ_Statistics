@@ -1,16 +1,16 @@
 <div class="container">
   <div *ngIf="playerInfo() as player">
     <h2>Общая статистика игрока</h2>
-    <p><b>Никнейм:</b> {{ player.nickname }}</p>
-    <p><b>ID:</b> {{ player.account_id }}</p>
-    <p><b>Клан:</b> {{ clanInfo()?.name }} </p>
-    <p><b>Дата создания аккаунта</b> {{ getDate(player.created_at) }}</p>
-    <p><b>Количество боев:</b> {{ player.statistics.all.battles }}</p>
-    <p><b>Процент побед:</b> {{ getWinRate() }}%</p>
-    <p><b>Максимально убил в бою:</b> {{ player.statistics.all.max_frags }} танков противника</p>
-    <p><b>Максимальный опыт за бой:</b> {{ player.statistics.all.max_xp }} </p>
-    <p><b>Точность стрельбы:</b> {{ getAccuracy() }}%</p>
-    <p><b>Выжил в боях:</b> {{ getSurvivalRate() }}%</p>
+    <p>Никнейм: {{ player.nickname }}</p>
+    <p>ID: {{ player.account_id }}</p>
+    <p>Клан: {{ clanInfo()?.name }} </p>
+    <p>Дата создания аккаунта {{ getDate(player.created_at) }}</p>
+    <p>Количество боев: {{ player.statistics.all.battles }}</p>
+    <p>Процент побед: {{ getWinRate() }}%</p>
+    <p>Максимально уничтожил в бою: {{ player.statistics.all.max_frags }}</p>
+    <p>Максимальный опыт за бой: {{ player.statistics.all.max_xp }} </p>
+    <p>Точность стрельбы: {{ getAccuracy() }}%</p>
+    <p>Выжил в боях: {{ getSurvivalRate() }}%</p>
   </div>
 
   <div *ngIf="errorMessage() as error" class="error">

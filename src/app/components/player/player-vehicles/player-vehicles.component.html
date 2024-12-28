@@ -1,1 +1,17 @@
-<p>player-vehicles works!</p>
+<div *ngIf="vehicles() as vehicles; else loading">
+  <div *ngIf="vehicles.length > 0; else noData">
+    <ul>
+      <li *ngFor="let vehicle of vehicles">
+        <p>Идентификатор танка: {{ vehicle.tank_id }}</p>
+        <p>Количество боёв: {{ vehicle.all.battles }}</p>
+        <p>Уровень: {{ vehicle.level || 'не указан' }}</p>
+      </li>
+    </ul>
+  </div>
+  <ng-template #noData>
+    <p>Данные о технике отсутствуют.</p>
+  </ng-template>
+</div>
+<ng-template #loading>
+  <p>Загрузка данных...</p>
+</ng-template>

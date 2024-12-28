@@ -1,0 +1,8 @@
+@use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/mixins/mixins-media" as *;
+@use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
+
+.vehicles {
+  margin: $gap-x2 0;
+}
