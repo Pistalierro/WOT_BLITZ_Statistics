@@ -18,14 +18,24 @@ export class PlayerVehiclesComponent {
 
   private playerService = inject(PlayerService);
   private vehicleService = inject(VehicleService);
-  vehicles = this.vehicleService.vehiclesSignal;
+  vehicles = this.vehicleService.tanksSignal;
+  tanksDetails = this.vehicleService.tanksDetailsSignal;
 
   constructor() {
     effect(() => {
       const accountId = this.playerService.playerId();
       if (accountId) {
-        this.vehicleService.getVehicles(accountId);
+        this.vehicleService.getPlayerTanksList(accountId);
       }
     });
+  }
+
+  getWinRate(vehicle: any): number {
+    const battles = vehicle.all?.battles ?? 0;
+    const wins = vehicle.all?.wins ?? 0;
+    if (battles === 0) {
+      return 0;
+    }
+    return (wins / battles) * 100;
   }
 }

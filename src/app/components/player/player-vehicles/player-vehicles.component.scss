@@ -6,3 +6,11 @@
 .vehicles {
   margin: $gap-x2 0;
 }
+
+ul {
+  list-style: none;
+  width: 200px;
+  border-bottom: 1px solid $color-light;
+  margin: 0;
+  padding: 0;
+}

@@ -61,9 +61,7 @@ export class PlayerStatisticsComponent {
 
   getSurvivalRate(): string {
     const player = this.playerInfo();
-    if (!player || !player.statistics?.all?.battles) {
-      return '0.00%'; // Возвращаем 0%, если данных нет
-    }
+    if (!player || !player.statistics?.all?.battles) return '0.00%'; // Возвращаем 0%, если данных нет
     return ((player.statistics.all.survived_battles / player.statistics.all.battles) * 100).toFixed(2); // Форматируем до 2 знаков после запятой
   }
 }

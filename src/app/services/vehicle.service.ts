@@ -1,35 +1,50 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
+import {MergedTankInterface, TankDetailsResponseInterface, TankInterface, TanksResponseInterface} from '../models/vehicles-response.model';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehicleService {
 
-  vehiclesSignal = signal<any>(null);
-  tankIds = signal<any[]>([]);
+  tanksSignal = signal<TankInterface[] | null>(null);
+  tanksDetailsSignal = signal<any[] | null>(null);
   private http = inject(HttpClient);
 
-  getVehicles(accountId: number): void {
-    const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&language=ru`;
-
-    this.http.get<any>(url).subscribe({
-      next: res => {
-        const data = res.data[accountId];
-        if (data && Array.isArray(data)) {
-          const filteredVehicles = data.filter(vehicle => vehicle.all.battles > 0);
-          console.log('Отфильтрованные танки', filteredVehicles);
-          filteredVehicles.forEach(vehicle => console.log(vehicle.tank_id));
-          this.vehiclesSignal.set(filteredVehicles);
-        } else {
-          this.vehiclesSignal.set([]); // Если данных нет
+  getPlayerTanksList(accountId: number) {
+    const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=tank_id%2C+all.battles%2C+all.wins`;
+    this.http.get<TanksResponseInterface>(url).subscribe({
+      next: (res) => {
+        const vehiclesData = res.data[accountId];
+        if (vehiclesData && Array.isArray(vehiclesData)) {
+          const filteredVehicles = vehiclesData.filter(vehicle => vehicle.all.battles > 0);
+          this.tanksSignal.set(filteredVehicles);
+          this.getTankDetails(filteredVehicles.map(v => v.tank_id));
         }
-      },
-      error: err => {
-        console.error('Данные о технике не получены', err);
-        this.vehiclesSignal.set([]); // На случай ошибки
       }
     });
   }
+
+
+  getTankDetails(tankIds: number[]) {
+    const idsString = tankIds.join(',');
+    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}&fields=name,nation,is_premium&tank_id=${idsString}`;
+
+    this.http.get<TankDetailsResponseInterface>(url).subscribe({
+      next: (res) => {
+        const tankDetails = res.data;
+        const tanks = this.tanksSignal();
+        if (!tanks) return;
+
+        const mergedTanks: MergedTankInterface[] = tanks.map(tank => ({...tank, ...tankDetails[tank.tank_id]}));
+        this.tanksDetailsSignal.set(mergedTanks);
+      },
+      error: (err) => {
+        console.error('Ошибка при запросе деталей танков:', err);
+      },
+    });
+  }
+
 }

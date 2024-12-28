@@ -1,17 +1,16 @@
-<div *ngIf="vehicles() as vehicles; else loading">
-  <div *ngIf="vehicles.length > 0; else noData">
-    <ul>
-      <li *ngFor="let vehicle of vehicles">
-        <p>Идентификатор танка: {{ vehicle.tank_id }}</p>
-        <p>Количество боёв: {{ vehicle.all.battles }}</p>
-        <p>Уровень: {{ vehicle.level || 'не указан' }}</p>
-      </li>
-    </ul>
-  </div>
-  <ng-template #noData>
-    <p>Данные о технике отсутствуют.</p>
-  </ng-template>
+<!--<div *ngIf="vehicles() as vehicles">-->
+<!--  <h2>Список техники игрока</h2>-->
+<!--  <p>Всего техники {{ vehicles.length }}</p>-->
+<!--  <ul *ngFor="let vehicle of vehicles">-->
+<!--    <li>ID: {{ vehicle.tank_id }}</li>-->
+<!--    <li>Сыграно боев: {{ vehicle.all.battles }}</li>-->
+<!--    <li>Побед: {{ vehicle.all.wins }}</li>-->
+<!--    <li>Процент побед: {{ getWinRate(vehicle) | number: '1.1-1' }}%</li>-->
+<!--  </ul>-->
+<!--</div>-->
+
+<div *ngIf="tanksDetails() as tanks">
+  <ul *ngFor="let tank of tanks">
+    <li>{{ tank.name }}</li>
+  </ul>
 </div>
-<ng-template #loading>
-  <p>Загрузка данных...</p>
-</ng-template>
