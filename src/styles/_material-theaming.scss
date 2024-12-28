@@ -1,0 +1,86 @@
+@use "presets/skin" as *;
+
+/* Перекрашиваем фон при автозаполнении */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  box-shadow: 0 0 0 1000px $color-deep-dark inset !important;
+  -webkit-text-fill-color: $color-accent !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Иногда нужно также покрыть hover/focus состояния */
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 1000px $color-deep-dark inset !important;
+  -webkit-text-fill-color: $color-accent !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: transparent !important;
+}
+
+.mdc-text-field--filled {
+  border-top: 1px solid $color-accent !important;
+  border-bottom: 1px solid $color-accent !important;
+  border-radius: 0 !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label,
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label--float-above {
+  color: $color-light !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: $color-light !important;
+  font-size: 1rem !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+.mat-mdc-table {
+  table-layout: auto;
+  white-space: normal;
+  background-color: transparent !important;
+  color: $color-light !important;
+}
+
+
+.mat-mdc-cell {
+  border-bottom-color: $color-accent !important;
+}
+
+.mat-mdc-header-cell {
+  border-bottom: none;
+  color: $color-light !important;
+  background-color: $color-deep-dark !important;
+}
+
+.mat-mdc-row {
+  color: $color-light !important;
+}
+
+.mat-mdc-paginator {
+  color: $color-light !important;
+  background-color: $color-deep-dark !important;
+  border-radius: 0 0 4px 4px !important;
+}
+
+.mat-mdc-select {
+  color: $color-light !important;
+}
+
+.mat-mdc-select-arrow {
+  color: $color-light !important;
+}
+
+.mat-mdc-paginator-icon {
+  fill: $color-light !important;
+}
+
+.mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+  fill: $color-gray-dark !important;
+}

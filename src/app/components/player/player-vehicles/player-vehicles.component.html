@@ -1,16 +1,74 @@
-<!--<div *ngIf="vehicles() as vehicles">-->
-<!--  <h2>Список техники игрока</h2>-->
-<!--  <p>Всего техники {{ vehicles.length }}</p>-->
-<!--  <ul *ngFor="let vehicle of vehicles">-->
-<!--    <li>ID: {{ vehicle.tank_id }}</li>-->
-<!--    <li>Сыграно боев: {{ vehicle.all.battles }}</li>-->
-<!--    <li>Побед: {{ vehicle.all.wins }}</li>-->
-<!--    <li>Процент побед: {{ getWinRate(vehicle) | number: '1.1-1' }}%</li>-->
-<!--  </ul>-->
-<!--</div>-->
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input
+    #input
+    (keyup)="applyFilter($event)"
+    matInput
+    placeholder="Ex. 'IS-7' or '113'"
+  />
+</mat-form-field>
 
-<div *ngIf="tanksDetails() as tanks">
-  <ul *ngFor="let tank of tanks">
-    <li>{{ tank.name }}</li>
-  </ul>
+<div class="mat-elevation-z8">
+  <table [dataSource]="dataSource" mat-table matSort>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
+      <td *matCellDef="let row" mat-cell> {{ row.name }}</td>
+    </ng-container>
+
+    <!-- WinRate Column -->
+    <ng-container matColumnDef="winRate">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Процент побед</th>
+      <td *matCellDef="let row" mat-cell>
+        <!-- Вызываем метод getWinRate, форматируем через пайп -->
+        {{ getWinRate(row) | number:'1.2-2' }}%
+      </td>
+    </ng-container>
+
+    <!-- DamageDeal Column -->
+    <ng-container matColumnDef="damageDeal">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Средний урон</th>
+      <td *matCellDef="let row" mat-cell>
+        <!-- Вызываем метод getDamageDeal, форматируем через пайп -->
+        {{ getDamageDeal(row) | number:'1.0-0' }}
+      </td>
+    </ng-container>
+
+    <!-- Nation Column -->
+    <ng-container matColumnDef="nation">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Нация</th>
+      <td *matCellDef="let row" mat-cell> {{ row.nation }}</td>
+    </ng-container>
+
+
+    <!-- Battles Column -->
+    <ng-container matColumnDef="battles">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Всего боёв</th>
+      <td *matCellDef="let row" mat-cell>
+        {{ row.all.battles }}
+      </td>
+    </ng-container>
+
+    <!-- Wins Column -->
+    <ng-container matColumnDef="wins">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Победы</th>
+      <td *matCellDef="let row" mat-cell>
+        {{ row.all.wins }}
+      </td>
+    </ng-container>
+
+    <!-- Заголовок и строки -->
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+    <!-- Если данных нет -->
+    <tr *matNoDataRow class="mat-row">
+      <td class="mat-cell" colspan="7">
+        No data matching the filter "{{ input.value }}"
+      </td>
+    </tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
 </div>

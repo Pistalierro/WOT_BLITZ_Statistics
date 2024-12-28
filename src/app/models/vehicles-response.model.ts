@@ -1,6 +1,7 @@
 export interface TankStatsInterface {
   battles: number;
   wins: number;
+  damage_dealt: number;
 }
 
 export interface TankInterface {

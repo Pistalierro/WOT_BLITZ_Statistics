@@ -10,11 +10,11 @@ import {MergedTankInterface, TankDetailsResponseInterface, TankInterface, TanksR
 export class VehicleService {
 
   tanksSignal = signal<TankInterface[] | null>(null);
-  tanksDetailsSignal = signal<any[] | null>(null);
+  tanksDetailsSignal = signal<MergedTankInterface[] | null>(null);
   private http = inject(HttpClient);
 
   getPlayerTanksList(accountId: number) {
-    const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=tank_id%2C+all.battles%2C+all.wins`;
+    const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=tank_id%2C+all.battles%2C+all.damage_dealt%2C+all.wins&language=ru`;
     this.http.get<TanksResponseInterface>(url).subscribe({
       next: (res) => {
         const vehiclesData = res.data[accountId];
@@ -30,7 +30,7 @@ export class VehicleService {
 
   getTankDetails(tankIds: number[]) {
     const idsString = tankIds.join(',');
-    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}&fields=name,nation,is_premium&tank_id=${idsString}`;
+    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}&fields=name,nation,is_premium&tank_id=${idsString}&language=ru`;
 
     this.http.get<TankDetailsResponseInterface>(url).subscribe({
       next: (res) => {
