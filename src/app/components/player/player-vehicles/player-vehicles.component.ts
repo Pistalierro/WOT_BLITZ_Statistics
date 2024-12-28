@@ -20,8 +20,6 @@ import {BreakpointObserver} from '@angular/cdk/layout';
   styleUrl: './player-vehicles.component.scss'
 })
 export class PlayerVehiclesComponent implements AfterViewInit {
-
-  isMobile: boolean = false;
   displayedColumns: string[] = ['name', 'nation', 'battles', 'wins', 'winRate', 'damageDeal'];
   dataSource!: MatTableDataSource<MergedTankInterface>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -47,7 +45,7 @@ export class PlayerVehiclesComponent implements AfterViewInit {
       if (mergedData) this.dataSource.data = mergedData;
     });
 
-    this.dataSource.sortingDataAccessor = (item, property) => {
+    this.dataSource.sortingDataAccessor = (item: MergedTankInterface, property) => {
       const battles = item.all?.battles ?? 0;
       const damage = item.all?.damage_dealt ?? 0;
       const wins = item.all?.wins ?? 0;
@@ -62,7 +60,6 @@ export class PlayerVehiclesComponent implements AfterViewInit {
         case 'damageDeal':
           return battles === 0 ? 0 : damage / battles;
         default:
-          // По умолчанию, возвращаем значение поля напрямую (строковая сортировка)
           return (item as any)[property];
       }
     };
