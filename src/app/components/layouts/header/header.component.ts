@@ -1,8 +1,10 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, inject, ViewChild} from '@angular/core';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
 import {NgIf} from '@angular/common';
+import {MatDialog} from '@angular/material/dialog';
+import {AuthComponent} from '../../features/auth/auth.component';
 
 @Component({
   selector: 'app-header',
@@ -12,6 +14,7 @@ import {NgIf} from '@angular/common';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  readonly dialog = inject(MatDialog);
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isSidenavOpen: boolean = false;
 
@@ -27,5 +30,15 @@ export class HeaderComponent {
 
   onSidenavClose(): void {
     console.log('Сайд-меню закрыто');
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(AuthComponent, {
+      width: '50%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

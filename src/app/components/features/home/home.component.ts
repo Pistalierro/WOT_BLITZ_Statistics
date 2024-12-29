@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {MATERIAL_MODULES} from '../../mock/material-providers';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MATERIAL_MODULES} from '../../../mock/material-providers';
 
 @Component({
   selector: 'app-home',

@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
-import {PlayerService} from '../../../services/player.service';
-import {VehicleService} from '../../../services/vehicle.service';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
-import {MergedTankInterface} from '../../../models/vehicles-response.model';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {DecimalPipe, NgIf} from '@angular/common';
+import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {MergedTankInterface} from '../../../../models/vehicles-response.model';
+import {VehicleService} from '../../../../services/vehicle.service';
+import {PlayerService} from '../../../../services/player.service';
 
 @Component({
   selector: 'app-player-vehicles',

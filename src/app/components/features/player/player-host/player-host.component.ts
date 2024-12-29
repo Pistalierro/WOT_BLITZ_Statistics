@@ -1,10 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {FormsModule} from '@angular/forms';
-import {PlayerService} from '../../../services/player.service';
-import {ClanService} from '../../../services/clan.service';
 import {NgIf} from '@angular/common';
+import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {PlayerService} from '../../../../services/player.service';
+import {ClanService} from '../../../../services/clan.service';
 
 @Component({
   selector: 'app-player-host',

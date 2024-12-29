@@ -11,6 +11,9 @@
       <button mat-button routerLink="/tournaments" routerLinkActive="active">Турниры</button>
       <button mat-button routerLink="/session" routerLinkActive="active">Сессия</button>
       <button mat-button routerLink="/history" routerLinkActive="active">История</button>
+      <button (click)="openDialog()" mat-button>
+        <mat-icon>login</mat-icon>
+      </button>
     </nav>
     <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
       <svg *ngIf="!isSidenavOpen" height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">

@@ -1,8 +1,8 @@
 import {Component, effect, inject} from '@angular/core';
-import {PlayerService} from '../../../services/player.service';
 import {NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ClanService} from '../../../services/clan.service';
+import {ClanService} from '../../../../services/clan.service';
+import {PlayerService} from '../../../../services/player.service';
 
 @Component({
   selector: 'app-player-player',
