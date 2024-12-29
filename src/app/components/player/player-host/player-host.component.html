@@ -3,9 +3,7 @@
   <p>Введите никнейм или ID игрока, чтобы увидеть его статистику, технику и достижения.</p>
 
   <div class="grid-layout">
-    <!-- Левый блок: форма -->
     <div class="form-block">
-      <!-- Предположим, что вы добавите класс "custom-input" на форму или на mat-form-field, чтобы проще выделять нужное поле стилями -->
       <form (ngSubmit)="onSearch()" class="form custom-input">
         <mat-form-field appearance="outline">
           <mat-label>Укажите Никнейм / ID игрока</mat-label>
@@ -15,11 +13,8 @@
           </button>
         </mat-form-field>
       </form>
-
     </div>
 
-
-    <!-- Правый блок: меню и router-outlet -->
     <div class="content-block">
       <div *ngIf="isPlayerSelected()">
         <mat-toolbar>

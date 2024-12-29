@@ -50,7 +50,6 @@ export class PlayerStatisticsComponent {
     return new Date(timestamp * 1000).toLocaleDateString();
   }
 
-
   getAccuracy(): string {
     const player = this.playerInfo();
     if (!player || !player.statistics?.all?.hits || !player.statistics?.all?.shots) {

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
 import {PlayerService} from '../../../services/player.service';
 import {VehicleService} from '../../../services/vehicle.service';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
@@ -6,29 +6,28 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MergedTankInterface} from '../../../models/vehicles-response.model';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {DecimalPipe} from '@angular/common';
-import {BreakpointObserver} from '@angular/cdk/layout';
+import {DecimalPipe, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-player-vehicles',
   standalone: true,
   imports: [
     ...MATERIAL_MODULES,
-    DecimalPipe
+    DecimalPipe,
+    NgIf
   ],
   templateUrl: './player-vehicles.component.html',
   styleUrl: './player-vehicles.component.scss'
 })
-export class PlayerVehiclesComponent implements AfterViewInit {
+export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['name', 'nation', 'battles', 'wins', 'winRate', 'damageDeal'];
   dataSource!: MatTableDataSource<MergedTankInterface>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  private playerService = inject(PlayerService);
-  private vehicleService = inject(VehicleService);
+  protected vehicleService = inject(VehicleService);
   vehicles = this.vehicleService.tanksSignal;
   tanksDetails = this.vehicleService.tanksDetailsSignal;
-  private breakpointObserver = inject(BreakpointObserver);
+  private playerService = inject(PlayerService);
 
   constructor() {
     this.dataSource = new MatTableDataSource<MergedTankInterface>();
@@ -38,7 +37,7 @@ export class PlayerVehiclesComponent implements AfterViewInit {
       if (accountId) {
         this.vehicleService.getPlayerTanksList(accountId);
       }
-    });
+    }, {allowSignalWrites: true});
 
     effect(() => {
       const mergedData = this.tanksDetails();
@@ -63,6 +62,18 @@ export class PlayerVehiclesComponent implements AfterViewInit {
           return (item as any)[property];
       }
     };
+  }
+
+  ngOnInit() {
+    const accountId = this.playerService.playerId();
+
+    if (accountId) {
+      // Если accountId есть, загружаем данные техники
+      this.vehicleService.getPlayerTanksList(accountId);
+    } else {
+      // Если accountId отсутствует, добавьте здесь обработку ошибки или перенаправление
+      console.error('Account ID не найден.');
+    }
   }
 
   ngAfterViewInit() {

@@ -41,7 +41,6 @@ export class PlayerHostComponent {
       this.playerService.searchPlayer(query);
     }
 
-    // Перенаправление на страницу статистики
     this.router.navigate(['/players/statistics']);
   }
 

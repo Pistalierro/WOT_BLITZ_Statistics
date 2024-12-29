@@ -27,3 +27,16 @@ table {
 td, th {
   width: 25%;
 }
+
+.table-responsive {
+  overflow-x: auto; // Добавить горизонтальный скролл
+  -webkit-overflow-scrolling: touch;
+
+  table {
+    min-width: 600px; // Минимальная ширина таблицы
+  }
+}
+
+.loading {
+  margin-top: $gap;
+}

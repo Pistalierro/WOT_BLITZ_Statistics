@@ -25,6 +25,7 @@
     }
 
     p {
+
       @include lg-min {
         font-size: 1.2rem;
       }
@@ -34,6 +35,7 @@
       @include md {
         font-size: 0.85rem;
       }
+
     }
   }
 
