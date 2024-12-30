@@ -5,6 +5,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {NgIf} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthComponent} from '../../features/auth/auth.component';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -15,8 +16,11 @@ import {AuthComponent} from '../../features/auth/auth.component';
 })
 export class HeaderComponent {
   readonly dialog = inject(MatDialog);
+  readonly authService = inject(AuthService);
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isSidenavOpen: boolean = false;
+  user$ = this.authService.userSignal;
+  nickname$ = this.authService.nicknameSignal;
 
   toggleSidenav(): void {
     this.sidenav.toggle();
@@ -34,11 +38,15 @@ export class HeaderComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(AuthComponent, {
-      width: '30%',
+      width: '40%',
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

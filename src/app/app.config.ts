@@ -10,12 +10,13 @@ import {getAuth, provideAuth} from '@angular/fire/auth';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDW5NiM16RpmnaXpuK3LSVhIToNW-EigyM',
-  authDomain: 'wot-blitz-player.firebaseapp.com',
-  projectId: 'wot-blitz-player',
-  storageBucket: 'wot-blitz-player.firebasestorage.app',
+  authDomain: 'wot-blitz-statistics.firebaseapp.com',
+  projectId: 'wot-blitz-statistics',
+  storageBucket: 'wot-blitz-statistics.appspot.com',
   messagingSenderId: '16894861011',
   appId: '1:16894861011:web:484ef3fa5e7d5ab5e73e26'
 };
+
 
 export const apiConfig = {
   baseUrl: 'https://api.wotblitz.eu/wotb',

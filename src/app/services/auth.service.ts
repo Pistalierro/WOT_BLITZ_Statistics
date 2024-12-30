@@ -1,17 +1,34 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {Auth, signInWithEmailAndPassword} from '@angular/fire/auth';
+import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, User} from '@angular/fire/auth';
+import {doc, Firestore, getDoc, setDoc} from '@angular/fire/firestore';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-  userSignal = signal<any>(null);
+  userSignal = signal<User | null>(null);
+  nicknameSignal = signal<string | null>(null);
   errorSignal = signal<string | null>(null);
   private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
+  constructor() {
+    onAuthStateChanged(this.auth, async (user) => {
+      this.userSignal.set(user);
+      if (user) {
+        const userDocRef = doc(this.firestore, `users/${user.uid}`);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
+          this.nicknameSignal.set(data['nickname'] || null);
+        }
+      } else this.nicknameSignal.set(null);
+    });
+  }
 
   async login(email: string, password: string) {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-      this.userSignal.set(userCredential);
+      this.userSignal.set(userCredential.user);
       this.errorSignal.set(null);
       console.log('Вы вошли', userCredential.user);
     } catch (error: any) {
@@ -19,6 +36,33 @@ export class AuthService {
       this.errorSignal.set(errorMessage);
       console.log('Ошибка входа', errorMessage);
       throw error;
+    }
+  }
+
+  async register(email: string, password: string, nickname: string) {
+    try {
+      // Регистрация пользователя в Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      const {uid} = userCredential.user;
+
+      // Создание документа в коллекции users
+      const userDocRef = doc(this.firestore, `users/${uid}`);
+      await setDoc(userDocRef, {email, nickname, uid});
+
+      console.log('Пользователь успешно зарегистрирован и добавлен в Firestore:', {email, nickname, uid});
+    } catch (error) {
+      console.error('Ошибка при регистрации:', error);
+      throw error; // Пробрасываем ошибку для обработки в компоненте
+    }
+  }
+
+  async logout() {
+    try {
+      await this.auth.signOut();
+      this.userSignal.set(null); // Сбрасываем состояние
+      console.log('Вы вышли из системы');
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
     }
   }
 
