@@ -1,11 +1,11 @@
 <ng-container>
   <mat-form-field>
-    <mat-label>Поиск по любому значению...</mat-label>
-    <input
-      #input
-      (keyup)="applyFilter($event)"
-      matInput
-      placeholder="Ex. 'IS-7' or '113'"
+    <mat-label>Используйте фильтр для поиска техники здесь...</mat-label>
+    <input #input
+           (keyup)="applyFilter($event)"
+           class="filter"
+           matInput
+           placeholder="Например: 'Объект 907' или 'WZ-120-1G FT'"
     />
   </mat-form-field>
 

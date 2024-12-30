@@ -31,7 +31,7 @@ mat-form-field {
   width: 100%;
 
   input {
-    background-color: $color-dark !important;
+    background-color: $color-black !important;
     padding-left: 1rem;
   }
 }
@@ -71,68 +71,100 @@ mat-form-field {
   text-decoration: underline;
 }
 
-:host ::ng-deep .custom-input {
-  /* 1) Скрыть блок для ошибок/подсказок внизу */
+:host ::ng-deep .search-form {
+  margin-top: $gap-x2;
+  
+  /* --- Стили для инпута --- */
+  input {
+    background-color: $color-black !important; /* Устанавливаем фон инпута */
+    color: $color-accent !important; /* Цвет текста */
+    font-size: 1rem !important; /* Размер текста */
+    border: none !important; /* Убираем стандартные границы */
+    box-shadow: none !important; /* Убираем тени, которые могут менять восприятие фона */
+    outline: none !important; /* Убираем обводку */
+    caret-color: $color-accent !important;
 
-  margin: $gap-x2 0;
+    &:focus,
+    &:focus-visible {
+      background-color: $color-black !important; /* Повторяем фон */
+      border: none !important; /* Убираем границы */
+      box-shadow: none !important; /* Убираем тени */
+      outline: none !important; /* Убираем обводку */
+    }
 
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none !important;
+    /* Убираем фон автозаполнения (особенно для Chrome) */
+    &:-webkit-autofill,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px $color-black inset !important;
+      -webkit-text-fill-color: $color-accent !important;
+      transition: background-color 5000s ease-in-out 0s !important; /* Сохраняем фон */
+    }
   }
 
-  /* 2) Фон, на котором лежит инпут */
-  .mat-mdc-form-field-flex {
-    background-color: $color-deep-dark !important; /* темно-серый фон */
-  }
+  /* --- Рамка инпута --- */
+  .mat-mdc-form-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 
-  /* 3) Цвет рамки (outline).
-     В MDC outline состоит из нескольких элементов:
-       - .mdc-notched-outline__leading
-       - .mdc-notched-outline__notch
-       - .mdc-notched-outline__trailing
-     Для надёжности переопределяем сразу все,
-     чтобы при фокусе/hover всё было #ff4f00.
-  */
-  .mdc-notched-outline__leading,
-  .mdc-notched-outline__notch,
-  .mdc-notched-outline__trailing {
-    border-color: $color-accent !important;
-  }
+    .mdc-notched-outline {
+      border-color: $color-accent !important;
+      border-width: 2px !important;
+      border-style: solid !important;
+      border-radius: 4px !important;
 
-  /* 4) Цвет текста внутри инпута */
-  .mat-mdc-form-field-input-control {
-    color: $color-accent !important;
-  }
+      &__leading,
+      &__trailing,
+      &__notch {
+        border-color: transparent !important; /* Цвет боковых рамок */
+      }
 
-  /* 5) Цвет лейбла (Label).
-     При outline-режиме надпись всплывает наверх —
-     отвечает класс .mat-mdc-floating-label.
-  */
-  .mat-mdc-floating-label {
-    color: $color-accent !important;
-  }
+      &__notch {
+        width: auto !important; /* Ширина выемки для метки */
+      }
+    }
 
-  /* 6) Цвет иконки (search) */
-  .mat-icon {
-    color: $color-accent !important;
-  }
+    &.mat-focused {
+      .mdc-notched-outline {
+        border-color: $color-accent !important;
+        box-shadow: none !important; /* Убираем стандартную тень */
+      }
+    }
 
-  .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-    padding-left: 0;
-  }
+    /* Метка */
+    .mdc-floating-label {
+      color: $color-accent !important; /* Цвет метки */
+      padding: 0 8px !important; /* Отступы внутри рамки */
+      z-index: 1 !important; /* Поднимаем метку выше рамки */
+      background: $color-black !important; /* Фон под текст метки */
 
-  .mat-mdc-form-field-infix {
-    background-color: $color-deep-dark !important;
-  }
+      &.mat-focused {
+        color: $color-accent !important; /* Цвет метки при фокусе */
+      }
+    }
 
-  .mat-mdc-form-field-input-element,
-  .mdc-text-field__input {
-    background-color: $color-deep-dark !important;
+    /* Иконка поиска */
+    .mat-mdc-form-field-icon-suffix {
+      mat-icon {
+        color: $color-accent !important; /* Цвет иконки */
+        font-size: 1.5rem !important; /* Размер иконки */
+      }
+
+      button {
+        background: none !important; /* Убираем фон кнопки */
+        border: none !important; /* Убираем границу */
+        padding: 0 !important; /* Убираем внутренние отступы */
+      }
+    }
+
+    /* Подскриптовая область */
+    .mat-mdc-form-field-subscript-wrapper,
+    .mat-mdc-form-field-bottom-align::before {
+      display: none !important; /* Убираем подскриптовую область */
+    }
   }
 }
-
-
-
-
-
 

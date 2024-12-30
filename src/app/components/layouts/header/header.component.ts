@@ -34,7 +34,7 @@ export class HeaderComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(AuthComponent, {
-      width: '50%',
+      width: '30%',
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -1,7 +1,7 @@
-@use "../../../../styles/mixins/extends" as *;
-@use "../../../../styles/mixins/mixins-media" as *;
-@use "../../../../styles/presets/variables" as *;
-@use "../../../../styles/presets/skin" as *;
+@use "../../../../../styles/mixins/extends" as *;
+@use "../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../styles/presets/variables" as *;
+@use "../../../../../styles/presets/skin" as *;
 
 .vehicles {
   margin: $gap-x2 0;
@@ -39,4 +39,8 @@ td, th {
 
 .loading {
   margin-top: $gap;
+}
+
+:host ::ng-deep .filter::placeholder {
+  color: $color-gray !important;
 }
