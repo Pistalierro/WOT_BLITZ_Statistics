@@ -59,4 +59,9 @@
   fill: $color-light !important;
 }
 
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: $color-light !important;
+  font-size: 1rem !important;
+}
+
 

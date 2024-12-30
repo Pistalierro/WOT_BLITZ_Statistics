@@ -40,10 +40,6 @@ export class HeaderComponent {
     const dialogRef = this.dialog.open(AuthComponent, {
       width: '40%',
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 
   logout(): void {

@@ -7,26 +7,18 @@ export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {
     path: 'players',
-    loadComponent: () =>
-      import('./components/features/player/player-host/player-host.component').then(
-        (m) => m.PlayerHostComponent
-      ),
-    title: 'WOT Blitz Statistics',
+    loadComponent: () => import('./components/features/player/player-host/player-host.component')
+      .then(m => m.PlayerHostComponent),
     children: [
       {
-        path: 'statistics',
-        loadComponent: () => import('./components/features/player/player-statistics/player-statistics.component')
-          .then(m => m.PlayerStatisticsComponent)
+        path: 'stat',
+        loadComponent: () => import('./components/features/player/player-stat/player-stat.component')
+          .then(m => m.PlayerStatComponent)
       },
       {
         path: 'vehicles',
         loadComponent: () => import('./components/features/player/player-vehicles/player-vehicles.component')
           .then(m => m.PlayerVehiclesComponent)
-      },
-      {
-        path: 'achievements',
-        loadComponent: () => import('./components/features/player/player-achievements/player-achievements.component')
-          .then(m => m.PlayerAchievementsComponent)
       }
     ]
   }

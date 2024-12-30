@@ -11,14 +11,15 @@ export class PlayerService {
   playerId = signal<number | null>(null);
   playerInfo = signal<PlayerInfoInterface | null>(null); // Данные игрока
   error = signal<any>(null);
-
   private http = inject(HttpClient);
 
-  searchPlayer(nickName: string): void {
-    const url = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickName}`;
+  searchPlayer(nickname: string): void {
+    const url = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
     this.http.get<AccountListResponse>(url).subscribe({
       next: (res) => {
+        console.log(res);
         const accountId = Object.values(res.data)[0]?.account_id;
+        console.log(accountId);
         if (accountId) {
           this.playerId.set(Number(accountId)); // Преобразуем ID в число
         } else {
@@ -37,6 +38,7 @@ export class PlayerService {
     const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${accountId}`;
     this.http.get<PlayerApiResponse>(url).subscribe({
       next: (res) => {
+        console.log(res);
         this.playerInfo.set(res.data[accountId]); // Сохраняем данные игрока
       },
       error: (err) => {

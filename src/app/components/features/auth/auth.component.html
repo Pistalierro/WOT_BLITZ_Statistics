@@ -25,30 +25,20 @@
 
       <mat-form-field *ngIf="!isLoginMode" appearance="outline">
         <mat-label>Никнейм:</mat-label>
-        <input formControlName="nickname" matInput placeholder="Введите никнейм..." type="text"/>
-        <mat-error *ngIf="authForm.get('nickname')?.hasError('required')">Никнейм обязателен</mat-error>
+        <input formControlName="nickname" matInput placeholder="Укажите никнейм (WG)..." type="text"/>
+        <mat-error *ngIf="authForm.get('nickname')?.hasError('required')">
+          Никнейм обязателен
+        </mat-error>
       </mat-form-field>
 
-      <mat-dialog-actions align="end">
-        <button
-          [@buttonState]="buttonState"
-          color="primary"
-          mat-raised-button
-          type="submit"
-        >
+      <mat-dialog-actions class="action-buttons">
+        <button (click)="toggleMode()" color="default" mat-raised-button>
+          {{ isLoginMode ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти' }}
+        </button>
+        <button [@buttonState]="buttonState" color="primary" mat-raised-button type="submit">
           {{ isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
         </button>
       </mat-dialog-actions>
     </form>
   </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button
-      (click)="toggleMode()"
-      color="accent"
-      mat-raised-button
-    >
-      {{ isLoginMode ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти' }}
-    </button>
-  </mat-dialog-actions>
 </div>

@@ -3,9 +3,9 @@ import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth.service';
 import {NgIf} from '@angular/common';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Router} from '@angular/router';
 import {MatDialogRef} from '@angular/material/dialog';
+import {ANIMATIONS} from '../../../mock/animations';
 
 @Component({
   selector: 'app-auth',
@@ -13,26 +13,7 @@ import {MatDialogRef} from '@angular/material/dialog';
   imports: [...MATERIAL_MODULES, ReactiveFormsModule, NgIf],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
-  animations: [
-    trigger('buttonState', [
-      state(
-        'default',
-        style({
-          backgroundColor: '#3f51b5',
-          transform: 'scale(1)',
-        })
-      ),
-      state(
-        'success',
-        style({
-          backgroundColor: '#4caf50',
-          transform: 'scale(1.1)',
-        })
-      ),
-      transition('default => success', [animate('300ms ease-in')]),
-      transition('success => default', [animate('300ms ease-out')]),
-    ]),
-  ],
+  animations: [ANIMATIONS.buttonState],
 })
 export class AuthComponent implements OnInit {
   isLoginMode: boolean = true;
@@ -71,7 +52,6 @@ export class AuthComponent implements OnInit {
       const {email, password, nickname} = this.authForm.value;
 
       if (this.isLoginMode) {
-        console.log('Вход с данными:', {email, password});
         this.authService.login(email, password).then(() => {
           this.onLoginSuccess();
         }).catch(err => {
@@ -94,16 +74,16 @@ export class AuthComponent implements OnInit {
     this.buttonState = 'success';
     setTimeout(() => {
       this.dialogRef.close();
-      this.router.navigate(['/players']);
-    }, 300); // Закрытие после завершения анимации
+      this.router.navigate(['/players/statistics']).then();
+    }, 200); // Закрытие после завершения анимации
   }
 
   private onRegisterSuccess() {
     this.buttonState = 'success';
     setTimeout(() => {
       this.dialogRef.close();
-      this.router.navigate(['/players']);
-    }, 300); // Закрытие после завершения анимации
+      this.router.navigate(['/players']).then();
+    }, 200); // Закрытие после завершения анимации
   }
 
   private matchPasswordValidator = (control: any) => {

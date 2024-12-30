@@ -6,3 +6,15 @@ mat-form-field {
 .auth-dialog {
   padding: 20px 0;
 }
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 0; // для добавления пространства между кнопками и содержимым формы
+
+  button {
+    flex: 0 1 auto; // кнопки занимают место только по размеру контента
+  }
+}
+

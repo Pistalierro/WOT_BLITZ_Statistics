@@ -20,6 +20,7 @@ export class AuthService {
         if (userDocSnap.exists()) {
           const data = userDocSnap.data();
           this.nicknameSignal.set(data['nickname'] || null);
+          console.log(this.nicknameSignal());
         }
       } else this.nicknameSignal.set(null);
     });
@@ -30,7 +31,6 @@ export class AuthService {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       this.userSignal.set(userCredential.user);
       this.errorSignal.set(null);
-      console.log('Вы вошли', userCredential.user);
     } catch (error: any) {
       const errorMessage = this.getErrorMessage(error.code);
       this.errorSignal.set(errorMessage);
