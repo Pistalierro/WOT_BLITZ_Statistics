@@ -74,8 +74,8 @@ export class AuthComponent implements OnInit {
     this.buttonState = 'success';
     setTimeout(() => {
       this.dialogRef.close();
-      this.router.navigate(['/players/statistics']).then();
-    }, 200); // Закрытие после завершения анимации
+      this.router.navigate(['/players']).then();
+    }, 100); // Закрытие после завершения анимации
   }
 
   private onRegisterSuccess() {
@@ -83,7 +83,7 @@ export class AuthComponent implements OnInit {
     setTimeout(() => {
       this.dialogRef.close();
       this.router.navigate(['/players']).then();
-    }, 200); // Закрытие после завершения анимации
+    }, 100); // Закрытие после завершения анимации
   }
 
   private matchPasswordValidator = (control: any) => {

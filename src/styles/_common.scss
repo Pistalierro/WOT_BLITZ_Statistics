@@ -1,4 +1,5 @@
 @use 'presets/variables' as *;
+@use 'presets/skin' as *;
 @use 'mixins/mixins-media' as *;
 
 * {
@@ -17,6 +18,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-header !important;
+  color: $color-gray !important;
 }
 
 h2 {
@@ -31,7 +33,20 @@ h2 {
   }
 }
 
+h3 {
+  @include lg-min {
+    font-size: 2rem !important;
+  }
+  @include lg-md {
+    font-size: 1.5rem !important;
+  }
+  @include md {
+    font-size: 1.2rem !important;
+  }
+}
+
 p {
+  color: $color-gray !important;
   @include md-min {
     font-size: 1.5rem !important;
   }

@@ -10,6 +10,7 @@ export const routes: Routes = [
     loadComponent: () => import('./components/features/player/player-host/player-host.component')
       .then(m => m.PlayerHostComponent),
     children: [
+      {path: '', redirectTo: 'stat', pathMatch: 'full'},
       {
         path: 'stat',
         loadComponent: () => import('./components/features/player/player-stat/player-stat.component')
@@ -19,7 +20,12 @@ export const routes: Routes = [
         path: 'vehicles',
         loadComponent: () => import('./components/features/player/player-vehicles/player-vehicles.component')
           .then(m => m.PlayerVehiclesComponent)
+      },
+      {
+        path: 'achievements',
+        loadComponent: () => import('./components/features/player/player-achievements/player-achievements.component')
+          .then(m => m.PlayerAchievementsComponent)
       }
     ]
-  }
+  },
 ];

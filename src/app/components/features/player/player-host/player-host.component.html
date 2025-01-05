@@ -1,1 +1,12 @@
-<p>player-host works!</p>
+<div class="container">
+  <h2>Рады видеть вас, {{ authService.nicknameSignal() ? authService.nicknameSignal() : 'Гость' }}!</h2>
+  <p>Здесь вы можете проанализировать вашу статистику по аккаунту, технику, просмотреть ваши награды.</p>
+
+  <mat-toolbar class="player-toolbar">
+    <button mat-button routerLink="stat" routerLinkActive="active">Статистика</button>
+    <button mat-button routerLink="vehicles" routerLinkActive="active">Техника</button>
+    <button mat-button routerLink="achievements" routerLinkActive="active">Достижения</button>
+  </mat-toolbar>
+
+  <router-outlet></router-outlet>
+</div>

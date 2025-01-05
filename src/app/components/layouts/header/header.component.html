@@ -11,20 +11,17 @@
       <button mat-button routerLink="/tournaments" routerLinkActive="active">Турниры</button>
       <button mat-button routerLink="/session" routerLinkActive="active">Сессия</button>
       <button mat-button routerLink="/history" routerLinkActive="active">История</button>
-
       <ng-container *ngIf="nickname$(); else loginButton">
-        <span class="user-nickname">{{ nickname$() }}</span>
         <button (click)="logout()" mat-button>
           <mat-icon>logout</mat-icon>
         </button>
+        <span class="user-nickname">{{ nickname$() }}</span>
       </ng-container>
-
       <ng-template #loginButton>
         <button (click)="openDialog()" mat-button>
           <mat-icon>login</mat-icon>
         </button>
       </ng-template>
-
     </nav>
     <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
       <svg *ngIf="!isSidenavOpen" height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -46,6 +43,18 @@
       <button (click)="closeSidenav()" mat-button routerLink="/tournaments">Турниры</button>
       <button (click)="closeSidenav()" mat-button routerLink="/session">Сессия</button>
       <button (click)="closeSidenav()" mat-button routerLink="/history">История</button>
+      <ng-container *ngIf="nickname$(); else loginButton">
+        <button (click)="logout()" mat-button>
+          <mat-icon>logout</mat-icon>
+        </button>
+        <span class="user-nickname">{{ nickname$() }}</span>
+      </ng-container>
+
+      <ng-template #loginButton>
+        <button (click)="openDialog()" mat-button>
+          <mat-icon>login</mat-icon>
+        </button>
+      </ng-template>
     </nav>
   </mat-sidenav>
   <div class="content-container">

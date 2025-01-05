@@ -1,0 +1,38 @@
+@use "../../../../../styles/mixins/extends" as *;
+@use "../../../../../styles/presets/skin" as *;
+@use "../../../../../styles/presets/variables" as *;
+
+.container {
+  @extend %container;
+
+  h2 {
+    margin: $gap 0;
+  }
+
+  p {
+    font-weight: 100;
+    margin: $gap-x2 0;
+  }
+
+  .player-toolbar {
+    width: 100%;
+    margin: $gap-x2 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: $color-deep-dark;
+    border-radius: 4px;
+
+    button {
+      color: $color-light;
+      text-transform: uppercase;
+      transition: color .25s;;
+
+      &:hover,
+      &:focus,
+      &.active {
+        color: $color-accent;
+      }
+    }
+  }
+}

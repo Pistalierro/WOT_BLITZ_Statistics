@@ -1,1 +1,23 @@
-<p>player-stat works!</p>
+<div *ngIf="playerService.playerData() as data; else checkAuth">
+  <h2>Общая статистика игрока</h2>
+  <p>{{ data.nickname }} / ID: {{ data.playerId }}</p>
+  <p>Дата создания аккаунта: {{ data.created_at * 1000 | date: 'dd.MM.yy' }}</p>
+  <p>Всего боев: {{ data.statistics.all.battles }}</p>
+  <p>Процент побед: {{ (data.statistics.all.wins / data.statistics.all.battles) * 100 | number: '1.2-2' }}%</p>
+  <p>Точность стрельбы: {{ (data.statistics.all.hits / data.statistics.all.shots) * 100 | number: '1.2-2' }}%</p>
+  <p>Средний урон за бой: {{ (data.statistics.all.damage_dealt / data.statistics.all.battles) | number: '1.0-0' }}</p>
+  <p *ngIf="data.statistics.all.max_damage">Максимальный урон за бой: {{ data.statistics.all.max_damage }}</p>
+  <p>Максимально уничтожено за бой: {{ data.statistics.all.max_frags }}</p>
+</div>
+
+<ng-template #checkAuth>
+  <div *ngIf="authService.nicknameSignal() === null">
+    <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику игрока.</p>
+  </div>
+  <div *ngIf="playerService.loading()">
+    <p>Loading...</p>
+  </div>
+  <div *ngIf="playerService.error()">
+    <p class="error">{{ playerService.error() }}</p>
+  </div>
+</ng-template>
