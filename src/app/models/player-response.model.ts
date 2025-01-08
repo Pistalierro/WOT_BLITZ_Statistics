@@ -1,41 +1,72 @@
-export interface PlayerStatisticsInterface {
-  all: {
-    battles: number; // Общее количество боёв
-    wins: number; // Количество побед
-    max_frags: number; // Максимальное количество уничтоженных танков за бой
-    max_xp: number; // Максимальное количество опыта за бой
-    hits: number; // Количество попаданий
-    shots: number; // Общее количество выстрелов
-    survived_battles: number; // Количество выживших боёв
-  };
+export interface PlayerSearchResponse {
+  status: 'ok' | 'error';
+  data: Array<{
+    account_id: number;
+    nickname: string;
+  }>;
 }
 
-export interface PlayerInfoInterface {
-  account_id: number; // Уникальный идентификатор игрока
-  nickname: string; // Никнейм игрока
-  created_at: number; // Временная метка создания аккаунта
-  statistics: PlayerStatisticsInterface; // Статистика игрока
-}
-
-export interface PlayerApiResponse {
-  status: string; // Статус ответа
-  meta: {
-    count: number; // Количество записей
-  };
+export interface PlayerInfoResponse {
+  status: 'ok' | 'error';
   data: {
-    [accountId: number]: PlayerInfoInterface; // Данные игрока по его account_id
-  };
-}
-
-export interface AccountListResponse {
-  status: string; // Статус ответа
-  meta: {
-    count: number; // Количество найденных игроков
-  };
-  data: {
-    [accountId: number]: {
-      nickname: string; // Никнейм игрока
-      account_id: string | number; // ID игрока
+    [accountId: string]: {
+      account_id: number;
+      created_at: number;
+      nickname: string;
+      statistics: {
+        all: {
+          battles: number;
+          wins: number;
+          damage_dealt: number;
+          hits: number;
+          shots: number;
+          max_damage?: number;
+          max_frags: number;
+        };
+      };
     };
+  };
+}
+
+export interface ClanAccountInfoResponse {
+  status: 'ok' | 'error';
+  data: {
+    [accountId: string]: {
+      clan_id?: number;
+    };
+  };
+}
+
+export interface ClanInfoResponse {
+  status: 'ok' | 'error';
+  data: {
+    [clanId: string]: {
+      name: string;
+      tag: string;
+      members_count?: number;
+      motto?: string;
+      description?: string;
+    };
+  };
+}
+
+export interface PlayerData {
+  playerId: number;
+  created_at: number;
+  nickname: string;
+  statistics: {
+    all: {
+      battles: number;
+      wins: number;
+      damage_dealt: number;
+      hits: number;
+      shots: number;
+      max_damage?: number;
+      max_frags: number;
+    };
+  };
+  clan?: {
+    name: string;
+    tag: string;
   };
 }

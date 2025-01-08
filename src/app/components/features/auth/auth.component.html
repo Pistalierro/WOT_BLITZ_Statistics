@@ -4,7 +4,7 @@
     <form (ngSubmit)="onSubmit()" [formGroup]="authForm" class="login-form">
       <mat-form-field appearance="outline">
         <mat-label>Email:</mat-label>
-        <input formControlName="email" matInput placeholder="Введите Email..." type="email"/>
+        <input (keydown.enter)="onSubmit()" formControlName="email" matInput placeholder="Введите Email..." type="email"/>
         <mat-error *ngIf="authForm.get('email')?.hasError('required')">Email обязателен</mat-error>
         <mat-error *ngIf="authForm.get('email')?.hasError('email')">Некорректный Email</mat-error>
       </mat-form-field>
