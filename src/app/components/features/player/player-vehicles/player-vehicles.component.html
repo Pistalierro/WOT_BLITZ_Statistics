@@ -1,1 +1,15 @@
-<p>player-vehicles works!</p>
+<div *ngIf="tanksService.loading()">
+  <p>Загрузка данных...</p>
+</div>
+
+<div *ngIf="tanksService.error()">
+  <p class="error">{{ tanksService.error() }}</p>
+</div>
+
+<div *ngIf="tanksService.tanksIdList() as tanksIdList">
+  <h2>Список танков:</h2>
+  <p>Всего танков в ангаре: {{ tanksIdList.length }}</p>
+  <div *ngFor="let tankId of tanksIdList">
+    <p>Tank ID: {{ tankId }}</p>
+  </div>
+</div>

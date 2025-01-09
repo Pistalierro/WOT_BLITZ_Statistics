@@ -1,9 +1,7 @@
 import {Component, inject} from '@angular/core';
-import {PlayerService} from '../../../../services/player.service';
 import {AuthService} from '../../../../services/auth.service';
-import {toObservable} from '@angular/core/rxjs-interop';
-import {filter, tap} from 'rxjs/operators';
 import {DatePipe, DecimalPipe, NgIf} from '@angular/common';
+import {PlayerStoreService} from '../../../../services/player-store.service';
 
 @Component({
   selector: 'app-player-stat',
@@ -18,14 +16,14 @@ import {DatePipe, DecimalPipe, NgIf} from '@angular/common';
 })
 export class PlayerStatComponent {
   protected authService = inject(AuthService);
-  protected playerService = inject(PlayerService);
+  protected playerStore = inject(PlayerStoreService);
 
-  constructor() {
-    toObservable(this.authService.nicknameSignal)
-      .pipe(
-        filter((nickname): nickname is string => !!nickname),
-        tap((nickname) => this.playerService.fetchPlayerData(nickname))
-      )
-      .subscribe();
-  }
+  // constructor() {
+  //   toObservable(this.authService.nicknameSignal)
+  //     .pipe(
+  //       filter((nickname): nickname is string => !!nickname),
+  //       tap((nickname) => this.playerStoreService.loadPlayerData(nickname))
+  //     )
+  //     .subscribe();
+  // }
 }

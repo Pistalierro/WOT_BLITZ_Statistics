@@ -1,6 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, User} from '@angular/fire/auth';
 import {doc, Firestore, getDoc, setDoc} from '@angular/fire/firestore';
+import {PlayerStoreService} from './player-store.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
   errorSignal = signal<string | null>(null);
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  private playerStore = inject(PlayerStoreService);
 
   constructor() {
     onAuthStateChanged(this.auth, async (user) => {
@@ -19,10 +21,19 @@ export class AuthService {
         const userDocSnap = await getDoc(userDocRef);
         if (userDocSnap.exists()) {
           const data = userDocSnap.data();
-          this.nicknameSignal.set(data['nickname'] || null);
-          console.log(this.nicknameSignal());
+          const nickname = data['nickname'] || null;
+          this.nicknameSignal.set(nickname);
+
+          if (nickname) {
+            await this.playerStore.loadPlayerData(nickname);
+          }
         }
-      } else this.nicknameSignal.set(null);
+      } else {
+        this.nicknameSignal.set(null);
+        this.playerStore.nickname.set(null);
+        this.playerStore.accountId.set(null);
+        this.playerStore.playerData.set(null);
+      }
     });
   }
 

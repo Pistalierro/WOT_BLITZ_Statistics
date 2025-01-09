@@ -1,4 +1,4 @@
-<div *ngIf="playerService.playerData() as data; else checkAuth">
+<div *ngIf="playerStore.playerData() as data; else checkAuth">
   <h2>Общая статистика игрока</h2>
   <p>{{ data.nickname }} / {{ data.playerId }}</p>
   <p>Дата создания аккаунта: {{ data.created_at * 1000 | date: 'dd.MM.yy' }}</p>
@@ -8,17 +8,17 @@
   <p>Средний урон за бой: {{ (data.statistics.all.damage_dealt / data.statistics.all.battles) | number: '1.0-0' }}</p>
   <p *ngIf="data.statistics.all.max_damage">Максимальный урон за бой: {{ data.statistics.all.max_damage }}</p>
   <p>Максимально уничтожено за бой: {{ data.statistics.all.max_frags }}</p>
-  <p *ngIf="data.clan">Клан: {{ data.clan.name }}</p>
+  <p *ngIf="data.clan">Клан: [{{ data.clan.name }}]</p>
 </div>
 
 <ng-template #checkAuth>
   <div *ngIf="authService.nicknameSignal() === null">
     <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику игрока.</p>
   </div>
-  <div *ngIf="playerService.loading()">
-    <p>Loading...</p>
+  <div *ngIf="playerStore.loading()">
+    <p class="loader"></p>
   </div>
-  <div *ngIf="playerService.error()">
-    <p class="error">{{ playerService.error() }}</p>
+  <div *ngIf="playerStore.error()">
+    <p class="error">{{ playerStore.error() }}</p>
   </div>
 </ng-template>

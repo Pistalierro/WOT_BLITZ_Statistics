@@ -1,7 +1,4 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {catchError, firstValueFrom, throwError} from 'rxjs';
-import {apiConfig} from '../app.config';
 import {
   ClanAccountInfoResponse,
   ClanInfoResponse,
@@ -9,20 +6,36 @@ import {
   PlayerInfoResponse,
   PlayerSearchResponse
 } from '../models/player-response.model';
+import {HttpClient} from '@angular/common/http';
+import {apiConfig} from '../app.config';
+import {catchError, firstValueFrom, throwError} from 'rxjs';
 
-@Injectable({providedIn: 'root'})
-export class PlayerService {
+@Injectable({
+  providedIn: 'root'
+})
+export class PlayerStoreService {
+
+  nickname = signal<string | null>(null);
+  accountId = signal<number | null>(null);
   playerData = signal<PlayerData | null>(null);
-  loading = signal<boolean>(false);
+
+  loading = signal<boolean | null>(null);
   error = signal<string | null>(null);
 
   private http = inject(HttpClient);
 
-  async fetchPlayerData(nickname: string): Promise<void> {
+  async loadPlayerData(nickname: string): Promise<void> {
+    if (!nickname) {
+      this.error.set('Никнейм отсутствует');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
+    this.accountId.set(null);
     this.playerData.set(null);
 
+    // 1. Получаем playerId
     try {
       // 1. Получаем playerId
       const searchUrl = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
@@ -38,6 +51,7 @@ export class PlayerService {
       }
 
       const playerId = searchRes.data[0].account_id;
+      this.accountId.set(playerId);
 
       // 2. Получаем информацию об игроке
       const infoUrl = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${playerId}&fields=created_at,nickname,statistics.all`;
