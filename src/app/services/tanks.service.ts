@@ -4,6 +4,7 @@ import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
 import {Tank, TankStatsResponse} from '../models/tanks-response.model';
 import {PlayerStoreService} from './player-store.service';
+import {tankTypesRu} from '../mock/tank-utils';
 
 @Injectable({providedIn: 'root'})
 export class TanksService {
@@ -13,13 +14,6 @@ export class TanksService {
 
   private http = inject(HttpClient);
   private playerStore = inject(PlayerStoreService);
-  private tankTypesRu: { [key: string]: string } = {
-    'lightTank': 'Лёгкий танк',
-    'mediumTank': 'Средний танк',
-    'heavyTank': 'Тяжёлый танк',
-    'AT-SPG': 'ПТ-САУ',
-    'SPG': 'САУ'
-  };
 
   constructor() {
     effect(() => {
@@ -32,7 +26,6 @@ export class TanksService {
     });
   }
 
-  // Метод для получения основной информации о танках
   async fetchTankData(accountId: number) {
     if (!accountId) {
       this.error.set('ID игрока отсутствует');
@@ -55,15 +48,14 @@ export class TanksService {
         return;
       }
 
-      // Фильтруем танки и получаем массив ID танков
-      const filteredTanks = res.data[accountId].filter(tank => tank.all.battles > 0);
-      const tanksIdArray = filteredTanks.map(tank => tank.tank_id);
+      const statsData = res.data[accountId];
+      const tankIds = statsData.map(tank => tank.tank_id);
 
-      // Получаем свойства танков и объединяем данные
-      const tankProps = await this.fetchTanksProps(tanksIdArray);
-      const mergedTanks = filteredTanks.map(tank => ({
-        ...tank,
-        ...(tankProps[tank.tank_id] || {})
+      const tankProps = await this.fetchTanksProps(tankIds);
+
+      const mergedTanks = statsData.map(stat => ({
+        ...stat,
+        ...tankProps[stat.tank_id],
       }));
 
       this.tanksList.set(mergedTanks);
@@ -74,38 +66,34 @@ export class TanksService {
     }
   }
 
-  // Метод для получения свойств танков с разбиением на чанки по 100 танков
-  async fetchTanksProps(tanksIdArray: number[]) {
+  async fetchTanksProps(tankIds: number[]) {
     const chunkSize = 100;
     const chunks = [];
 
-    // Разбиваем массив на чанки по 100 элементов
-    for (let i = 0; i < tanksIdArray.length; i += chunkSize) {
-      chunks.push(tanksIdArray.slice(i, i + chunkSize));
+    for (let i = 0; i < tankIds.length; i += chunkSize) {
+      chunks.push(tankIds.slice(i, i + chunkSize));
     }
 
     try {
-      // Делаем несколько запросов параллельно
       const responses = await Promise.all(
-        chunks.map(async (chunk) => {
+        chunks.map(async chunk => {
           const chunkIds = chunk.join(',');
           const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}&fields=name%2C+images%2C+nation%2C+tier%2C+type&language=ru&tank_id=${chunkIds}`;
-          const resProps: any = await firstValueFrom(
-            this.http.get(url).pipe(
+          const res = await firstValueFrom(
+            this.http.get<{ status: string; data: { [key: number]: Tank } }>(url).pipe(
               catchError(err => throwError(() => new Error('Ошибка получения данных о свойствах танка')))
             )
           );
 
-          if (!resProps || resProps.status !== 'ok') {
+          if (!res || res.status !== 'ok') {
             throw new Error('Ошибка: данные о свойствах танков отсутствуют');
           }
 
-          return resProps.data;
+          return res.data;
         })
       );
 
-      // Объединяем результаты всех запросов в один объект
-      return responses.reduce((acc, data) => ({...acc, ...data}), {});
+      return responses.reduce<{ [key: number]: Tank }>((acc, data) => ({...acc, ...data}), {});
     } catch (err: any) {
       this.error.set(err.message);
       return {};
@@ -113,8 +101,6 @@ export class TanksService {
   }
 
   getTankTypeRu(type: string): string {
-    return this.tankTypesRu[type] || 'Неизвестный тип';
+    return tankTypesRu[type] || 'Неизвестный тип';
   }
-
-  
 }

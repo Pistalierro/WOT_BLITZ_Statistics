@@ -1,7 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {TanksService} from '../../../../services/tanks.service';
-import {DecimalPipe, NgForOf, NgIf, SlicePipe, TitleCasePipe} from '@angular/common';
+import {DecimalPipe, NgForOf, NgIf, SlicePipe} from '@angular/common';
 import {PlayerStoreService} from '../../../../services/player-store.service';
+import {getFlagUrl} from '../../../../mock/tank-utils';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -10,7 +11,6 @@ import {PlayerStoreService} from '../../../../services/player-store.service';
     NgIf,
     NgForOf,
     DecimalPipe,
-    TitleCasePipe,
     SlicePipe,
   ],
   templateUrl: './player-vehicles.component.html',
@@ -18,5 +18,6 @@ import {PlayerStoreService} from '../../../../services/player-store.service';
 })
 export class PlayerVehiclesComponent {
   protected tanksService = inject(TanksService);
+  protected readonly getFlagUrl = getFlagUrl;
   private playerStore = inject(PlayerStoreService);
 }
