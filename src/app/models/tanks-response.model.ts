@@ -12,3 +12,17 @@ export interface TankStatsResponse {
     }>;
   };
 }
+
+export interface Tank {
+  tank_id: number;
+  name: string;
+  nation: string;
+  tier: number;
+  type: string;
+  all?: {
+    battles: number;
+    wins: number;
+    damage_dealt: number;
+    max_frags: number;
+  };
+}

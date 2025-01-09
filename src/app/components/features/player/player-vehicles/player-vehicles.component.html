@@ -6,10 +6,27 @@
   <p class="error">{{ tanksService.error() }}</p>
 </div>
 
-<div *ngIf="tanksService.tanksIdList() as tanksIdList">
-  <h2>Список танков:</h2>
-  <p>Всего танков в ангаре: {{ tanksIdList.length }}</p>
-  <div *ngFor="let tankId of tanksIdList">
-    <p>Tank ID: {{ tankId }}</p>
+<div *ngIf="tanksService.tanksList() as tanks">
+  <h2>Список танков (первые 10)</h2>
+  <p>Всего танков в ангаре: {{ tanks.length }}</p>
+
+  <!-- Отображаем только первые 5 танков -->
+  <div *ngFor="let tank of tanks | slice:0:10" class="tank-card">
+    <h3>{{ tank.name || 'Название неизвестно' }}</h3>
+    <p>ID танка: {{ tank.tank_id }}</p>
+    <p>Нация: {{ tank.nation | titlecase }}</p>
+    <p>Уровень: {{ tank.tier }}</p>
+    <p>Тип: {{ tanksService.getTankTypeRu(tank.type) }}</p>
+
+    <ng-container *ngIf="tank.all as stats; else noStats">
+      <p>Количество боев: {{ stats.battles }}</p>
+      <p>Победы: {{ (stats.wins / stats.battles) * 100 | number: '1.2-2' }}%</p>
+      <p>Средний урон за бой: {{ (stats.damage_dealt / stats.battles) | number: '1.0-0' }}</p>
+      <p>Максимально уничтожено за бой: {{ stats.max_frags }}</p>
+    </ng-container>
+
+    <ng-template #noStats>
+      <p>Статистика отсутствует</p>
+    </ng-template>
   </div>
 </div>

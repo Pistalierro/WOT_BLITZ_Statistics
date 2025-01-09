@@ -32,10 +32,11 @@ export class PlayerStoreService {
 
     this.loading.set(true);
     this.error.set(null);
-    this.accountId.set(null);
     this.playerData.set(null);
+    if (!this.accountId()) {
+      this.accountId.set(null);
+    }
 
-    // 1. Получаем playerId
     try {
       // 1. Получаем playerId
       const searchUrl = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
@@ -51,7 +52,7 @@ export class PlayerStoreService {
       }
 
       const playerId = searchRes.data[0].account_id;
-      this.accountId.set(playerId);
+      if (playerId) this.accountId.set(playerId);
 
       // 2. Получаем информацию об игроке
       const infoUrl = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${playerId}&fields=created_at,nickname,statistics.all`;

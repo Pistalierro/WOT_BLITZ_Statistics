@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {TanksService} from '../../../../services/tanks.service';
-import {NgForOf, NgIf} from '@angular/common';
+import {DecimalPipe, NgForOf, NgIf, SlicePipe, TitleCasePipe} from '@angular/common';
 import {PlayerStoreService} from '../../../../services/player-store.service';
 
 @Component({
@@ -9,6 +9,9 @@ import {PlayerStoreService} from '../../../../services/player-store.service';
   imports: [
     NgIf,
     NgForOf,
+    DecimalPipe,
+    TitleCasePipe,
+    SlicePipe,
   ],
   templateUrl: './player-vehicles.component.html',
   styleUrl: './player-vehicles.component.scss'
