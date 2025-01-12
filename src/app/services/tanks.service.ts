@@ -4,7 +4,6 @@ import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
 import {Tank, TankStatsResponse} from '../models/tanks-response.model';
 import {PlayerStoreService} from './player-store.service';
-import {tankTypesRu} from '../mock/tank-utils';
 
 @Injectable({providedIn: 'root'})
 export class TanksService {
@@ -52,11 +51,9 @@ export class TanksService {
       const tankIds = statsData.map(tank => tank.tank_id);
 
       const tankProps = await this.fetchTanksProps(tankIds);
-
       const mergedTanks = statsData.map(stat => ({
-        ...stat,
-        ...tankProps[stat.tank_id],
-      }));
+        ...stat, ...tankProps[stat.tank_id],
+      })).filter(tank => tank.name && tank.images && tank.nation && tank.tier && tank.type);
 
       this.tanksList.set(mergedTanks);
     } catch (err: any) {
@@ -88,7 +85,6 @@ export class TanksService {
           if (!res || res.status !== 'ok') {
             throw new Error('Ошибка: данные о свойствах танков отсутствуют');
           }
-
           return res.data;
         })
       );
@@ -98,9 +94,5 @@ export class TanksService {
       this.error.set(err.message);
       return {};
     }
-  }
-
-  getTankTypeRu(type: string): string {
-    return tankTypesRu[type] || 'Неизвестный тип';
   }
 }

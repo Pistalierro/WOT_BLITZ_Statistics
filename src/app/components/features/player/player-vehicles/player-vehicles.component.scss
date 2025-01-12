@@ -1,5 +1,21 @@
+@use "../../../../../styles/presets/variables" as *;
+@use "../../../../../styles/presets/skin" as *;
+
 p {
   font-weight: 100;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td, th {
+  width: 25%;
 }
 
 .tanks {
@@ -7,8 +23,8 @@ p {
 }
 
 .flag-icon {
-  width: 32px;
-  height: 24px;
+  width: 64px;
+  height: 40px;
   margin-right: 8px;
   vertical-align: middle;
   border-radius: 4px;
@@ -22,4 +38,13 @@ p {
   vertical-align: middle;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.id,
+.nation {
+  width: $gap-x3;
+}
+
+.filter {
+  background-color: white;
 }

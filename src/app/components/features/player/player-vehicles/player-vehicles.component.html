@@ -1,33 +1,101 @@
-<div *ngIf="tanksService.loading()">
-  <p>Загрузка данных...</p>
-</div>
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input #input (keyup)="applyFilter($event)" matInput placeholder="Ex. Mia">
+</mat-form-field>
 
-<div *ngIf="tanksService.error()">
-  <p class="error">{{ tanksService.error() }}</p>
-</div>
+<div class="mat-elevation-z8">
+  <table [dataSource]="dataSource" mat-table matSort>
 
-<div *ngIf="tanksService.tanksList() as tanks">
-  <h2>Список танков на которых сыгран хотя бы 1 бой (первые 10)</h2>
-  <p>Всего танков в ангаре: {{ tanks.length }}</p>
-
-  <!-- Отображаем только первые 5 танков -->
-  <div *ngFor="let tank of tanks | slice:0:10" class="tank-card">
-    <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-icon">
-    <h3>{{ tank.name || 'Название неизвестно' }}</h3>
-    <p>ID танка: {{ tank.tank_id }}</p>
-    <p>Нация: <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)" class="flag-icon"></p>
-    <p>Уровень: {{ tank.tier }}</p>
-    <p>Тип: {{ tanksService.getTankTypeRu(tank.type) }}</p>
-
-    <ng-container *ngIf="tank.all as stats; else noStats">
-      <p>Количество боев: {{ stats.battles }}</p>
-      <p>Победы: {{ (stats.wins / stats.battles) * 100 | number: '1.2-2' }}%</p>
-      <p>Средний урон за бой: {{ (stats.damage_dealt / stats.battles) | number: '1.0-0' }}</p>
-      <p>Максимально уничтожено за бой: {{ stats.max_frags }}</p>
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th *matHeaderCellDef class="id" mat-header-cell mat-sort-header> ID</th>
+      <td *matCellDef="let row" class="id" mat-cell> {{ row.tank_id }}</td>
     </ng-container>
 
-    <ng-template #noStats>
-      <p>Статистика отсутствует</p>
-    </ng-template>
-  </div>
+    <!-- Nation Column -->
+    <ng-container matColumnDef="nation">
+      <th *matHeaderCellDef class="nation" mat-header-cell mat-sort-header> Нация</th>
+      <td *matCellDef="let row" class="nation" mat-cell>
+        <img *ngIf="row.nation" [src]="getFlagUrl(row.nation)" alt="WG" class="flag-icon">
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
+      <td *matCellDef="let row" mat-cell> {{ row.name }}</td>
+    </ng-container>
+
+    <!-- Battles Column -->
+    <ng-container matColumnDef="battles">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Боев</th>
+      <td *matCellDef="let row" mat-cell> {{ row.all.battles }}</td>
+    </ng-container>
+
+    <!-- Tier Column -->
+    <ng-container matColumnDef="tier">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Уровень</th>
+      <td *matCellDef="let row" mat-cell> {{ row.tier }}</td>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Класс</th>
+      <td *matCellDef="let row" mat-cell>
+        <img [alt]="row.type" [src]="getVehicleTypeIconUrl(row.type)" class="vehicle-icon">
+      </td>
+    </ng-container>
+
+
+    <!-- Damage Column -->
+    <ng-container matColumnDef="damage">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Средний урон</th>
+      <td *matCellDef="let row" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <tr *matNoDataRow class="mat-row">
+      <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
+    </tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
 </div>
+
+
+<!--<div *ngIf="tanksService.loading()">-->
+<!--  <p>Загрузка данных...</p>-->
+<!--</div>-->
+
+<!--<div *ngIf="tanksService.error()">-->
+<!--  <p class="error">{{ tanksService.error() }}</p>-->
+<!--</div>-->
+
+<!--<div *ngIf="tanksService.tanksList() as tanks">-->
+<!--  <h2>Список танков в ангаре: (первые 10)</h2>-->
+<!--  <p>Всего танков в ангаре: {{ tanks.length }}</p>-->
+
+<!--  &lt;!&ndash; Отображаем только первые 5 танков &ndash;&gt;-->
+<!--  <div *ngFor="let tank of tanks | slice:0:10" class="tank-card">-->
+<!--    <h3>{{ tank.name || 'Название неизвестно' }}</h3>-->
+<!--    <img [alt]="tank.name" [src]="tank.images.preview" class="tank-icon">-->
+<!--    <p>ID танка: {{ tank.tank_id }}</p>-->
+<!--    <p>Нация: <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)" class="flag-icon"></p>-->
+<!--    <p>Уровень: {{ tank.tier }}</p>-->
+<!--    <p>Тип: {{ tanksService.getTankTypeRu(tank.type) }}</p>-->
+
+<!--    <ng-container *ngIf="tank.all as stats; else noStats">-->
+<!--      <p>Количество боев: {{ stats.battles }}</p>-->
+<!--      <p>Победы: {{ (stats.wins / stats.battles) * 100 | number: '1.2-2' }}%</p>-->
+<!--      <p>Средний урон за бой: {{ (stats.damage_dealt / stats.battles) | number: '1.0-0' }}</p>-->
+<!--      <p>Максимально уничтожено за бой: {{ stats.max_frags }}</p>-->
+<!--    </ng-container>-->
+
+<!--    <ng-template #noStats>-->
+<!--      <p>Статистика отсутствует</p>-->
+<!--    </ng-template>-->
+<!--  </div>-->
+<!--</div>-->
