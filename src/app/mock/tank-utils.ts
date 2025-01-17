@@ -29,7 +29,7 @@ export function getFlagUrl(nation: string): string {
   return flagUrls[nation] || 'unknown';
 }
 
-export const COLUMNS_NAMES: string[] = ['mainInfo', 'win_rate', 'battles', 'type', 'damage'];
+export const COLUMNS_NAMES: string[] = ['mainInfo', 'win_rate', 'battles', 'damage'];
 
 export function toRoman(num: number): string {
   const romanNumerals: { [key: number]: string } = {

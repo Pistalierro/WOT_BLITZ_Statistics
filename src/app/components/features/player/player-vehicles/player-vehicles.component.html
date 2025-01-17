@@ -14,35 +14,20 @@
       <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
         <!-- Блок, в котором три «кнопки» сортировки -->
         <div class="header-buttons">
-          <span class="header-button" mat-sort-header="nation">
-            <mat-icon>public</mat-icon>
-          </span>
+          <span class="header-button" mat-sort-header="nation"><mat-icon>public</mat-icon></span>
           <span class="header-button" mat-sort-header="tier">I-X</span>
-          <span class="header-button" mat-sort-header="name">Название</span>
+          <span class="header-button header-button--type" mat-sort-header="type">Тип</span>
         </div>
       </th>
-
       <!-- Ячейка колонки -->
       <td *matCellDef="let row" class="main-info-cell" mat-cell>
         <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
-          <!-- Уровень танка -->
           <div class="tier-label">{{ toRoman(row.tier) }}</div>
-
-          <!-- Содержимое внутри флага -->
+          <img [alt]="row.type" [src]="tankTypes(row.type)" class="class-icon"/>
           <div class="flag-content">
-            <!-- Иконка танка -->
-            <img
-              *ngIf="row.images?.preview; else noImage"
-              [alt]="row.name"
-              [src]="row.images.preview"
-              class="tank-icon-centered"
-            />
-            <ng-template #noImage>
-              <span class="no-image">Нет изображения</span>
-            </ng-template>
+            <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="row.images.preview" class="tank-icon-centered"/>
+            <ng-template #noImage><span class="no-image">Нет изображения</span></ng-template>
           </div>
-
-          <!-- Название танка -->
           <div class="tank-name">{{ row.name }}</div>
         </div>
       </td>
@@ -50,35 +35,22 @@
 
     <!-- Win_Rate Column -->
     <ng-container matColumnDef="win_rate">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Процент побед</th>
-      <td *matCellDef="let row" mat-cell>
-        {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.2-2') : '0.00' }}%
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> П/П</th>
+      <td *matCellDef="let row" class="win-rate" mat-cell>
+        {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
       </td>
     </ng-container>
 
     <!-- Battles Column -->
     <ng-container matColumnDef="battles">
-      <th *matHeaderCellDef class="battles" mat-header-cell mat-sort-header> Боев</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Боев</th>
       <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
     </ng-container>
 
-    <!-- Type Column -->
-    <ng-container matColumnDef="type">
-      <th *matHeaderCellDef class="type" mat-header-cell mat-sort-header> Класс</th>
-      <td *matCellDef="let row" class="type" mat-cell>
-        <img
-          [alt]="row.type"
-          [src]="tankTypes(row.type)"
-          class="tank-class-icon"
-        />
-      </td>
-    </ng-container>
-
-
     <!-- Damage Column -->
     <ng-container matColumnDef="damage">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Средний урон</th>
-      <td *matCellDef="let row" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> С/У</th>
+      <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
     </ng-container>
 
     <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
@@ -86,7 +58,7 @@
 
     <!-- Row shown when there is no matching data. -->
     <tr *matNoDataRow class="mat-row">
-      <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
+      <td class="mat-cell" colspan="4">Укажите технику {{ input.value }}</td>
     </tr>
   </table>
 

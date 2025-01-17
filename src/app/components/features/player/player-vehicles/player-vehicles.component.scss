@@ -1,12 +1,23 @@
 @use "../../../../../styles/presets/variables" as *;
 @use "../../../../../styles/presets/skin" as *;
-
-p {
-  font-weight: 100;
-}
+@use "../../../../../styles/mixins/mixins-media" as *;
 
 table {
   width: 100%;
+
+  tr,
+  td {
+    padding: $gap-sm;
+  }
+}
+
+th {
+  @include md-min {
+    font-size: 1rem;
+  }
+  @include md {
+    font-size: 0.75rem;
+  }
 }
 
 .mat-mdc-form-field {
@@ -14,24 +25,11 @@ table {
   width: 100%;
 }
 
-tr,
-td {
-  padding: $gap-sm;
-}
-
 .tanks {
   border-bottom: 1px solid white;
 }
 
-.flag-icon {
-  width: 64px;
-  height: 40px;
-  margin-right: 8px;
-  vertical-align: middle;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
+.flag-icon,
 .tank-icon {
   width: 64px;
   height: 64px;
@@ -39,13 +37,6 @@ td {
   vertical-align: middle;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.id,
-.nation,
-.battles,
-.image {
-  width: 10%;
 }
 
 .filter {
@@ -70,25 +61,35 @@ td {
   width: 20%;
 }
 
-//___________________________________________________________________________________________________
-
-
-/* Контейнер для кнопок сортировки */
+/* Кнопки сортировки */
 .header-buttons {
   display: inline-flex;
   gap: 12px;
   align-items: center;
   justify-content: flex-start;
-}
 
-/* Стили для сортировки кнопок */
-.header-button {
-  padding: 4px 8px;
-  background-color: rgba(0, 0, 0, 0.07);
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s, color 0.2s;
+  .header-button {
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.07);
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.15);
+      color: #000;
+    }
+
+    &--type {
+      @include sm-min {
+        display: block;
+      }
+      @include sm {
+        display: none;
+      }
+    }
+  }
 }
 
 /* Основной блок объединённой ячейки */
@@ -98,110 +99,136 @@ td {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  .flag-background {
+    position: relative;
+    @include md-min {
+      width: $gap * 9;
+      height: $gap * 6;
+    }
+
+    @include md {
+      width: $gap * 6;
+      height: $gap * 4;
+    }
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 1;
+    }
+
+    > * {
+      z-index: 2;
+      opacity: 1;
+    }
+
+    .flag-content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 8px;
+      z-index: 2;
+    }
+
+    .tank-icon-centered {
+      @include md-min {
+        width: $gap * 7;
+        height: $gap * 7;
+      }
+
+      @include md {
+        width: $gap * 5;
+        height: $gap * 5;
+      }
+
+      object-fit: contain;
+      margin-top: -$gap;
+      border-radius: 50%;
+    }
+
+    .no-image {
+      color: #666;
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .tier-label {
+      position: absolute;
+      top: 4px;
+      left: 8px;
+      color: white;
+      @include md-min {
+        font-size: 1rem;
+      }
+      @include md {
+        font-size: 0.875rem;
+      }
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+      z-index: 3;
+      text-align: left;
+    }
+
+    .class-icon {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      @include md-min {
+        width: $gap;
+        height: $gap;
+      }
+      @include md {
+        width: $gap * 0.66;
+        height: $gap * 0.66;
+      }
+      z-index: 3;
+      object-fit: contain;
+      filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.7));
+    }
+
+    .tank-name {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      color: white;
+      @include md-min {
+        font-size: 0.875rem;
+      }
+      @include md {
+        font-size: 0.75rem;
+      }
+      font-weight: 600;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+      z-index: 3;
+    }
+  }
 }
 
-/* Фон флага */
-.flag-background {
-  position: relative;
-  width: 180px; /* Фиксированная ширина флага */
-  height: 120px; /* Фиксированная высота флага */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 4px;
-  overflow: hidden; /* Скрываем всё, что выходит за пределы */
+.battles,
+.damage,
+.win-rate {
+  @include md-min {
+    font-size: 1.5rem;
+  }
+  @include md {
+    font-size: 1rem;
+  }
 }
-
-/* Оверлей для прозрачности */
-.flag-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Прозрачный чёрный слой */
-  z-index: 1; /* Под содержимым */
-}
-
-/* Содержимое внутри флага */
-.flag-background > * {
-  z-index: 2; /* Поверх оверлея */
-  opacity: 1; /* Полностью непрозрачное */
-}
-
-/* Контейнер для элементов внутри флага */
-.flag-content {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column; /* Располагаем элементы вертикально */
-  align-items: center; /* Центрируем элементы по горизонтали */
-  justify-content: flex-start; /* Прижимаем элементы к верхнему краю */
-  padding-top: 8px; /* Небольшой отступ сверху */
-  z-index: 2;
-}
-
-/* Иконка танка */
-.tank-icon-centered {
-  width: 140px;
-  height: 140px;
-  object-fit: contain;
-  margin-top: -$gap; /* Небольшой отступ сверху для эстетики */
-  border-radius: 50%; /* Круглая форма */
-}
-
-/* Если нет иконки */
-.no-image {
-  color: #666;
-  font-size: 14px;
-  font-style: italic;
-}
-
-/* Уровень танка (в верхнем левом углу) */
-.tier-label {
-  position: absolute;
-  top: 4px;
-  left: 8px;
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Тень для выделения */
-  z-index: 3;
-  text-align: left;
-}
-
-/* Название танка (в нижнем левом углу) */
-.tank-name {
-  position: absolute;
-  bottom: 8px; /* Отступ от нижнего края */
-  left: 8px; /* Отступ от левого края */
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap; /* Отключаем перенос строк */
-  text-overflow: ellipsis;
-  overflow: hidden;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Тень для выделения */
-  z-index: 3;
-}
-
-.tank-class-icon {
-  width: 40px; /* Ширина иконки */
-  height: 40px; /* Высота иконки */
-  object-fit: contain; /* Сохраняем пропорции */
-  border-radius: 4px; /* Скругление углов, если нужно */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-}
-
-
-
-
-
-
-
-
-
-
-
