@@ -48,7 +48,9 @@ export class TanksService {
       }
 
       const statsData = res.data[accountId];
-      const tankIds = statsData.map(tank => tank.tank_id);
+      const tankIds = statsData
+        .filter(tank => tank.all.battles > 0)
+        .map(tank => tank.tank_id);
 
       const tankProps = await this.fetchTanksProps(tankIds);
       const mergedTanks = statsData.map(stat => ({

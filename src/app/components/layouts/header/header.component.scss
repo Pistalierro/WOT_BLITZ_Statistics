@@ -26,10 +26,7 @@
     }
 
     .site-title {
-      @include lg-min {
-        font-size: 1.5rem;
-
-      }
+      font-size: 1.25rem;
       font-weight: bold;
       color: $color-light;
       margin: 0;
@@ -43,11 +40,19 @@
     @include lg {
       display: none;
     }
-    gap: $gap;
+    gap: $gap-sm * 0.5;
 
     button {
       color: $color-gray;
-      font-size: 1rem;
+      @include lg-min {
+        font-size: 0.875rem;
+      }
+      @include lg-md {
+        font-size: 0.75rem;
+      }
+      @include md {
+        font-size: 0.5rem;
+      }
       text-transform: uppercase;
       font-weight: bold;
       transition: color 0.3s, background-color 0.3s;
@@ -131,6 +136,10 @@
     filter: blur(5px); /* Применяем размытие */
     z-index: -1;
   }
+}
+
+.user-nickname {
+  font-size: 0.875rem;
 }
 
 

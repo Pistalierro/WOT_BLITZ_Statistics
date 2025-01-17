@@ -14,8 +14,9 @@ table {
   width: 100%;
 }
 
-td, th {
-  width: 25%;
+tr,
+td {
+  padding: $gap-sm;
 }
 
 .tanks {
@@ -41,10 +42,166 @@ td, th {
 }
 
 .id,
-.nation {
-  width: $gap-x3;
+.nation,
+.battles,
+.image {
+  width: 10%;
 }
 
 .filter {
   background-color: white;
 }
+
+.tank-image {
+  width: 80px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.name {
+  width: 20%;
+}
+
+//___________________________________________________________________________________________________
+
+
+/* Контейнер для кнопок сортировки */
+.header-buttons {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Стили для сортировки кнопок */
+.header-button {
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.07);
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Основной блок объединённой ячейки */
+.main-info-cell {
+  position: relative;
+  padding: 10px 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Фон флага */
+.flag-background {
+  position: relative;
+  width: 180px; /* Фиксированная ширина флага */
+  height: 120px; /* Фиксированная высота флага */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  border-radius: 4px;
+  overflow: hidden; /* Скрываем всё, что выходит за пределы */
+}
+
+/* Оверлей для прозрачности */
+.flag-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Прозрачный чёрный слой */
+  z-index: 1; /* Под содержимым */
+}
+
+/* Содержимое внутри флага */
+.flag-background > * {
+  z-index: 2; /* Поверх оверлея */
+  opacity: 1; /* Полностью непрозрачное */
+}
+
+/* Контейнер для элементов внутри флага */
+.flag-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column; /* Располагаем элементы вертикально */
+  align-items: center; /* Центрируем элементы по горизонтали */
+  justify-content: flex-start; /* Прижимаем элементы к верхнему краю */
+  padding-top: 8px; /* Небольшой отступ сверху */
+  z-index: 2;
+}
+
+/* Иконка танка */
+.tank-icon-centered {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  margin-top: -$gap; /* Небольшой отступ сверху для эстетики */
+  border-radius: 50%; /* Круглая форма */
+}
+
+/* Если нет иконки */
+.no-image {
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Уровень танка (в верхнем левом углу) */
+.tier-label {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Тень для выделения */
+  z-index: 3;
+  text-align: left;
+}
+
+/* Название танка (в нижнем левом углу) */
+.tank-name {
+  position: absolute;
+  bottom: 8px; /* Отступ от нижнего края */
+  left: 8px; /* Отступ от левого края */
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap; /* Отключаем перенос строк */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Тень для выделения */
+  z-index: 3;
+}
+
+.tank-class-icon {
+  width: 40px; /* Ширина иконки */
+  height: 40px; /* Высота иконки */
+  object-fit: contain; /* Сохраняем пропорции */
+  border-radius: 4px; /* Скругление углов, если нужно */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+}
+
+
+
+
+
+
+
+
+
+
+

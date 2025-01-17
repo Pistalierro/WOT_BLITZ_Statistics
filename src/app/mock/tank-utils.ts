@@ -1,32 +1,50 @@
-export function getVehicleTypeIconUrl(type: string): string {
-  const typeToIconUrl: { [key: string]: string } = {
-    'lightTank': 'https://glossary-wot.eu/static/1.161.0/images/icons/vehicle-type/lt.svg',
-    'mediumTank': 'https://glossary-wot.eu/static/1.161.0/images/icons/vehicle-type/mt.svg',
-    'heavyTank': 'https://glossary-wot.eu/static/1.161.0/images/icons/vehicle-type/ht.svg',
-    'AT-SPG': 'https://glossary-wot.eu/static/1.161.0/images/icons/vehicle-type/at.svg',
-    'SPG': 'https://glossary-wot.eu/static/1.161.0/images/icons/vehicle-type/spg.svg',
+export function tankTypes(type: string): string {
+  const icons: { [key: string]: string } = {
+    'lightTank': '/images/tank-types/light-tank.png',
+    'mediumTank': '/images/tank-types/medium-tank.png',
+    'heavyTank': '/images/tank-types/heavy-tank.png',
+    'AT-SPG': '/images/tank-types/at-spg.png',
   };
 
-  return typeToIconUrl[type] || '';
+  return icons[type] || 'unknown';
 }
-
 
 export function getFlagUrl(nation: string): string {
   const flagUrls: { [key: string]: string } = {
-    'usa': '/images/flags/usa-middle.png',
-    'germany': '/images/flags/de-middle.png',
-    'uk': '/images/flags/gb-middle.png',
-    'japan': '/images/flags/jp-middle.png',
-    'china': '/images/flags/ch-middle.png',
-    'france': '/images/flags/fr-middle.png',
-    'ussr': '/images/flags/ussr-middle.png',
-    'poland': '/images/flags/pl-middle.png',
-    'italy': '/images/flags/it-middle.png',
-    'czechoslovakia': '/images/flags/cz-middle.png',
-    'sweden': '/images/flags/sw-middle.png',
-    'european': '/images/flags/eu-middle.png',
-    'other': '/images/flags/wg-middle.png'
+    'usa': '/images/flags/usa-large.png',
+    'germany': '/images/flags/de-large.png',
+    'uk': '/images/flags/gb-large.png',
+    'japan': '/images/flags/jp-large.png',
+    'china': '/images/flags/ch-large.png',
+    'france': '/images/flags/fr-large.png',
+    'ussr': '/images/flags/ussr-large.png',
+    'poland': '/images/flags/pl-large.png',
+    'italy': '/images/flags/it-large.png',
+    'czechoslovakia': '/images/flags/cz-large.png',
+    'sweden': '/images/flags/sw-large.png',
+    'european': '/images/flags/eu-large.png',
+    'other': '/images/flags/wg-large.png'
   };
 
   return flagUrls[nation] || 'unknown';
 }
+
+export const COLUMNS_NAMES: string[] = ['mainInfo', 'win_rate', 'battles', 'type', 'damage'];
+
+export function toRoman(num: number): string {
+  const romanNumerals: { [key: number]: string } = {
+    1: 'I',
+    2: 'II',
+    3: 'III',
+    4: 'IV',
+    5: 'V',
+    6: 'VI',
+    7: 'VII',
+    8: 'VIII',
+    9: 'IX',
+    10: 'X',
+  };
+
+  return romanNumerals[num] || num.toString(); // Возвращаем римскую цифру или исходное число, если оно больше 10
+}
+

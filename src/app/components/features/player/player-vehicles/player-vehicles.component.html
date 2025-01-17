@@ -1,48 +1,76 @@
+<div *ngIf="tanksService.loading()" class="overlay">
+  <p *ngIf="tanksService.loading()">Загрузка данных о танках...</p>
+</div>
+
 <mat-form-field>
   <mat-label>Filter</mat-label>
-  <input #input (keyup)="applyFilter($event)" matInput placeholder="Ex. Mia">
+  <input #input (keyup)="applyFilter($event)" matInput placeholder="Фильтрация по танкам">
 </mat-form-field>
 
 <div class="mat-elevation-z8">
   <table [dataSource]="dataSource" mat-table matSort>
 
-    <!-- ID Column -->
-    <ng-container matColumnDef="id">
-      <th *matHeaderCellDef class="id" mat-header-cell mat-sort-header> ID</th>
-      <td *matCellDef="let row" class="id" mat-cell> {{ row.tank_id }}</td>
-    </ng-container>
+    <ng-container matColumnDef="mainInfo">
+      <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
+        <!-- Блок, в котором три «кнопки» сортировки -->
+        <div class="header-buttons">
+          <span class="header-button" mat-sort-header="nation">
+            <mat-icon>public</mat-icon>
+          </span>
+          <span class="header-button" mat-sort-header="tier">I-X</span>
+          <span class="header-button" mat-sort-header="name">Название</span>
+        </div>
+      </th>
 
-    <!-- Nation Column -->
-    <ng-container matColumnDef="nation">
-      <th *matHeaderCellDef class="nation" mat-header-cell mat-sort-header> Нация</th>
-      <td *matCellDef="let row" class="nation" mat-cell>
-        <img *ngIf="row.nation" [src]="getFlagUrl(row.nation)" alt="WG" class="flag-icon">
+      <!-- Ячейка колонки -->
+      <td *matCellDef="let row" class="main-info-cell" mat-cell>
+        <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
+          <!-- Уровень танка -->
+          <div class="tier-label">{{ toRoman(row.tier) }}</div>
+
+          <!-- Содержимое внутри флага -->
+          <div class="flag-content">
+            <!-- Иконка танка -->
+            <img
+              *ngIf="row.images?.preview; else noImage"
+              [alt]="row.name"
+              [src]="row.images.preview"
+              class="tank-icon-centered"
+            />
+            <ng-template #noImage>
+              <span class="no-image">Нет изображения</span>
+            </ng-template>
+          </div>
+
+          <!-- Название танка -->
+          <div class="tank-name">{{ row.name }}</div>
+        </div>
       </td>
     </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Название</th>
-      <td *matCellDef="let row" mat-cell> {{ row.name }}</td>
+    <!-- Win_Rate Column -->
+    <ng-container matColumnDef="win_rate">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header> Процент побед</th>
+      <td *matCellDef="let row" mat-cell>
+        {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.2-2') : '0.00' }}%
+      </td>
     </ng-container>
 
     <!-- Battles Column -->
     <ng-container matColumnDef="battles">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Боев</th>
-      <td *matCellDef="let row" mat-cell> {{ row.all.battles }}</td>
-    </ng-container>
-
-    <!-- Tier Column -->
-    <ng-container matColumnDef="tier">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Уровень</th>
-      <td *matCellDef="let row" mat-cell> {{ row.tier }}</td>
+      <th *matHeaderCellDef class="battles" mat-header-cell mat-sort-header> Боев</th>
+      <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
     </ng-container>
 
     <!-- Type Column -->
     <ng-container matColumnDef="type">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Класс</th>
-      <td *matCellDef="let row" mat-cell>
-        <img [alt]="row.type" [src]="getVehicleTypeIconUrl(row.type)" class="vehicle-icon">
+      <th *matHeaderCellDef class="type" mat-header-cell mat-sort-header> Класс</th>
+      <td *matCellDef="let row" class="type" mat-cell>
+        <img
+          [alt]="row.type"
+          [src]="tankTypes(row.type)"
+          class="tank-class-icon"
+        />
       </td>
     </ng-container>
 
@@ -65,37 +93,3 @@
   <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
 </div>
 
-
-<!--<div *ngIf="tanksService.loading()">-->
-<!--  <p>Загрузка данных...</p>-->
-<!--</div>-->
-
-<!--<div *ngIf="tanksService.error()">-->
-<!--  <p class="error">{{ tanksService.error() }}</p>-->
-<!--</div>-->
-
-<!--<div *ngIf="tanksService.tanksList() as tanks">-->
-<!--  <h2>Список танков в ангаре: (первые 10)</h2>-->
-<!--  <p>Всего танков в ангаре: {{ tanks.length }}</p>-->
-
-<!--  &lt;!&ndash; Отображаем только первые 5 танков &ndash;&gt;-->
-<!--  <div *ngFor="let tank of tanks | slice:0:10" class="tank-card">-->
-<!--    <h3>{{ tank.name || 'Название неизвестно' }}</h3>-->
-<!--    <img [alt]="tank.name" [src]="tank.images.preview" class="tank-icon">-->
-<!--    <p>ID танка: {{ tank.tank_id }}</p>-->
-<!--    <p>Нация: <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)" class="flag-icon"></p>-->
-<!--    <p>Уровень: {{ tank.tier }}</p>-->
-<!--    <p>Тип: {{ tanksService.getTankTypeRu(tank.type) }}</p>-->
-
-<!--    <ng-container *ngIf="tank.all as stats; else noStats">-->
-<!--      <p>Количество боев: {{ stats.battles }}</p>-->
-<!--      <p>Победы: {{ (stats.wins / stats.battles) * 100 | number: '1.2-2' }}%</p>-->
-<!--      <p>Средний урон за бой: {{ (stats.damage_dealt / stats.battles) | number: '1.0-0' }}</p>-->
-<!--      <p>Максимально уничтожено за бой: {{ stats.max_frags }}</p>-->
-<!--    </ng-container>-->
-
-<!--    <ng-template #noStats>-->
-<!--      <p>Статистика отсутствует</p>-->
-<!--    </ng-template>-->
-<!--  </div>-->
-<!--</div>-->
