@@ -8,6 +8,7 @@ table {
   tr,
   td {
     padding: $gap-sm;
+    width: auto;
   }
 }
 
@@ -40,7 +41,12 @@ th {
 }
 
 .filter {
-  background-color: white;
+  background-color: $color-deep-dark;
+  border-radius: 4px 4px 0 0;
+
+  input::placeholder {
+    color: $color-gray;
+  }
 }
 
 .tank-image {
@@ -76,11 +82,6 @@ th {
     user-select: none;
     transition: background-color 0.2s, color 0.2s;
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.15);
-      color: #000;
-    }
-
     &--type {
       @include sm-min {
         display: block;
@@ -102,9 +103,14 @@ th {
 
   .flag-background {
     position: relative;
-    @include md-min {
+    @include lg-min {
       width: $gap * 9;
       height: $gap * 6;
+    }
+
+    @include lg-md {
+      width: $gap * 7.5;
+      height: $gap * 5;
     }
 
     @include md {
@@ -146,9 +152,14 @@ th {
     }
 
     .tank-icon-centered {
-      @include md-min {
+      @include lg-min {
         width: $gap * 7;
         height: $gap * 7;
+      }
+
+      @include lg-md {
+        width: $gap * 6;
+        height: $gap * 6;
       }
 
       @include md {

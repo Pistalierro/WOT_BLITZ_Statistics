@@ -7,7 +7,6 @@ import {MatSort} from '@angular/material/sort';
 import {Tank} from '../../../../models/tanks-response.model';
 import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
 import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../mock/tank-utils';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -33,7 +32,6 @@ export class PlayerVehiclesComponent implements AfterViewInit {
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
-  private breakpointObserver = inject(BreakpointObserver);
 
   constructor() {
     effect(() => {
@@ -41,9 +39,6 @@ export class PlayerVehiclesComponent implements AfterViewInit {
       if (tankList) {
         this.dataSource.data = tankList;
       }
-    });
-    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
-      this.isMobile = result.matches;
     });
   }
 

@@ -15,10 +15,14 @@
   border-bottom-color: $color-accent !important;
 }
 
+.mat-mdc-header-row {
+  //border-radius: 4px 4px 0 0 !important;
+  background-color: $color-deep-dark !important;
+}
+
 .mat-mdc-header-cell {
   border-bottom: none;
   color: $color-light !important;
-  background-color: $color-deep-dark !important;
 }
 
 .mat-mdc-row {

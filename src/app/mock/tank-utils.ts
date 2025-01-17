@@ -25,11 +25,10 @@ export function getFlagUrl(nation: string): string {
     'european': '/images/flags/eu-large.png',
     'other': '/images/flags/wg-large.png'
   };
-
   return flagUrls[nation] || 'unknown';
 }
 
-export const COLUMNS_NAMES: string[] = ['mainInfo', 'win_rate', 'battles', 'damage'];
+export const COLUMNS_NAMES: string[] = ['mainInfo', 'battles', 'win_rate', 'damage'];
 
 export function toRoman(num: number): string {
   const romanNumerals: { [key: number]: string } = {

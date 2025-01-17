@@ -2,9 +2,9 @@
   <p *ngIf="tanksService.loading()">Загрузка данных о танках...</p>
 </div>
 
-<mat-form-field>
+<mat-form-field class="filter">
   <mat-label>Filter</mat-label>
-  <input #input (keyup)="applyFilter($event)" matInput placeholder="Фильтрация по танкам">
+  <input #input (keyup)="applyFilter($event)" matInput placeholder="Начните вводить информацию...">
 </mat-form-field>
 
 <div class="mat-elevation-z8">
@@ -12,14 +12,12 @@
 
     <ng-container matColumnDef="mainInfo">
       <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
-        <!-- Блок, в котором три «кнопки» сортировки -->
         <div class="header-buttons">
           <span class="header-button" mat-sort-header="nation"><mat-icon>public</mat-icon></span>
           <span class="header-button" mat-sort-header="tier">I-X</span>
           <span class="header-button header-button--type" mat-sort-header="type">Тип</span>
         </div>
       </th>
-      <!-- Ячейка колонки -->
       <td *matCellDef="let row" class="main-info-cell" mat-cell>
         <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
           <div class="tier-label">{{ toRoman(row.tier) }}</div>
@@ -35,7 +33,9 @@
 
     <!-- Win_Rate Column -->
     <ng-container matColumnDef="win_rate">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> П/П</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        <mat-icon>emoji_flags</mat-icon>
+      </th>
       <td *matCellDef="let row" class="win-rate" mat-cell>
         {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
       </td>
@@ -43,13 +43,15 @@
 
     <!-- Battles Column -->
     <ng-container matColumnDef="battles">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> Боев</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        <span class="material-symbols-outlined">swords</span>
+      </th>
       <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
     </ng-container>
 
     <!-- Damage Column -->
     <ng-container matColumnDef="damage">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> С/У</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
       <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
     </ng-container>
 
