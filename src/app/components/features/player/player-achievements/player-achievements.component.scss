@@ -1,0 +1,89 @@
+@use "../../../../../styles/presets/variables" as *;
+@use "../../../../../styles/presets/skin" as *;
+@use "../../../../../styles/mixins/mixins-media" as *;
+
+.grid-container {
+  display: grid;
+
+  @include lg-min {
+    grid-template-columns: repeat(6, 1fr); // Для больших экранов
+  }
+
+  @include lg-md {
+    grid-template-columns: repeat(4, 1fr); // Для планшетов
+  }
+
+  @include md-min {
+    gap: $gap;
+  }
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr); // Для мобильных устройств
+    gap: $gap-sm;
+  }
+}
+
+.achievement-card {
+  background-color: transparent;
+  width: 100%;
+
+  @include md-min {
+    height: $gap * 12;
+    padding: $gap-sm;
+  }
+
+  @include md {
+    height: $gap * 10; // Уменьшаем высоту на мобильных устройствах
+    padding: $gap-xs;
+  }
+
+  &__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $gap;
+    height: $gap-x4;
+
+    img {
+      @include md-min {
+        width: 64px;
+        height: 64px;
+      }
+
+      @include md {
+        width: 48px;
+        height: 48px; // Уменьшаем размеры изображений для мобильных устройств
+      }
+    }
+  }
+
+  &__name {
+    text-align: center;
+    height: $gap-x2;
+
+    @include md-min {
+      font-size: 1rem !important;
+    }
+
+    @include md {
+      font-size: 0.9rem !important; // Уменьшаем размер текста для мобильных устройств
+    }
+  }
+
+  &__value {
+    height: $gap-x2;
+    text-align: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    @include md-min {
+
+      font-size: 1rem; // Уменьшаем размер текста на мобильных устройствах
+    }
+
+    @include md {
+      font-size: 0.8rem; // Уменьшаем размер текста на мобильных устройствах
+    }
+  }
+}

@@ -1,1 +1,16 @@
-<p>player-achievements works!</p>
+<h2>Награды игрока</h2>
+
+<div *ngIf="achievementsService.achievementsSignal() as achievements">
+  <div class="grid-container">
+    <mat-card *ngFor="let achievement of achievements" class="achievement-card">
+      <div class="achievement-card__image">
+        <img [alt]="achievement.key" [src]="getAchievementIcon(achievement.key)" mat-card-image>
+      </div>
+      <mat-card-content>
+        <p class="achievement-card__name">{{ translateAchievementName(achievement.key) }}</p>
+        <p *ngIf="achievement.type === 'achievement'" class="achievement-card__value">{{ achievement.value }}</p>
+        <p *ngIf="achievement.type === 'max_series'" class="achievement-card__value">{{ achievement.value }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

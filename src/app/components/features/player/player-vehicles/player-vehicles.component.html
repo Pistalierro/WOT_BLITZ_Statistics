@@ -1,5 +1,13 @@
-<div *ngIf="tanksService.loading()" class="overlay">
-  <p *ngIf="tanksService.loading()">Загрузка данных о танках...</p>
+<div [style.display]="tanksService.loading() ? 'flex' : 'none'" class="overlay">
+  <p>Загрузка данных о танках...</p>
+</div>
+
+<div [style.display]="authService.userSignal() === null ? 'flex' : 'none'" class="overlay">
+  <p>Пожалуйста, авторизуйтесь, чтобы увидеть данные.</p>
+</div>
+
+<div [style.display]="authService.errorSignal() ? 'flex' : 'none'" class="overlay">
+  <p class="error">{{ authService.errorSignal() }}</p>
 </div>
 
 <mat-form-field class="filter">

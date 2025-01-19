@@ -7,6 +7,7 @@ import {MatSort} from '@angular/material/sort';
 import {Tank} from '../../../../models/tanks-response.model';
 import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
 import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../mock/tank-utils';
+import {AuthService} from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -23,12 +24,13 @@ import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../mock/ta
 export class PlayerVehiclesComponent implements AfterViewInit {
   displayedColumns: string[] = COLUMNS_NAMES;
   dataSource = new MatTableDataSource<Tank>([]);
-  isMobile = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   protected tanksService = inject(TanksService);
+  protected authService = inject(AuthService);
+  
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
