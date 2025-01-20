@@ -23,6 +23,7 @@ export class AuthService {
           const data = userDocSnap.data();
           const nickname = data['nickname'] || null;
           this.nicknameSignal.set(nickname);
+          this.playerStore.nickname.set(nickname);
 
           if (nickname) {
             await this.playerStore.loadPlayerData(nickname);

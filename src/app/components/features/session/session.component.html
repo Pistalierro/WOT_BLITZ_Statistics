@@ -1,27 +1,42 @@
 <div class="container">
-  <div>
-    <!-- Кнопки управления сессией -->
-    <button (click)="startSession()" *ngIf="userSignal()">Начать сессию</button>
-    <button (click)="updateSession()" *ngIf="sessionId()">Обновить сессию</button>
+  <h2>Игровая сессия</h2>
+
+  <div *ngIf="sessionStore.sessionError() as error">
+    <p class="error">Ошибка: {{ error }}</p>
   </div>
 
-  <!-- Данные текущей сессии -->
-  <div *ngIf="sessionData() as session">
-    <h2>Текущая сессия</h2>
-    <p>Игрок: {{ nicknameSignal() }}</p>
-    <p>Начало сессии: {{ session.startTimestamp | date: 'short' }}</p>
-    <p>Последнее обновление: {{ session.lastUpdated | date: 'short' }}</p>
-
-    <h3>Общая статистика</h3>
-    <pre>{{ session.currentStats.overall | json }}</pre>
-
-    <h3>Статистика по танкам</h3>
-    <pre>{{ session.currentStats.tanks | json }}</pre>
+  <div *ngIf="!sessionStore.sessionActive()">
+    <p>Сессия не запущена.</p>
+    <button (click)="startSession()" color="warn" mat-flat-button type="button">Начать Сессию</button>
   </div>
 
-  <!-- Сообщение об ошибке -->
-  <div *ngIf="!userSignal()">
-    <p class="error">Вы не авторизованы. Войдите, чтобы начать сессию.</p>
+  <div *ngIf="sessionStore.sessionActive()">
+    <p>
+      <strong>Сессия активна.</strong> <br>
+      ID: {{ sessionStore.sessionId() }}
+    </p>
+    <div class="session-actions">
+      <button (click)="updateSession()" color="warn" mat-flat-button type="button">Обновить данные</button>
+      <button (click)="endSession()" color="warn" mat-flat-button type="button">Закончить Сессию</button>
+    </div>
+
+    <div *ngIf="sessionStore.intermediateStats() as iStats">
+      <h3>Промежуточные результаты:</h3>
+      <ul>
+        <li>Сыграно боёв: {{ iStats.battles }}</li>
+        <li>Побед: {{ iStats.wins }}</li>
+        <li>Урон: {{ iStats.damage_dealt }}</li>
+      </ul>
+    </div>
   </div>
 
+  <div *ngIf="!sessionStore.sessionActive() && sessionStore.sessionStats() as final">
+    <h3>Итоговая статистика за сессию</h3>
+    <ul>
+      <li>Сыграно боёв: {{ final.battles }}</li>
+      <li>Побед: {{ final.wins }}</li>
+      <li>Винрейт: {{ final.winRate | number:'1.0-2' }} %</li>
+      <li>Средний урон: {{ final.avgDamage | number:'1.0-0' }}</li>
+    </ul>
+  </div>
 </div>
