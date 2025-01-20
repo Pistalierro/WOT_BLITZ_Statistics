@@ -28,4 +28,9 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'session',
+    loadComponent: () => import('./components/features/session/session.component')
+      .then(m => m.SessionComponent)
+  }
 ];

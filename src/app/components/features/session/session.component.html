@@ -1,0 +1,27 @@
+<div class="container">
+  <div>
+    <!-- Кнопки управления сессией -->
+    <button (click)="startSession()" *ngIf="userSignal()">Начать сессию</button>
+    <button (click)="updateSession()" *ngIf="sessionId()">Обновить сессию</button>
+  </div>
+
+  <!-- Данные текущей сессии -->
+  <div *ngIf="sessionData() as session">
+    <h2>Текущая сессия</h2>
+    <p>Игрок: {{ nicknameSignal() }}</p>
+    <p>Начало сессии: {{ session.startTimestamp | date: 'short' }}</p>
+    <p>Последнее обновление: {{ session.lastUpdated | date: 'short' }}</p>
+
+    <h3>Общая статистика</h3>
+    <pre>{{ session.currentStats.overall | json }}</pre>
+
+    <h3>Статистика по танкам</h3>
+    <pre>{{ session.currentStats.tanks | json }}</pre>
+  </div>
+
+  <!-- Сообщение об ошибке -->
+  <div *ngIf="!userSignal()">
+    <p class="error">Вы не авторизованы. Войдите, чтобы начать сессию.</p>
+  </div>
+
+</div>

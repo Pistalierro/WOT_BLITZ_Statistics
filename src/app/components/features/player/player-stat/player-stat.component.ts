@@ -17,13 +17,4 @@ import {PlayerStoreService} from '../../../../services/player-store.service';
 export class PlayerStatComponent {
   protected authService = inject(AuthService);
   protected playerStore = inject(PlayerStoreService);
-
-  // constructor() {
-  //   toObservable(this.authService.nicknameSignal)
-  //     .pipe(
-  //       filter((nickname): nickname is string => !!nickname),
-  //       tap((nickname) => this.playerStoreService.loadPlayerData(nickname))
-  //     )
-  //     .subscribe();
-  // }
 }
