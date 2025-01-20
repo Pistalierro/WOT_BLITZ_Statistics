@@ -1,42 +1,59 @@
 <div class="container">
-  <h2>Игровая сессия</h2>
+  <div class="session-container">
+    <h2>Управление игровой сессией</h2>
 
-  <div *ngIf="sessionStore.sessionError() as error">
-    <p class="error">Ошибка: {{ error }}</p>
-  </div>
-
-  <div *ngIf="!sessionStore.sessionActive()">
-    <p>Сессия не запущена.</p>
-    <button (click)="startSession()" color="warn" mat-flat-button type="button">Начать Сессию</button>
-  </div>
-
-  <div *ngIf="sessionStore.sessionActive()">
-    <p>
-      <strong>Сессия активна.</strong> <br>
-      ID: {{ sessionStore.sessionId() }}
-    </p>
-    <div class="session-actions">
-      <button (click)="updateSession()" color="warn" mat-flat-button type="button">Обновить данные</button>
-      <button (click)="endSession()" color="warn" mat-flat-button type="button">Закончить Сессию</button>
+    <!-- Индикатор состояния -->
+    <div class="session-status">
+      <ng-container *ngIf="sessionActive(); else noSession">
+        <p class="active-session">Сессия активна</p>
+      </ng-container>
+      <ng-template #noSession>
+        <p class="inactive-session">Сессия неактивна</p>
+      </ng-template>
     </div>
 
-    <div *ngIf="sessionStore.intermediateStats() as iStats">
-      <h3>Промежуточные результаты:</h3>
-      <ul>
-        <li>Сыграно боёв: {{ iStats.battles }}</li>
-        <li>Побед: {{ iStats.wins }}</li>
-        <li>Урон: {{ iStats.damage_dealt }}</li>
-      </ul>
+    <!-- Ошибки -->
+    <div *ngIf="sessionStore.sessionError() as error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Управление сессией -->
+    <div class="session-controls">
+      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>
+        Начать сессию
+      </button>
+      <button (click)="updateSession()" *ngIf="sessionActive()" color="accent" mat-flat-button>
+        Обновить сессию
+      </button>
+      <button (click)="endSession()" *ngIf="sessionActive()" color="warn" mat-flat-button>
+        Завершить сессию
+      </button>
+    </div>
+
+    <!-- Данные сессии -->
+    <div class="session-data">
+      <div *ngIf="sessionStore.startStats() as startStats">
+        <h3>Стартовая статистика:</h3>
+        <p>Сыграно боёв: {{ startStats.battles }}</p>
+        <p>Побед: {{ startStats.wins }}</p>
+      </div>
+
+      <div *ngIf="sessionStore.intermediateStats() as intermediateStats">
+        <h3>Промежуточные результаты:</h3>
+        <p>Сыграно боёв: {{ intermediateStats.battles }}</p>
+        <p>Побед: {{ intermediateStats.wins }}</p>
+        <p>Винрейт: {{ intermediateStats.winRate | number: '1.0-2' }}%</p>
+        <p>Средний урон: {{ intermediateStats.avgDamage | number: '1.0-0' }}</p>
+      </div>
+
+      <div *ngIf="sessionStore.sessionStats() as sessionStats">
+        <h3>Итоговая статистика за сессию:</h3>
+        <p>Сыграно боёв: {{ sessionStats.battles }}</p>
+        <p>Побед: {{ sessionStats.wins }}</p>
+        <p>Винрейт: {{ sessionStats.winRate | number: '1.0-2' }}%</p>
+        <p>Средний урон: {{ sessionStats.avgDamage | number: '1.0-0' }}</p>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="!sessionStore.sessionActive() && sessionStore.sessionStats() as final">
-    <h3>Итоговая статистика за сессию</h3>
-    <ul>
-      <li>Сыграно боёв: {{ final.battles }}</li>
-      <li>Побед: {{ final.wins }}</li>
-      <li>Винрейт: {{ final.winRate | number:'1.0-2' }} %</li>
-      <li>Средний урон: {{ final.avgDamage | number:'1.0-0' }}</li>
-    </ul>
-  </div>
 </div>

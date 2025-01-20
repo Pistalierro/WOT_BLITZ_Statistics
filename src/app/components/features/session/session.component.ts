@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {SessionStoreService} from '../../../services/session-store.service';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {DecimalPipe, NgIf} from '@angular/common';
@@ -10,19 +10,43 @@ import {DecimalPipe, NgIf} from '@angular/common';
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss'
 })
-export class SessionComponent {
+export class SessionComponent implements OnInit {
+  sessionActive = signal(false);
+  sessionError = signal<string | null>(null);
 
-  sessionStore = inject(SessionStoreService);
-
-  async startSession() {
-    await this.sessionStore.startSession();
+  constructor(public sessionStore: SessionStoreService) {
   }
 
-  async updateSession() {
-    await this.sessionStore.updateSession();
+  ngOnInit(): void {
+    // Восстанавливаем сессию при загрузке компонента
+    this.sessionStore.restoreSession().then(() => {
+      this.sessionActive.set(this.sessionStore.sessionActive());
+    });
   }
 
-  async endSession() {
-    await this.sessionStore.endSession();
+  async startSession(): Promise<void> {
+    try {
+      await this.sessionStore.startSession();
+      this.sessionActive.set(true);
+    } catch (error) {
+      console.error('Ошибка при запуске сессии:', error);
+    }
+  }
+
+  async updateSession(): Promise<void> {
+    try {
+      await this.sessionStore.updateSession();
+    } catch (error) {
+      console.error('Ошибка при обновлении сессии:', error);
+    }
+  }
+
+  async endSession(): Promise<void> {
+    try {
+      await this.sessionStore.endSession();
+      this.sessionActive.set(false);
+    } catch (error) {
+      console.error('Ошибка при завершении сессии:', error);
+    }
   }
 }

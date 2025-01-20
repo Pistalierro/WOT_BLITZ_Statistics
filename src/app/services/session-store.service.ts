@@ -1,13 +1,12 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {Auth} from '@angular/fire/auth';
-import {collection, doc, Firestore, setDoc, updateDoc} from '@angular/fire/firestore';
+import {collection, doc, Firestore, getDoc, setDoc, updateDoc} from '@angular/fire/firestore';
 import {PlayerStoreService} from './player-store.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SessionStoreService {
-
   sessionId = signal<string | null>(null);
   sessionActive = signal<boolean>(false);
   sessionError = signal<string | null>(null);
@@ -20,6 +19,7 @@ export class SessionStoreService {
   private firestore = inject(Firestore);
   private playerStore = inject(PlayerStoreService);
 
+  // Запуск новой сессии
   async startSession(): Promise<void> {
     try {
       this.sessionError.set(null);
@@ -38,7 +38,7 @@ export class SessionStoreService {
         nickname: playerData.nickname,
         startStats: statsStartValue,
         startTimestamp: Date.now(),
-        isActive: true
+        isActive: true,
       };
 
       await setDoc(sessionDocRef, sessionData);
@@ -48,48 +48,61 @@ export class SessionStoreService {
       this.startStats.set(statsStartValue);
       this.intermediateStats.set(null);
 
+      // Сохраняем sessionId в localStorage
+      localStorage.setItem('activeSessionId', sessionDocRef.id);
+
       console.log('Сессия запущена! ID:', sessionDocRef.id);
     } catch (error: any) {
-      this.sessionError.set(error.message);
-      console.error('Ошибка при старте сессии:', error);
+      this.handleError(error, 'Ошибка при запуске сессии');
     }
   }
 
+  // Обновление текущей сессии
   async updateSession(): Promise<void> {
+    await this._processSessionUpdate({isFinal: false});
+  }
+
+  // Завершение сессии
+  async endSession(): Promise<void> {
+    await this._processSessionUpdate({isFinal: true});
+  }
+
+  // Восстановление сессии при загрузке приложения
+  async restoreSession(): Promise<void> {
+    const savedSessionId = localStorage.getItem('activeSessionId');
+    if (!savedSessionId) return;
+
     try {
-      this.sessionError.set(null);
-      const user = this.auth.currentUser;
-      if (!user) throw new Error('Пользователь не авторизован');
+      const sessionDocRef = doc(this.firestore, 'sessions', savedSessionId);
+      const sessionSnapshot = await getDoc(sessionDocRef);
 
-      const currentSessionId = this.sessionId();
-      if (!currentSessionId) throw new Error('Сессия не найдена. Сначала запустите сессию.');
-
-      const nickname = this.playerStore.nickname();
-      if (!nickname) throw new Error('Нет никнейма');
-
-      await this.playerStore.loadPlayerData(nickname);
-
-      const updatedStatsValue = this.playerStore.playerData()?.statistics.all;
-      if (!updatedStatsValue) throw new Error('Не удалось получить обновлённую статистику игрока');
-
-      const sessionDocRef = doc(this.firestore, 'sessions', currentSessionId);
-      await updateDoc(sessionDocRef, {
-        updatedStats: updatedStatsValue,
-        updatedTimestamp: Date.now()
-      });
-
-      this.intermediateStats.set(updatedStatsValue);
-      console.log('Сессия обновлена с актуальными данными!');
+      if (sessionSnapshot.exists()) {
+        const sessionData = sessionSnapshot.data();
+        if (sessionData['isActive']) {
+          this.sessionId.set(savedSessionId);
+          this.sessionActive.set(true);
+          this.startStats.set(sessionData['startStats']);
+          this.intermediateStats.set(sessionData['updatedDelta'] || null);
+          console.log('Сессия восстановлена:', sessionData);
+        } else {
+          console.log('Сессия завершена, удаляю localStorage');
+          localStorage.removeItem('activeSessionId');
+        }
+      } else {
+        console.log('Сессия не найдена в Firestore');
+        localStorage.removeItem('activeSessionId');
+      }
     } catch (error: any) {
-      this.sessionError.set(error.message);
-      console.error('Ошибка при обновлении сессии:', error);
+      this.handleError(error, 'Ошибка при восстановлении сессии');
     }
   }
 
-  async endSession(): Promise<void> {
+  // Приватный метод для обработки обновлений и завершений сессии
+  private async _processSessionUpdate(options: { isFinal: boolean }): Promise<void> {
+    const {isFinal} = options;
+
     try {
       this.sessionError.set(null);
-
       const user = this.auth.currentUser;
       if (!user) throw new Error('Пользователь не авторизован');
 
@@ -102,17 +115,16 @@ export class SessionStoreService {
       await this.playerStore.loadPlayerData(nickname);
 
       const playerData = this.playerStore.playerData();
-      if (!playerData) throw new Error('Нет данных об игроке для завершения сессии.');
-
-      const endStatsValue = playerData.statistics.all;
+      if (!playerData) throw new Error('Нет данных об игроке.');
+      const updatedStatsValue = playerData.statistics.all;
       const startStatsValue = this.startStats();
-      if (!startStatsValue) throw new Error('Стартовая статистика отсутствует — странная ситуация.');
+      if (!startStatsValue) throw new Error('Нет стартовой статистики.');
 
-      const deltaBattles = endStatsValue.battles - startStatsValue.battles;
-      const deltaWins = endStatsValue.wins - startStatsValue.wins;
-      const deltaDamage = endStatsValue.damage_dealt - startStatsValue.damage_dealt;
+      const deltaBattles = updatedStatsValue.battles - startStatsValue.battles;
+      const deltaWins = updatedStatsValue.wins - startStatsValue.wins;
+      const deltaDamage = updatedStatsValue.damage_dealt - startStatsValue.damage_dealt;
       const winRate = deltaBattles > 0 ? (deltaWins / deltaBattles) * 100 : 0;
-      const avgDamage = deltaBattles > 0 ? (deltaDamage / deltaBattles) : 0;
+      const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
 
       const sessionDelta = {
         battles: deltaBattles,
@@ -123,23 +135,39 @@ export class SessionStoreService {
       };
 
       const sessionDocRef = doc(this.firestore, 'sessions', currentSessionId);
-      await updateDoc(sessionDocRef, {
-        endStats: endStatsValue,
-        endTimestamp: Date.now(),
-        isActive: false,
-        sessionDelta: sessionDelta,
-      });
+      const updateData: any = {
+        updatedStats: updatedStatsValue,
+        updatedDelta: sessionDelta,
+        updatedTimestamp: Date.now(),
+      };
 
-      this.endStats.set(endStatsValue);
-      this.sessionStats.set(sessionDelta);
-      this.sessionActive.set(false);
-      this.intermediateStats.set(null);
+      if (isFinal) {
+        updateData.endStats = updatedStatsValue;
+        updateData.endTimestamp = Date.now();
+        updateData.isActive = false;
+        updateData.sessionDelta = sessionDelta;
 
-      console.log('Сессия завершена!', sessionDelta);
+        this.endStats.set(updatedStatsValue);
+        this.sessionStats.set(sessionDelta);
+        this.sessionActive.set(false);
 
+        // Удаляем sessionId из localStorage
+        localStorage.removeItem('activeSessionId');
+      } else {
+        this.intermediateStats.set(sessionDelta);
+      }
+
+      await updateDoc(sessionDocRef, updateData);
+      console.log(`Сессия ${isFinal ? 'завершена' : 'обновлена'}:`, sessionDelta);
     } catch (error: any) {
-      this.sessionError.set(error.message);
-      console.error('Ошибка при завершении сессии:', error);
+      this.handleError(error, 'Ошибка при обновлении/завершении сессии');
     }
+  }
+
+  // Обработка ошибок
+  private handleError(error: any, contextMessage: string): void {
+    const userFriendlyMessage = error.message || `${contextMessage}. Попробуйте снова.`;
+    this.sessionError.set(userFriendlyMessage);
+    console.error(contextMessage, error);
   }
 }

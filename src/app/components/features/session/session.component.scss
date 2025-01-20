@@ -7,12 +7,57 @@
   @extend %container;
 }
 
-.session-actions {
+.session-controls {
   display: flex;
-  gap: 1rem;
-  margin: 20px 0;
+  gap: $gap-sm;
+  margin: $gap 0;
+
+  button {
+    background: $color-accent !important;
+    color: $color-gray !important;
+  }
+
+  @include sm {
+    flex-direction: column;
+    button {
+      width: 100%;
+    }
+  }
 }
 
-li {
-  color: $color-light;
+.session-status {
+  margin-bottom: $gap;
+
+  .active-session {
+    font-weight: bold;
+  }
+
+  .inactive-session {
+    color: $color-light !important;
+    font-weight: bold;
+  }
+}
+
+.session-stats {
+  margin-top: $gap;
+
+  h3 {
+    color: $color-light !important;
+    margin-bottom: $gap-xs;
+  }
+
+  @include sm {
+    h3 {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+::ng-deep .mat-flat-button {
+  background: $color-accent !important;
+  color: $color-gray !important;
+}
+
+p {
+  font-weight: 100;
 }
