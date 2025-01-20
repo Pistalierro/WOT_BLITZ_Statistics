@@ -14,7 +14,8 @@
 
   button {
     background: $color-accent !important;
-    color: $color-gray !important;
+    color: $color-light !important;
+    text-transform: uppercase;
   }
 
   @include sm {
@@ -34,7 +35,7 @@
 
   .inactive-session {
     color: $color-light !important;
-    font-weight: bold;
+    //font-weight: bold;
   }
 }
 
@@ -55,7 +56,7 @@
 
 ::ng-deep .mat-flat-button {
   background: $color-accent !important;
-  color: $color-gray !important;
+  color: $color-light !important;
 }
 
 p {
