@@ -1,8 +1,8 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {Auth, User} from '@angular/fire/auth';
 import {collection, doc, Firestore, getDoc, onSnapshot, setDoc, updateDoc} from '@angular/fire/firestore';
-import {PlayerStoreService} from './player-store.service';
-import {SessionDeltaInterface, StatsInterface} from '../models/battle-session.model';
+import {PlayerStoreService} from '../player-store.service';
+import {SessionDeltaInterface, StatsInterface} from '../../models/battle-session.model';
 
 @Injectable({
   providedIn: 'root',
@@ -86,6 +86,16 @@ export class SessionStoreService {
     const sessionDocRef = doc(this.firestore, 'users', user.uid, 'sessions', 'activeSession');
     this.unsubscribeSnapshot = onSnapshot(sessionDocRef, (snapshot) => {
         if (snapshot.exists()) {
+
+          this.unsubscribeSnapshot = onSnapshot(sessionDocRef, (snapshot) => {
+            console.log('onSnapshot сработал');
+            if (snapshot.exists()) {
+              console.log('Данные сессии:', snapshot.data());
+            } else {
+              console.log('Сессия не найдена.');
+            }
+          }, error => console.error('Ошибка в подписке:', error));
+
           const sessionData = snapshot.data();
           if (sessionData['isActive']) {
             this.sessionId.set('activeSession');

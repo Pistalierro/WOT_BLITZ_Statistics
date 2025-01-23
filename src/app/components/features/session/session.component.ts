@@ -1,7 +1,7 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {SessionStoreService} from '../../../services/session-store.service';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {DecimalPipe, NgIf} from '@angular/common';
+import {SessionStoreService} from '../../../services/session/session-store.service';
 
 @Component({
   selector: 'app-session',
@@ -16,8 +16,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   sessionError = this.sessionStore.sessionError;
 
   ngOnInit(): void {
-    this.sessionStore.restoreSession().then(() => {
-      this.sessionStore.monitorSession().then();
+    this.sessionStore.restoreSession().finally(() => {
+      this.sessionStore.monitorSession();
     });
   }
 
