@@ -13,21 +13,17 @@
     </div>
 
     <!-- Ошибки -->
-    <div *ngIf="sessionStore.sessionError() as error" class="error-message">
+    <div *ngIf="sessionError() as error" class="error-message">
       <p>{{ error }}</p>
     </div>
 
     <!-- Управление сессией -->
     <div class="session-controls">
-      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>
-        Начать сессию
-      </button>
-      <button (click)="updateSession()" *ngIf="sessionActive()" color="accent" mat-flat-button>
-        Обновить сессию
-      </button>
-      <button (click)="endSession()" *ngIf="sessionActive()" color="warn" mat-flat-button>
-        Завершить сессию
-      </button>
+      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>Начать сессию</button>
+      <ng-container *ngIf="sessionActive()">
+        <button (click)="updateSession()" color="accent" mat-flat-button>Обновить сессию</button>
+        <button (click)="endSession()" color="warn" mat-flat-button>Завершить сессию</button>
+      </ng-container>
     </div>
 
     <!-- Данные сессии -->
@@ -55,5 +51,4 @@
       </div>
     </div>
   </div>
-
 </div>

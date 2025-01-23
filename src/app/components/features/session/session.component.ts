@@ -1,4 +1,4 @@
-import {Component, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {SessionStoreService} from '../../../services/session-store.service';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {DecimalPipe, NgIf} from '@angular/common';
@@ -10,15 +10,15 @@ import {DecimalPipe, NgIf} from '@angular/common';
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss'
 })
-export class SessionComponent implements OnInit {
-  sessionActive = signal(false);
-  sessionError = signal<string | null>(null);
-
-  constructor(public sessionStore: SessionStoreService) {
-  }
+export class SessionComponent implements OnInit, OnDestroy {
+  sessionStore = inject(SessionStoreService);
+  sessionActive = this.sessionStore.sessionActive;
+  sessionError = this.sessionStore.sessionError;
 
   ngOnInit(): void {
-    this.sessionStore.monitorSession();
+    this.sessionStore.restoreSession().then(() => {
+      this.sessionStore.monitorSession().then();
+    });
   }
 
   ngOnDestroy(): void {
@@ -28,7 +28,6 @@ export class SessionComponent implements OnInit {
   async startSession(): Promise<void> {
     try {
       await this.sessionStore.startSession();
-      this.sessionActive.set(true);
     } catch (error) {
       console.error('Ошибка при запуске сессии:', error);
     }
@@ -45,7 +44,6 @@ export class SessionComponent implements OnInit {
   async endSession(): Promise<void> {
     try {
       await this.sessionStore.endSession();
-      this.sessionActive.set(false);
     } catch (error) {
       console.error('Ошибка при завершении сессии:', error);
     }

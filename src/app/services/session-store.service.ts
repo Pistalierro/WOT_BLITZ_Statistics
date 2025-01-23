@@ -1,6 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {Auth} from '@angular/fire/auth';
-import {collection, doc, Firestore, onSnapshot, setDoc, updateDoc} from '@angular/fire/firestore';
+import {Auth, User} from '@angular/fire/auth';
+import {collection, doc, Firestore, getDoc, onSnapshot, setDoc, updateDoc} from '@angular/fire/firestore';
 import {PlayerStoreService} from './player-store.service';
 import {SessionDeltaInterface, StatsInterface} from '../models/battle-session.model';
 
@@ -22,15 +22,65 @@ export class SessionStoreService {
 
   private unsubscribeSnapshot: (() => void) | null = null;
 
+  async startSession(): Promise<void> {
+    try {
+      this.sessionError.set(null);
+      const user = this.auth.currentUser;
+      if (!user) {
+        this.sessionError.set('Пожалуйста, войдите в аккаунт.');
+        return;
+      }
+
+      const playerData = this.playerStore.playerData();
+      if (!playerData) throw new Error('Нет данных об игроке.');
+
+      const statsStartValue = playerData.statistics.all;
+      const userDocRef = doc(this.firestore, 'users', user.uid);
+      const sessionDocRef = doc(collection(userDocRef, 'sessions'), 'activeSession');
+
+      const sessionData = {
+        userId: user.uid,
+        nickname: playerData.nickname,
+        startStats: statsStartValue,
+        startTimestamp: Date.now(),
+        isActive: true,
+      };
+
+      await setDoc(sessionDocRef, sessionData);
+
+      this.sessionId.set(sessionDocRef.id);
+      this.sessionActive.set(true);
+      this.startStats.set(statsStartValue);
+      this.intermediateStats.set(null);
+      localStorage.setItem('activeSessionId', sessionDocRef.id);
+
+      console.log('Сессия запущена:', sessionData);
+    } catch (error: any) {
+      this.handleError(error, 'Ошибка при запуске сессии');
+    }
+  }
+
+
+  async updateSession(): Promise<void> {
+    await this._processSessionUpdate({isFinal: false});
+  }
+
+  async endSession(): Promise<void> {
+    try {
+      await this._processSessionUpdate({isFinal: true});
+
+      localStorage.removeItem('activeSessionId');
+    } catch (error: any) {
+      console.error('Ошибка при завершении сессии:', error);
+    }
+  }
+
   async monitorSession(): Promise<void> {
     const user = this.auth.currentUser;
     if (!user) {
       console.log('Пользователь не авторизован');
+      this.sessionActive.set(false);
       return;
-    }
-
-    if (this.sessionActive()) {
-      throw new Error('У вас уже есть активная сессия.');
     }
 
     const sessionDocRef = doc(this.firestore, 'users', user.uid, 'sessions', 'activeSession');
@@ -46,6 +96,7 @@ export class SessionStoreService {
           } else {
             this.sessionActive.set(false);
             console.log('Активной сессии нет.');
+            this.sessionActive.set(false);
           }
         } else {
           console.log('Сессия не найдена.');
@@ -63,52 +114,59 @@ export class SessionStoreService {
     }
   }
 
-  async startSession(): Promise<void> {
+  async restoreSession(): Promise<void> {
+    const savedSessionId = localStorage.getItem('activeSessionId');
+    if (!savedSessionId) {
+      console.log('Нет сохранённой активной сессии в localStorage');
+      this.sessionActive.set(false);
+      return;
+    }
+
     try {
-      this.sessionError.set(null);
-      const user = this.auth.currentUser;
-      if (!user) {
-        console.error('Пользователь не авторизован');
-        this.sessionError.set('Пожалуйста, войдите в аккаунт.');
-        return;
+      const user: User = await new Promise((resolve, reject) => {
+        const unsubscribe = this.auth.onAuthStateChanged(
+          (authUser) => {
+            if (authUser) {
+              resolve(authUser);
+              unsubscribe();
+            } else {
+              reject('Пользователь не авторизован');
+            }
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      });
+
+      const sessionDocRef = doc(this.firestore, 'users', user.uid, 'sessions', savedSessionId);
+      const sessionSnapshot = await getDoc(sessionDocRef);
+
+      if (sessionSnapshot.exists()) {
+        const sessionData = sessionSnapshot.data();
+        if (sessionData['isActive']) {
+          this.sessionId.set(savedSessionId);
+          this.sessionActive.set(true);
+          this.startStats.set(sessionData['startStats'] || null);
+          this.intermediateStats.set(sessionData['updatedDelta'] || null);
+          console.log('Сессия восстановлена из Firestore:', sessionData);
+        } else {
+          console.log('Сессия завершена. Удаляю данные из localStorage');
+          localStorage.removeItem('activeSessionId');
+          this.sessionActive.set(false);
+        }
+      } else {
+        console.log('Сессия не найдена в Firestore. Удаляю данные из localStorage');
+        localStorage.removeItem('activeSessionId');
+        this.sessionActive.set(false);
       }
-
-      const playerData = this.playerStore.playerData();
-      if (!playerData) throw new Error('Нет данных об игроке.');
-      const statsStartValue = playerData.statistics.all;
-
-      const userDocRef = doc(this.firestore, 'users', user.uid);
-      const sessionsRef = collection(userDocRef, 'sessions');
-      const sessionDocRef = doc(sessionsRef, 'activeSession');
-
-      const sessionData = {
-        userId: user.uid,
-        nickname: playerData.nickname,
-        startStats: statsStartValue,
-        startTimestamp: Date.now(),
-        isActive: true,
-      };
-
-      await setDoc(sessionDocRef, sessionData);
-
-      this.sessionId.set(sessionDocRef.id);
-      this.sessionActive.set(true);
-      this.startStats.set(statsStartValue);
-      this.intermediateStats.set(null);
-
-      console.log('Сессия запущена! ID:', sessionDocRef.id);
-    } catch (error: any) {
-      this.handleError(error, 'Ошибка при запуске сессии');
+    } catch (error) {
+      console.error('Ошибка при восстановлении сессии:', error);
+      this.sessionError.set('Не удалось восстановить сессию. Попробуйте снова.');
+      this.sessionActive.set(false);
     }
   }
 
-  async updateSession(): Promise<void> {
-    await this._processSessionUpdate({isFinal: false});
-  }
-
-  async endSession(): Promise<void> {
-    await this._processSessionUpdate({isFinal: true});
-  }
 
   private async _processSessionUpdate(options: { isFinal: boolean }): Promise<void> {
     const {isFinal} = options;
@@ -173,6 +231,6 @@ export class SessionStoreService {
   private handleError(error: any, contextMessage: string): void {
     const userFriendlyMessage = error.message || `${contextMessage}. Попробуйте снова.`;
     this.sessionError.set(userFriendlyMessage);
-    console.error(contextMessage, error);
+    console.error(`[SessionStoreService] ${contextMessage}:`, error);
   }
 }
