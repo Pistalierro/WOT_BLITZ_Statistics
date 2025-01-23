@@ -18,10 +18,11 @@ export class SessionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Восстанавливаем сессию при загрузке компонента
-    this.sessionStore.restoreSession().then(() => {
-      this.sessionActive.set(this.sessionStore.sessionActive());
-    });
+    this.sessionStore.monitorSession();
+  }
+
+  ngOnDestroy(): void {
+    this.sessionStore.stopMonitoringSession();
   }
 
   async startSession(): Promise<void> {
