@@ -20,7 +20,13 @@ export class SessionComponent implements OnInit, OnDestroy {
   private sessionMonitoring = inject(SessionMonitoringService);
 
   ngOnInit(): void {
-    this.sessionMonitoring.monitorSession();
+    this.sessionMonitoring.restoreSession()
+      .then(() => {
+        this.sessionMonitoring.monitorSession().then();
+      })
+      .catch(error => {
+        console.error('Ошибка при восстановлении сессии:', error);
+      });
   }
 
   ngOnDestroy(): void {

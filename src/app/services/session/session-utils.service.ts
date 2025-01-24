@@ -66,7 +66,7 @@ export class SessionUtilsService {
       this.handleError(error, 'Ошибка при обновлении/завершении сессии');
     }
   }
-
+  
   handleError(error: any, contextMessage: string): void {
     const userFriendlyMessage = error.message || `${contextMessage}. Попробуйте снова.`;
     this.sessionState.sessionError.set(userFriendlyMessage);

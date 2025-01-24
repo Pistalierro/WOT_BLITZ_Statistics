@@ -43,6 +43,7 @@ export class SessionActionsService {
       this.sessionState.startStats.set(startStatsValue);
       this.sessionState.intermediateStats.set(null);
 
+      localStorage.setItem('activeSessionId', sessionDocRef.id);
       console.log('Сессия запущена:', sessionData);
     } catch (error: any) {
       this.sessionUtils.handleError(error, 'Ошибка при запуске сессии');
@@ -57,6 +58,7 @@ export class SessionActionsService {
     try {
       await this.sessionUtils.processSessionUpdate({isFinal: true});
       this.sessionState.sessionActive.set(false);
+      localStorage.removeItem('activeSessionId');
     } catch (error: any) {
       console.log('Ошибка при завершении сессии:', error);
     }
