@@ -1,7 +1,9 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {DecimalPipe, NgIf} from '@angular/common';
-import {SessionStoreService} from '../../../services/session/session-store.service';
+import {SessionStateService} from '../../../services/session/session-state.service';
+import {SessionMonitoringService} from '../../../services/session/session-monitoring.service';
+import {SessionActionsService} from '../../../services/session/session-actions.service';
 
 @Component({
   selector: 'app-session',
@@ -11,23 +13,23 @@ import {SessionStoreService} from '../../../services/session/session-store.servi
   styleUrl: './session.component.scss'
 })
 export class SessionComponent implements OnInit, OnDestroy {
-  sessionStore = inject(SessionStoreService);
-  sessionActive = this.sessionStore.sessionActive;
-  sessionError = this.sessionStore.sessionError;
+  sessionState = inject(SessionStateService);
+  sessionActions = inject(SessionActionsService);
+  sessionActive = this.sessionState.sessionActive;
+  sessionError = this.sessionState.sessionError;
+  private sessionMonitoring = inject(SessionMonitoringService);
 
   ngOnInit(): void {
-    this.sessionStore.restoreSession().finally(() => {
-      this.sessionStore.monitorSession();
-    });
+    this.sessionMonitoring.monitorSession();
   }
 
   ngOnDestroy(): void {
-    this.sessionStore.stopMonitoringSession();
+    this.sessionMonitoring.stopMonitoringSession();
   }
 
   async startSession(): Promise<void> {
     try {
-      await this.sessionStore.startSession();
+      await this.sessionActions.startSession();
     } catch (error) {
       console.error('Ошибка при запуске сессии:', error);
     }
@@ -35,7 +37,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   async updateSession(): Promise<void> {
     try {
-      await this.sessionStore.updateSession();
+      await this.sessionActions.updateSession();
     } catch (error) {
       console.error('Ошибка при обновлении сессии:', error);
     }
@@ -43,7 +45,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   async endSession(): Promise<void> {
     try {
-      await this.sessionStore.endSession();
+      await this.sessionActions.endSession();
     } catch (error) {
       console.error('Ошибка при завершении сессии:', error);
     }

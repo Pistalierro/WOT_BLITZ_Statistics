@@ -28,13 +28,13 @@
 
     <!-- Данные сессии -->
     <div class="session-data">
-      <div *ngIf="sessionStore.startStats() as startStats">
+      <div *ngIf="sessionState.startStats() as startStats">
         <h3>Стартовая статистика:</h3>
         <p>Сыграно боёв: {{ startStats.battles }}</p>
         <p>Побед: {{ startStats.wins }}</p>
       </div>
 
-      <div *ngIf="sessionStore.intermediateStats() as intermediateStats">
+      <div *ngIf="sessionState.intermediateStats() as intermediateStats">
         <h3>Промежуточные результаты:</h3>
         <p>Сыграно боёв: {{ intermediateStats.battles }}</p>
         <p>Побед: {{ intermediateStats.wins }}</p>
@@ -42,7 +42,7 @@
         <p>Средний урон: {{ intermediateStats.avgDamage | number: '1.0-0' }}</p>
       </div>
 
-      <div *ngIf="sessionStore.sessionStats() as sessionStats">
+      <div *ngIf="sessionState.sessionStats() as sessionStats">
         <h3>Итоговая статистика за сессию:</h3>
         <p>Сыграно боёв: {{ sessionStats.battles }}</p>
         <p>Побед: {{ sessionStats.wins }}</p>
