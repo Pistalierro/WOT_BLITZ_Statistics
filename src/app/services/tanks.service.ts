@@ -56,7 +56,6 @@ export class TanksService {
       const mergedTanks = statsData.map(stat => ({
         ...stat, ...tankProps[stat.tank_id],
       })).filter(tank => tank.name && tank.images && tank.nation && tank.tier && tank.type);
-
       this.tanksList.set(mergedTanks);
     } catch (err: any) {
       this.error.set(err.message);

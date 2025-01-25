@@ -32,3 +32,20 @@ export interface Tank {
     max_frags: number;
   };
 }
+
+export interface TankSessionInterface {
+  tank: Tank;
+  battles: number;
+  winRate: number;
+  avgDamage: number;
+}
+
+export interface TankDeltaInterface {
+  tank_id: number;
+  name?: string;
+  battles: number;
+  wins: number;
+  damageDealt: number;
+  avgDamage: number;
+  winRate: number;
+}

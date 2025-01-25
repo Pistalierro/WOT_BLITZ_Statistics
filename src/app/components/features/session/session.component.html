@@ -19,10 +19,16 @@
 
     <!-- Управление сессией -->
     <div class="session-controls">
-      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>Начать сессию</button>
+      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>
+        Начать сессию
+      </button>
       <ng-container *ngIf="sessionActive()">
-        <button (click)="updateSession()" color="accent" mat-flat-button>Обновить сессию</button>
-        <button (click)="endSession()" color="warn" mat-flat-button>Завершить сессию</button>
+        <button (click)="updateSession()" color="accent" mat-flat-button>
+          Обновить сессию
+        </button>
+        <button (click)="endSession()" color="warn" mat-flat-button>
+          Завершить сессию
+        </button>
       </ng-container>
     </div>
 
@@ -50,5 +56,49 @@
         <p>Средний урон: {{ sessionStats.avgDamage | number: '1.0-0' }}</p>
       </div>
     </div>
+
+    <!-- Таблица с танками (промежуточная или итоговая) -->
+    <div *ngIf="intermediateTanksDelta.length > 0" class="tanks-data">
+      <h3>Промежуточная статистика по танкам:</h3>
+      <table [dataSource]="intermediateTanksDelta" class="mat-elevation-z8" mat-table>
+
+        <!-- Изображение танка -->
+        <ng-container matColumnDef="image">
+          <th *matHeaderCellDef mat-header-cell></th>
+          <td *matCellDef="let tank" mat-cell>
+            <img [src]="tank.images?.preview" alt="{{ tank.name }}" height="100" width="140">
+          </td>
+        </ng-container>
+
+        <!-- Название танка -->
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell> Название</th>
+          <td *matCellDef="let tank" mat-cell> {{ tank.name }}</td>
+        </ng-container>
+
+        <!-- Бои -->
+        <ng-container matColumnDef="battles">
+          <th *matHeaderCellDef mat-header-cell> Бои</th>
+          <td *matCellDef="let tank" mat-cell> {{ tank.battles }}</td>
+        </ng-container>
+
+        <!-- Винрейт -->
+        <ng-container matColumnDef="winRate">
+          <th *matHeaderCellDef mat-header-cell> Винрейт</th>
+          <td *matCellDef="let tank" mat-cell> {{ tank.winRate | number: '1.0-2' }}%</td>
+        </ng-container>
+
+        <!-- Урон -->
+        <ng-container matColumnDef="damageDealt">
+          <th *matHeaderCellDef mat-header-cell> Средний урон</th>
+          <td *matCellDef="let tank" mat-cell> {{ tank.avgDamage | number: '1.0-0' }}</td>
+        </ng-container>
+
+        <!-- Заголовки и строки -->
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+    </div>
+
   </div>
 </div>

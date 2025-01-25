@@ -11,6 +11,7 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {CdkTableModule} from '@angular/cdk/table';
 
 export const MATERIAL_MODULES = [
   MatToolbarModule,
@@ -26,4 +27,5 @@ export const MATERIAL_MODULES = [
   MatSidenavModule,
   MatFormFieldModule,
   FormsModule,
+  CdkTableModule
 ];

@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {collection, doc, setDoc} from '@angular/fire/firestore';
 import {SessionUtilsService} from './session-utils.service';
+import {TanksService} from '../tanks.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class SessionActionsService {
 
   private sessionState = inject(SessionStateService);
   private sessionUtils = inject(SessionUtilsService);
+  private tanksService = inject(TanksService);
 
   async startSession(): Promise<void> {
     try {
@@ -25,6 +27,9 @@ export class SessionActionsService {
 
       const startStatsValue = playerData.statistics.all;
 
+      const startTanksList = this.tanksService.tanksList();
+      if (!startTanksList.length) throw new Error('Список танков в начале сессии отсутствует!');
+
       const userDocRef = doc(this.sessionState.firestore, 'users', user.uid);
       const sessionDocRef = doc(collection(userDocRef, 'sessions'), 'activeSession');
 
@@ -32,6 +37,7 @@ export class SessionActionsService {
         userId: user.uid,
         nickname: playerData.nickname,
         startStats: startStatsValue,
+        startTanksList: startTanksList,
         startTimestamp: Date.now(),
         isActive: true,
       };
@@ -42,6 +48,7 @@ export class SessionActionsService {
       this.sessionState.sessionActive.set(true);
       this.sessionState.startStats.set(startStatsValue);
       this.sessionState.intermediateStats.set(null);
+      this.sessionState.startsTanksStats.set(startTanksList);
 
       localStorage.setItem('activeSessionId', sessionDocRef.id);
       console.log('Сессия запущена:', sessionData);

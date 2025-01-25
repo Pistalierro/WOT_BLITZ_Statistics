@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {doc, getDoc, onSnapshot} from '@angular/fire/firestore';
 import {User} from '@angular/fire/auth';
+import {SessionDataInterface} from '../../models/battle-session.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,25 +23,27 @@ export class SessionMonitoringService {
 
     this.sessionState.unsubscribeSnapshot = onSnapshot(sessionDocRef, (snapshot) => {
       if (snapshot.exists()) {
-        console.log('onSnapshot сработал');
-        console.log('Данные сессии:', snapshot.data());
-
-        const sessionData = snapshot.data() as any;
+        const sessionData = snapshot.data() as SessionDataInterface;
 
         if (sessionData.isActive) {
           this.sessionState.sessionId.set('activeSession');
           this.sessionState.sessionActive.set(true);
           this.sessionState.startStats.set(sessionData.startStats || null);
           this.sessionState.intermediateStats.set(sessionData.updatedDelta || null);
+          this.sessionState.startsTanksStats.set(sessionData.startTanksList || null);
 
           console.log('Обновлена информация о сессии:', sessionData);
         } else {
+          console.log('Сессия завершена.');
+          this.stopMonitoringSession();
           this.sessionState.sessionActive.set(false);
-          console.log('Активной сессии нет.');
+          localStorage.removeItem('activeSessionId');
         }
       } else {
         console.log('Сессия не найдена.');
+        this.stopMonitoringSession();
         this.sessionState.sessionActive.set(false);
+        localStorage.removeItem('activeSessionId');
       }
     }, (error) => {
       console.log('Ошибка при подписке на изменения сессии:', error);
@@ -81,11 +84,12 @@ export class SessionMonitoringService {
       const sessionSnapshot = await getDoc(sessionDocRef);
 
       if (sessionSnapshot.exists()) {
-        const sessionData = sessionSnapshot.data() as any;
+        const sessionData = sessionSnapshot.data() as SessionDataInterface;
         if (sessionData.isActive) {
           this.sessionState.sessionId.set(savedSessionId);
           this.sessionState.sessionActive.set(true);
           this.sessionState.startStats.set(sessionData.startStats || null);
+          this.sessionState.startsTanksStats.set(sessionData.startTanksList || []);
           this.sessionState.intermediateStats.set(sessionData.updatedDelta || null);
 
           console.log('Сессия восстановлена из Firestore:', sessionData);

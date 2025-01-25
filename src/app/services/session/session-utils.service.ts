@@ -1,6 +1,10 @@
 import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {doc, updateDoc} from '@angular/fire/firestore';
+import {SessionDataInterface, SessionDeltaInterface} from '../../models/battle-session.model';
+import {TanksService} from '../tanks.service';
+import {PlayerStoreService} from '../player-store.service';
+import {Tank, TankDeltaInterface} from '../../models/tanks-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +12,8 @@ import {doc, updateDoc} from '@angular/fire/firestore';
 export class SessionUtilsService {
 
   sessionState = inject(SessionStateService);
+  tanksService = inject(TanksService);
+  private playerStore = inject(PlayerStoreService);
 
   async processSessionUpdate(options: { isFinal: boolean }): Promise<void> {
     const {isFinal} = options;
@@ -19,13 +25,22 @@ export class SessionUtilsService {
 
       const nickname = this.sessionState.playerStore.nickname();
       if (!nickname) throw new Error('Нет никнейма');
-
       await this.sessionState.playerStore.loadPlayerData(nickname);
+
+      const accountId = this.playerStore.accountId();
+      if (!accountId) throw new Error('Account ID отсутствует');
+      await this.tanksService.fetchTankData(accountId);
+
       const playerData = this.sessionState.playerStore.playerData();
       if (!playerData) throw new Error('Нет данных об игроке.');
 
       const updatedStatsValue = playerData.statistics.all;
       const startStatsValue = this.sessionState.startStats();
+
+      const startTanksList = this.sessionState.startsTanksStats();
+      if (!startTanksList) throw new Error('Начальный список танков отсутствует');
+      const updatedTanksList = this.tanksService.tanksList();
+
       if (!startStatsValue) throw new Error('Нет стартовой статистики!');
 
       const deltaBattles = updatedStatsValue.battles - startStatsValue.battles;
@@ -33,21 +48,24 @@ export class SessionUtilsService {
       const deltaDamage = updatedStatsValue.damage_dealt - startStatsValue.damage_dealt;
       const winRate = deltaBattles > 0 ? (deltaWins / deltaBattles) * 100 : 0;
       const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
+      const tanksDelta = this.getSessionTanks(startTanksList, updatedTanksList);
 
-      const sessionDelta = {
+      const sessionDelta: SessionDeltaInterface = {
         battles: deltaBattles,
         wins: deltaWins,
-        damage: deltaDamage,
+        damageDealt: deltaDamage,
         winRate,
         avgDamage,
+        tanksDelta
       };
 
       const sessionDocRef = doc(this.sessionState.firestore, 'users', user.uid, 'sessions', 'activeSession');
 
-      const updateData: any = {
+      const updateData: Partial<SessionDataInterface> = {
         updatedStats: updatedStatsValue,
         updatedDelta: sessionDelta,
         updatedTimestamp: Date.now(),
+        tanksDelta
       };
 
       if (isFinal) {
@@ -66,7 +84,41 @@ export class SessionUtilsService {
       this.handleError(error, 'Ошибка при обновлении/завершении сессии');
     }
   }
-  
+
+  getSessionTanks(startTanksList: Tank[], updatedTankList: Tank[]): TankDeltaInterface[] {
+    const startTanksMap = new Map(startTanksList.map(tank => [tank.tank_id, tank]));
+
+    return updatedTankList.map(updatedTank => {
+      const startTank = startTanksMap.get(updatedTank.tank_id);
+
+      if (startTank) {
+        const deltaBattles = updatedTank.all.battles - startTank.all.battles;
+        const deltaWins = updatedTank.all.wins - startTank.all.wins;
+        const deltaDamage = updatedTank.all.damage_dealt - startTank.all.damage_dealt;
+        const winRate = deltaBattles > 0 ? (deltaWins / deltaBattles) * 100 : 0;
+        const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
+
+        if (deltaBattles > 0) {
+          return {
+            tank_id: updatedTank.tank_id,
+            name: updatedTank.name,
+            battles: deltaBattles,
+            wins: deltaWins,
+            damageDealt: deltaDamage,
+            winRate,
+            avgDamage,
+            tier: updatedTank.tier,
+            type: updatedTank.type,
+            nation: updatedTank.nation,
+            images: updatedTank.images,
+          };
+        }
+      }
+
+      return null;
+    }).filter(delta => delta !== null);
+  }
+
   handleError(error: any, contextMessage: string): void {
     const userFriendlyMessage = error.message || `${contextMessage}. Попробуйте снова.`;
     this.sessionState.sessionError.set(userFriendlyMessage);
