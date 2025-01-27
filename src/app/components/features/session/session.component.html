@@ -58,43 +58,60 @@
     </div>
 
     <!-- Таблица с танками (промежуточная или итоговая) -->
+    <h3>Промежуточная статистика по танкам:</h3>
     <div *ngIf="intermediateTanksDelta.length > 0" class="tanks-data">
-      <h3>Промежуточная статистика по танкам:</h3>
-      <table [dataSource]="intermediateTanksDelta" class="mat-elevation-z8" mat-table>
 
-        <!-- Изображение танка -->
-        <ng-container matColumnDef="image">
-          <th *matHeaderCellDef mat-header-cell></th>
-          <td *matCellDef="let tank" mat-cell>
-            <img [src]="tank.images?.preview" alt="{{ tank.name }}" height="100" width="140">
+      <table [dataSource]="dataSource" class="mat-elevation-z8 session-tanks-table" mat-table matSort>
+
+        <!-- Main Column -->
+        <ng-container class="main-info-cell" matColumnDef="mainInfo">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            <div class="header-buttons">
+              <span class="header-button" mat-sort-header="nation">
+                <mat-icon>public</mat-icon>
+              </span>
+              <span class="header-button" mat-sort-header="tier">I-X</span>
+              <span class="header-button header-button--type" mat-sort-header="type">Тип</span>
+            </div>
+          </th>
+          <td *matCellDef="let tank" class="main-info-cell" mat-cell>
+            <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="flag-background">
+              <div class="tier-label">{{ toRoman(tank.tier) }}</div>
+              <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="class-icon">
+              <div class="flag-content">
+                <img *ngIf="tank.images?.preview; else noImage" [alt]="tank.name"
+                     [src]="tank.images.preview" class="tank-icon-centered">
+                <ng-template #noImage>
+                  <span class="no-image">Нет изображения</span>
+                </ng-template>
+                <div class="tank-name">{{ tank.name }}</div>
+              </div>
+            </div>
           </td>
         </ng-container>
 
-        <!-- Название танка -->
-        <ng-container matColumnDef="name">
-          <th *matHeaderCellDef mat-header-cell> Название</th>
-          <td *matCellDef="let tank" mat-cell> {{ tank.name }}</td>
-        </ng-container>
-
-        <!-- Бои -->
+        <!-- Battles Column -->
         <ng-container matColumnDef="battles">
-          <th *matHeaderCellDef mat-header-cell> Бои</th>
-          <td *matCellDef="let tank" mat-cell> {{ tank.battles }}</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            <span class="material-symbols-outlined">swords</span>
+          </th>
+          <td *matCellDef="let tank" class="battles" mat-cell> {{ tank.battles }}</td>
         </ng-container>
 
-        <!-- Винрейт -->
+        <!-- WinRate Column -->
         <ng-container matColumnDef="winRate">
-          <th *matHeaderCellDef mat-header-cell> Винрейт</th>
-          <td *matCellDef="let tank" mat-cell> {{ tank.winRate | number: '1.0-2' }}%</td>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            <mat-icon>emoji_flags</mat-icon>
+          </th>
+          <td *matCellDef="let tank" class="win-rate" mat-cell> {{ tank.winRate | number: '1.2-2' }}%</td>
         </ng-container>
 
-        <!-- Урон -->
-        <ng-container matColumnDef="damageDealt">
-          <th *matHeaderCellDef mat-header-cell> Средний урон</th>
-          <td *matCellDef="let tank" mat-cell> {{ tank.avgDamage | number: '1.0-0' }}</td>
+        <!-- avgDamage Column -->
+        <ng-container matColumnDef="avgDamage">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
+          <td *matCellDef="let tank" class="damage" mat-cell> {{ tank.avgDamage | number: '1.0-0' }}</td>
         </ng-container>
 
-        <!-- Заголовки и строки -->
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
         <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
       </table>

@@ -1,30 +1,49 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
-import {DecimalPipe, NgIf} from '@angular/common';
+import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
 import {SessionStateService} from '../../../services/session/session-state.service';
 import {SessionMonitoringService} from '../../../services/session/session-monitoring.service';
 import {SessionActionsService} from '../../../services/session/session-actions.service';
 import {TankDeltaInterface} from '../../../models/tanks-response.model';
-import {MatTableModule} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {CdkTableModule} from '@angular/cdk/table';
+import {SessionDataInterface} from '../../../models/battle-session.model';
+import {MatSort} from '@angular/material/sort';
+import {getFlagUrl, tankTypes, toRoman} from '../../../mock/tank-utils';
 
 @Component({
   selector: 'app-session',
   standalone: true,
   imports: [...MATERIAL_MODULES, NgIf, DecimalPipe, MatTableModule, // Добавьте сюда MatTableModule
-    CdkTableModule,],
+    CdkTableModule, NgStyle,],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss'
 })
-export class SessionComponent implements OnInit, OnDestroy {
+export class SessionComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  displayedColumns: string[] = ['image', 'name', 'battles', 'winRate', 'damageDealt'];
+  displayedColumns: string[] = ['mainInfo', 'battles', 'winRate', 'avgDamage'];
+  dataSource = new MatTableDataSource<SessionDataInterface>([]);
+
   sessionState = inject(SessionStateService);
   sessionActions = inject(SessionActionsService);
   sessionActive = this.sessionState.sessionActive;
   sessionError = this.sessionState.sessionError;
   tanksDelta: TankDeltaInterface[] = [];
+  @ViewChild(MatSort) sort!: MatSort;
+  // }
+  protected readonly getFlagUrl = getFlagUrl;
+  protected readonly toRoman = toRoman;
+  protected readonly tankTypes = tankTypes;
   private sessionMonitoring = inject(SessionMonitoringService);
+
+  constructor() {
+    effect(() => {
+      const sessionTanksList = this.sessionState.intermediateStats()?.tanksDelta;
+      if (sessionTanksList) {
+        this.dataSource.data = sessionTanksList;
+      }
+    });
+  }
 
   get intermediateTanksDelta(): TankDeltaInterface[] {
     return this.sessionState.intermediateStats()?.tanksDelta ?? [];
@@ -40,9 +59,19 @@ export class SessionComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+  }
+
   ngOnDestroy(): void {
     this.sessionMonitoring.stopMonitoringSession();
   }
+
+  // private updateTanksDelta(): void {
+  //   const sessionData = this.sessionState.intermediateStats();
+  //   if (sessionData?.tanksDelta) {
+  //     this.tanksDelta = sessionData.tanksDelta;
+  //   }
 
   async startSession(): Promise<void> {
     try {
@@ -65,13 +94,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       await this.sessionActions.endSession();
     } catch (error) {
       console.error('Ошибка при завершении сессии:', error);
-    }
-  }
-
-  private updateTanksDelta(): void {
-    const sessionData = this.sessionState.intermediateStats();
-    if (sessionData?.tanksDelta) {
-      this.tanksDelta = sessionData.tanksDelta;
     }
   }
 }
