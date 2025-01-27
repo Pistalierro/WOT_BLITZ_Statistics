@@ -4,7 +4,7 @@ import {HomeComponent} from './components/features/home/home.component';
 
 export const routes: Routes = [
   {path: 'home', component: HomeComponent},
-  {path: '', redirectTo: 'home', pathMatch: 'full'},
+  {path: '', component: HomeComponent},
   {
     path: 'players',
     loadComponent: () => import('./components/features/player/player-host/player-host.component')

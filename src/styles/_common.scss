@@ -10,13 +10,6 @@ html, body {
   overflow-x: hidden; /* Убирает горизонтальный скролл */
 }
 
-/* Задаем корневому компоненту высоту с учетом вьюпорта */
-app-root {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(var(--vh, 1vh) * 100);
-}
-
 * {
   box-sizing: border-box;
 }
