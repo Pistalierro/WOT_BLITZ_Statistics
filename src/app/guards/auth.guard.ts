@@ -4,22 +4,34 @@ import {AuthService} from '../services/auth.service';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthComponent} from '../components/features/auth/auth.component';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
   const dialog = inject(MatDialog);
 
-  if (authService.userSignal()) {
+  console.log('👀 Проверяем статус авторизации...');
+
+  // 🔥 Ждём, пока Firebase загрузит данные (максимум 3 секунды)
+  if (!authService.isAuthLoaded()) {
+    let attempts = 0;
+    while (!authService.isAuthLoaded() && attempts < 30) {
+      await new Promise((resolve) => setTimeout(resolve, 100)); // 🔄 Ждём 100 мс
+      attempts++;
+    }
+  }
+
+  console.log('✅ Firebase загрузился. user:', authService.userSignal());
+
+  // 1️⃣ Если пользователь уже авторизован → пропускаем маршрут
+  if (authService.isLoggedIn()) {
     return true;
   }
 
-  const isMobile = window.innerWidth <= 600; // Мобильное устройство
-  const containerWidth = document.querySelector('.container')?.clientWidth || window.innerWidth;
-  const appRoot = document.querySelector('app-root');
+  // 2️⃣ Если мы сюда дошли → пользователя нет, показываем диалог
+  console.log('⛔ Пользователь не авторизован, открываем диалог входа');
 
-  if (appRoot) {
-    appRoot.setAttribute('inert', 'true'); // ❗ Блокируем фон
-  }
+  const isMobile = window.innerWidth <= 600;
+  const containerWidth = document.querySelector('.container')?.clientWidth || window.innerWidth;
 
   const dialogRef = dialog.open(AuthComponent, {
     width: isMobile ? `${containerWidth}px` : '40%',
@@ -30,14 +42,14 @@ export const authGuard: CanActivateFn = (route, state) => {
     backdropClass: 'custom-backdrop',
   });
 
-  dialogRef.afterClosed().subscribe(() => {
-    if (authService.userSignal()) {
-      router.navigateByUrl(state.url).then();
-    } else router.navigate(['/home']).then();
-
-    if (appRoot) {
-      appRoot.removeAttribute('inert'); // ❗ Разблокируем фон после закрытия
+  // 3️⃣ Ждём закрытия диалога
+  return dialogRef.afterClosed().toPromise().then(() => {
+    if (authService.isLoggedIn()) {
+      router.navigateByUrl(state.url);
+      return true; // ✅ Пользователь вошёл → пропускаем маршрут
+    } else {
+      router.navigate(['/home']); // ❌ Пользователь не вошёл → редиректим
+      return false;
     }
   });
-  return false;
 };

@@ -2,6 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, User} from '@angular/fire/auth';
 import {doc, Firestore, getDoc, setDoc} from '@angular/fire/firestore';
 import {PlayerStoreService} from './player-store.service';
+import {Router} from '@angular/router';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -9,13 +10,17 @@ export class AuthService {
   userSignal = signal<User | null>(null);
   nicknameSignal = signal<string | null>(null);
   errorSignal = signal<string | null>(null);
+  isAuthLoaded = signal(false);
   private auth = inject(Auth);
   private firestore = inject(Firestore);
   private playerStore = inject(PlayerStoreService);
+  private router = inject(Router);
 
   constructor() {
     onAuthStateChanged(this.auth, async (user) => {
       this.userSignal.set(user);
+      this.isAuthLoaded.set(true);
+      console.log('🔥 Firebase прислал нового пользователя:', user);
       if (user) {
         const userDocRef = doc(this.firestore, `users/${user.uid}`);
         const userDocSnap = await getDoc(userDocRef);
@@ -36,6 +41,10 @@ export class AuthService {
         this.playerStore.playerData.set(null);
       }
     });
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.userSignal();
   }
 
   async login(email: string, password: string) {
@@ -72,6 +81,7 @@ export class AuthService {
     try {
       await this.auth.signOut();
       this.userSignal.set(null); // Сбрасываем состояние
+      this.router.navigate(['/home']);
       console.log('Вы вышли из системы');
     } catch (error) {
       console.error('Ошибка при выходе:', error);
