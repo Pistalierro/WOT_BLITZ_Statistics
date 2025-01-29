@@ -1,0 +1,58 @@
+// Обычное модальное окно (на десктопе)
+.auth-dialog {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+// Полноэкранный диалог на мобильных
+.full-screen-dialog .mat-dialog-container {
+  height: 100vh;
+  width: auto;
+  max-width: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .auth-dialog {
+    width: 90%;
+    max-width: 400px; // Чтобы форма не была слишком широкой
+  }
+
+  .mat-dialog-content {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+}
+
+// Ограничение по ширине контейнера
+@media (max-width: 600px) {
+  .full-screen-dialog .mat-dialog-container {
+    width: 100%;
+    max-width: var(--container-width, 100%);
+  }
+}
+
+.custom-backdrop ~ app-root {
+  aria-hidden: false !important;
+}
+
+// Затемнение заднего фона
+.custom-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
+}

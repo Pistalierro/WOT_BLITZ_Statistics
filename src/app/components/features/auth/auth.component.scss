@@ -1,3 +1,8 @@
+@use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/mixins/mixins-media" as *;
+@use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
+
 mat-form-field {
   margin-top: 5px;
   width: 100%;
@@ -8,10 +13,20 @@ mat-form-field {
 }
 
 .action-buttons {
+  gap: $gap;
+
+  @include sm-min {
+    flex-direction: row;
+    padding: 16px 0; // для добавления пространства между кнопками и содержимым формы
+  }
+
+  @include sm {
+    flex-direction: column;
+    padding: 8px 0;
+  }
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 16px 0; // для добавления пространства между кнопками и содержимым формы
 
   button {
     flex: 0 1 auto; // кнопки занимают место только по размеру контента

@@ -1,6 +1,6 @@
 import {Routes} from '@angular/router';
 import {HomeComponent} from './components/features/home/home.component';
-
+import {authGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   {path: 'home', component: HomeComponent},
@@ -9,6 +9,7 @@ export const routes: Routes = [
     path: 'players',
     loadComponent: () => import('./components/features/player/player-host/player-host.component')
       .then(m => m.PlayerHostComponent),
+    canActivate: [authGuard],
     children: [
       {path: '', redirectTo: 'stat', pathMatch: 'full'},
       {
@@ -31,6 +32,7 @@ export const routes: Routes = [
   {
     path: 'session',
     loadComponent: () => import('./components/features/session/session.component')
-      .then(m => m.SessionComponent)
+      .then(m => m.SessionComponent),
+    canActivate: [authGuard],
   }
 ];

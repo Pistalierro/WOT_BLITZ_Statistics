@@ -37,12 +37,31 @@ export class HeaderComponent {
   }
 
   openDialog() {
+    const isMobile = window.innerWidth <= 600;
+    const containerWidth = document.querySelector('.container')?.clientWidth || window.innerWidth;
+    const appRoot = document.querySelector('app-root');
+
+    if (appRoot) {
+      appRoot.setAttribute('inert', 'true'); // ❗ Блокируем фон
+    }
+
     const dialogRef = this.dialog.open(AuthComponent, {
-      width: '40%',
+      width: isMobile ? `${containerWidth}px` : '40%',
+      height: 'auto',
+      maxWidth: isMobile ? 'none' : '500px',
+      panelClass: isMobile ? 'full-screen-dialog' : '',
+      disableClose: false,
+      backdropClass: 'custom-backdrop',
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      if (appRoot) {
+        appRoot.removeAttribute('inert'); // ❗ Разблокируем фон после закрытия
+      }
     });
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authService.logout().then();
   }
 }
