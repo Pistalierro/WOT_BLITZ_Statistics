@@ -60,15 +60,17 @@
     <h3>Промежуточная статистика по танкам:</h3>
     <div *ngIf="intermediateTanksDelta.length > 0" class="card-grid">
 
-      <mat-card (click)="toggleFlip(i)" *ngFor="let tank of tanksDelta; let i = index"
+      <!-- Перебираем массив танков и выводим карточки -->
+      <mat-card (click)="toggleFlip(i)"
+                *ngFor="let tank of tanksDelta; let i = index"
                 [@slideUp]
                 [ngClass]="{'flipped': isFlipped[i]}"
                 appearance="outlined" class="card">
 
         <div class="card-inner">
 
+          <!-- Передняя сторона карточки -->
           <div class="card-front">
-
             <mat-card-content class="card-image__container">
               <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
                 <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
@@ -94,6 +96,7 @@
             </mat-card-actions>
           </div>
 
+          <!-- Задняя сторона карточки -->
           <div class="card-back">
             <h4 class="card-back__title">Общая статистика</h4>
             <mat-card-content class="card-back__content">
@@ -131,6 +134,5 @@
         </div>
       </mat-card>
     </div>
-
   </div>
 </div>
