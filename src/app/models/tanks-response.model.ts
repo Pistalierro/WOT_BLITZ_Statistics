@@ -42,10 +42,18 @@ export interface TankSessionInterface {
 
 export interface TankDeltaInterface {
   tank_id: number;
+  tier: number;
+  nation: string;
+  type: string;
+  images?: { preview: string, normal: string };
   name?: string;
   battles: number;
   wins: number;
   damageDealt: number;
   avgDamage: number;
   winRate: number;
+  totalBattles?: number;
+  totalWins?: number;
+  totalWinRate?: number;
+  totalAvgDamage?: number;
 }

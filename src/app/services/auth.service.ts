@@ -20,7 +20,7 @@ export class AuthService {
     onAuthStateChanged(this.auth, async (user) => {
       this.userSignal.set(user);
       this.isAuthLoaded.set(true);
-      console.log('🔥 Firebase прислал нового пользователя:', user);
+      // console.log('🔥 Firebase прислал нового пользователя:', user);
       if (user) {
         const userDocRef = doc(this.firestore, `users/${user.uid}`);
         const userDocSnap = await getDoc(userDocRef);

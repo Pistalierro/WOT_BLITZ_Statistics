@@ -87,9 +87,11 @@ export class SessionUtilsService {
 
   getSessionTanks(startTanksList: Tank[], updatedTankList: Tank[]): TankDeltaInterface[] {
     const startTanksMap = new Map(startTanksList.map(tank => [tank.tank_id, tank]));
+    const tanksData = new Map(this.tanksService.tanksList().map(tank => [tank.tank_id, tank]));
 
     return updatedTankList.map(updatedTank => {
       const startTank = startTanksMap.get(updatedTank.tank_id);
+      const globalTank = tanksData.get(updatedTank.tank_id);
 
       if (startTank) {
         const deltaBattles = updatedTank.all.battles - startTank.all.battles;
@@ -110,7 +112,14 @@ export class SessionUtilsService {
             tier: updatedTank.tier,
             type: updatedTank.type,
             nation: updatedTank.nation,
-            images: updatedTank.images,
+            images: {
+              preview: updatedTank.images.preview,
+              normal: updatedTank.images.normal
+            },
+            totalBattles: globalTank?.all.battles ?? 0,
+            totalWins: globalTank?.all.wins ?? 0,
+            totalWinRate: globalTank ? (globalTank?.all.wins / globalTank?.all.battles) * 100 : 0,
+            totalAvgDamage: globalTank ? globalTank.all.damage_dealt / globalTank?.all.battles : 0,
           };
         }
       }

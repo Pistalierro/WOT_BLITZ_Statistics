@@ -35,7 +35,6 @@
 
   .inactive-session {
     color: $color-light !important;
-    //font-weight: bold;
   }
 }
 
@@ -66,3 +65,121 @@ p {
 h3 {
   margin: $gap 0;
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-deep-dark;
+  color: $color-gray;
+  overflow: hidden;
+  cursor: pointer;
+  @extend %box-shadow;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.03);
+    @extend %box-shadow;
+  }
+
+  &-grid {
+    display: grid;
+    gap: $gap;
+    @include lg-min {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @include lg-md {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include md-sm {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include sm {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &-background {
+    top: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-position: 50% 50%;
+    background-size: cover;
+  }
+
+  &-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba($color-dark, 0.4);
+  }
+}
+
+.tank {
+  &-image {
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &-tier {
+    position: absolute;
+    top: $gap-sm;
+    left: $gap-sm;
+    color: $color-light;
+    z-index: 1;
+    font-weight: bold;
+    font-size: 1.5rem;
+    @extend %text-shadow;
+  }
+
+  &-type {
+    position: absolute;
+    top: $gap-sm;
+    right: $gap-sm;
+    width: 20px;
+    z-index: 1;
+    @extend %text-shadow;
+  }
+
+  &-name {
+    position: absolute;
+    bottom: $gap-sm;
+    left: $gap-sm;
+    color: $color-light;
+    z-index: 1;
+    font-size: 1.2rem;
+    @extend %text-shadow;
+  }
+
+  &-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+
+    &-item {
+      span {
+        font-size: 1.2rem;
+
+      }
+    }
+  }
+}
+
+

@@ -57,64 +57,35 @@
       </div>
     </div>
 
-    <!-- Таблица с танками (промежуточная или итоговая) -->
     <h3>Промежуточная статистика по танкам:</h3>
-    <div *ngIf="intermediateTanksDelta.length > 0" class="tanks-data">
+    <div *ngIf="intermediateTanksDelta.length > 0" class="card-grid">
 
-      <table [dataSource]="dataSource" class="mat-elevation-z8 session-tanks-table" mat-table matSort>
+      <mat-card *ngFor="let tank of tanksDelta" appearance="outlined" class="card">
 
-        <!-- Main Column -->
-        <ng-container class="main-info-cell" matColumnDef="mainInfo">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <div class="header-buttons">
-              <span class="header-button" mat-sort-header="nation">
-                <mat-icon>public</mat-icon>
-              </span>
-              <span class="header-button" mat-sort-header="tier">I-X</span>
-              <span class="header-button header-button--type" mat-sort-header="type">Тип</span>
-            </div>
-          </th>
-          <td *matCellDef="let tank" class="main-info-cell" mat-cell>
-            <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="flag-background">
-              <div class="tier-label">{{ toRoman(tank.tier) }}</div>
-              <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="class-icon">
-              <div class="flag-content">
-                <img *ngIf="tank.images?.preview; else noImage" [alt]="tank.name"
-                     [src]="tank.images.preview" class="tank-icon-centered">
-                <ng-template #noImage>
-                  <span class="no-image">Нет изображения</span>
-                </ng-template>
-                <div class="tank-name">{{ tank.name }}</div>
-              </div>
-            </div>
-          </td>
-        </ng-container>
+        <mat-card-content class="card-image-container">
+          <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
+            <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
+            <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
+            <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
+            <div class="tank-name">{{ tank.name }}</div>
+            <div class="card-overlay"></div>
+          </div>
+        </mat-card-content>
 
-        <!-- Battles Column -->
-        <ng-container matColumnDef="battles">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <span class="material-symbols-outlined">swords</span>
-          </th>
-          <td *matCellDef="let tank" class="battles" mat-cell> {{ tank.battles }}</td>
-        </ng-container>
-
-        <!-- WinRate Column -->
-        <ng-container matColumnDef="winRate">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>emoji_flags</mat-icon>
-          </th>
-          <td *matCellDef="let tank" class="win-rate" mat-cell> {{ tank.winRate | number: '1.2-2' }}%</td>
-        </ng-container>
-
-        <!-- avgDamage Column -->
-        <ng-container matColumnDef="avgDamage">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
-          <td *matCellDef="let tank" class="damage" mat-cell> {{ tank.avgDamage | number: '1.0-0' }}</td>
-        </ng-container>
-
-        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-      </table>
+        <mat-card-actions class="tank-stats">
+          <div class="tank-stats-item">
+            <span class="material-symbols-outlined stat-icon">swords</span>
+            <span>{{ tank.battles }}</span>
+          </div>
+          <div class="tank-stats-item">
+            <mat-icon class="stat-icon">emoji_flags</mat-icon>
+            <span>{{ tank.winRate | number: '1.0-0' }}%</span>
+          </div>
+          <div class="tank-stats-item">
+            <span>С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
+          </div>
+        </mat-card-actions>
+      </mat-card>
     </div>
 
   </div>

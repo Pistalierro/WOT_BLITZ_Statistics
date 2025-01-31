@@ -32,7 +32,7 @@ export class SessionMonitoringService {
           this.sessionState.intermediateStats.set(sessionData.updatedDelta || null);
           this.sessionState.startsTanksStats.set(sessionData.startTanksList || null);
 
-          console.log('Обновлена информация о сессии:', sessionData);
+          // console.log('Обновлена информация о сессии:', sessionData);
         } else {
           console.log('Сессия завершена.');
           this.stopMonitoringSession();
@@ -92,7 +92,7 @@ export class SessionMonitoringService {
           this.sessionState.startsTanksStats.set(sessionData.startTanksList || []);
           this.sessionState.intermediateStats.set(sessionData.updatedDelta || null);
 
-          console.log('Сессия восстановлена из Firestore:', sessionData);
+          // console.log('Сессия восстановлена из Firestore:', sessionData);
         } else {
           console.log('Сессия завершена. Удаляю данные из localStorage');
           localStorage.removeItem('activeSessionId');

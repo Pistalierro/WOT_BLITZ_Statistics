@@ -20,8 +20,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     }
   }
 
-  console.log('✅ Firebase загрузился. user:', authService.userSignal());
-
+  // console.log('✅ Firebase загрузился. user:', authService.userSignal());
   // 1️⃣ Если пользователь уже авторизован → пропускаем маршрут
   if (authService.isLoggedIn()) {
     return true;
