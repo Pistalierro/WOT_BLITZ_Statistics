@@ -40,7 +40,6 @@
   }
 }
 
-// Очищаем отступы mat-card для нашей верстки
 ::ng-deep mat-card {
   padding: 0 !important;
   margin: 0 !important;
@@ -53,77 +52,107 @@
   flex-direction: column;
 }
 
-// --- Карточка (переворот) ---
+// Сетка карточек
+.card-grid {
+  margin-top: $gap-x2;
+  display: grid;
+  gap: $gap;
+
+  @include lg-min {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @include lg-md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include md-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include sm {
+    grid-template-columns: 1fr;
+  }
+}
+
+// --- Карточка (flip) ---
 .card {
-  perspective: 1000px; // Добавляем 3D-эффект для родителя
+  // Важно: perspective только здесь (и без transform).
+  perspective: 1000px;
+  -webkit-perspective: 1000px; // для iOS Safari
+
   cursor: pointer;
   position: relative;
   width: 100%;
-  height: 260px; // Фиксированная высота карточек
+  height: 260px;
   display: flex;
   flex-direction: column;
   background-color: transparent;
   color: $color-gray;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  // Убираем scale при hover, чтобы не было "двойной" трансформации
+  // &:hover {
+  //   transform: scale(1.03);
+  // }
+
   border: none;
 
-  &:hover {
-    transform: scale(1.03);
-  }
-
-  // Сетка карточек
-  &-grid {
-    margin-top: $gap-x2;
-    display: grid;
-    gap: $gap;
-
-    @include lg-min {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    @include lg-md {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @include md-sm {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @include sm {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  &-inner {
+  .card-inner {
+    // Внутренний блок, который переворачиваем
     width: 100%;
     height: 100%;
-    transform-style: preserve-3d; // Включаем 3D для внутренней области
-    transition: transform 0.6s ease-in-out;
     position: relative;
     background-color: $color-deep-dark;
     border-radius: 4px;
+
+    // 3D для самого блока
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+
+    transition: transform 0.6s ease-in-out;
     contain: layout paint;
     will-change: transform;
   }
 
-  // Когда элементу добавляется класс flipped, разворачиваем внутренний блок
   &.flipped .card-inner {
-    transform: rotateY(180deg); // Анимация переворота
-    // Для iOS Safari может понадобиться префикс:
+    // Поворот на 180°
+    transform: rotateY(180deg);
     -webkit-transform: rotateY(180deg);
   }
 
-  // Передняя и задняя стороны
-  &-front,
-  &-back {
+  // Передняя сторона
+  .card-front {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    inset: 0;
 
-    // Проблема: на iOS Safari при перевороте передняя сторона отображается зеркально,
-    // а задняя не видна из-за некорректной поддержки backface-visibility.
-    // Решение: дублируем свойство с префиксом -webkit-backface-visibility.
-    -webkit-backface-visibility: hidden;
+    // iOS Safari любит префикс
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    // Дополнительно явно ставим rotateY(0),
+    // чтобы у Safari не было "зеркальной" передней стороны
+    transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: transparent;
+    overflow: hidden;
+    border-radius: inherit;
+    color: $color-light;
+    will-change: transform;
+  }
+
+  // Задняя сторона
+  .card-back {
+    position: absolute;
+    inset: 0;
+    color: $color-gray;
+    // Аналогично префиксам
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 
     display: flex;
     flex-direction: column;
@@ -134,19 +163,6 @@
     overflow: hidden;
     border-radius: inherit;
     will-change: transform;
-  }
-
-  &-front {
-    color: $color-light;
-  }
-
-  &-back {
-    width: 100%;
-    color: $color-gray;
-    // Переворачиваем заднюю сторону на 180 градусов
-    transform: rotateY(180deg);
-    // Префикс для iOS Safari:
-    -webkit-transform: rotateY(180deg);
 
     &__title {
       margin: 5px 0;
@@ -181,7 +197,9 @@
     }
   }
 
-  &-image__container {
+  // для пуша
+  // --- Стили передней стороны (изображение танка) ---
+  .card-image__container {
     position: relative;
     width: 100%;
     height: 200px;
@@ -191,7 +209,7 @@
     overflow: hidden;
   }
 
-  &-background {
+  .card-background {
     position: absolute;
     top: 0;
     width: 100%;
@@ -200,7 +218,7 @@
     background-position: center;
   }
 
-  &-overlay {
+  .card-overlay {
     position: absolute;
     inset: 0;
     background-color: rgba($color-dark, 0.5);
@@ -213,7 +231,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); // Центрируем изображение танка
+    transform: translate(-50%, -50%);
     z-index: 1;
   }
 
@@ -270,7 +288,6 @@
   }
 }
 
-// Иногда нужно дополнительно сбрасывать отступы у mat-card-content
 :host ::ng-deep mat-card-content {
   padding: 0 !important;
   margin: 0 !important;
