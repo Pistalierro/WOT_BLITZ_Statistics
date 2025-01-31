@@ -60,31 +60,75 @@
     <h3>Промежуточная статистика по танкам:</h3>
     <div *ngIf="intermediateTanksDelta.length > 0" class="card-grid">
 
-      <mat-card *ngFor="let tank of tanksDelta" appearance="outlined" class="card">
+      <mat-card (click)="toggleFlip(i)" *ngFor="let tank of tanksDelta; let i = index"
+                [@slideUp]
+                [ngClass]="{'flipped': isFlipped[i]}"
+                appearance="outlined" class="card">
 
-        <mat-card-content class="card-image-container">
-          <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
-            <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
-            <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
-            <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
-            <div class="tank-name">{{ tank.name }}</div>
-            <div class="card-overlay"></div>
-          </div>
-        </mat-card-content>
+        <div class="card-inner">
 
-        <mat-card-actions class="tank-stats">
-          <div class="tank-stats-item">
-            <span class="material-symbols-outlined stat-icon">swords</span>
-            <span>{{ tank.battles }}</span>
+          <div class="card-front">
+
+            <mat-card-content class="card-image__container">
+              <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
+                <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
+                <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
+                <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
+                <div class="tank-name">{{ tank.name }}</div>
+                <div class="card-overlay"></div>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions class="tank-stats">
+              <div class="tank-stats__item">
+                <span class="material-symbols-outlined tank-stat__icon">swords</span>
+                <span>{{ tank.battles }}</span>
+              </div>
+              <div class="tank-stats__item">
+                <mat-icon class="stat-icon">emoji_flags</mat-icon>
+                <span>{{ tank.winRate | number: '1.0-0' }}%</span>
+              </div>
+              <div class="tank-stats__item">
+                <span>С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
+              </div>
+            </mat-card-actions>
           </div>
-          <div class="tank-stats-item">
-            <mat-icon class="stat-icon">emoji_flags</mat-icon>
-            <span>{{ tank.winRate | number: '1.0-0' }}%</span>
+
+          <div class="card-back">
+            <h4 class="card-back__title">Общая статистика</h4>
+            <mat-card-content class="card-back__content">
+              <div class="card-back__name">{{ tank.name }}</div>
+              <div class="card-back__item">
+                <span>Нация:</span>
+                <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)">
+              </div>
+              <div class="card-back__item">
+                <span>Тип:</span>
+                <img [alt]="tank.name" [src]="tankTypes(tank.type)">
+              </div>
+              <div class="card-back__item">
+                <span>Уровень:</span>
+                <span>{{ toRoman(tank.tier) }}</span>
+              </div>
+              <div class="card-back__item">
+                <span>Всего боёв:</span>
+                <span>{{ tank.totalBattles }}</span>
+              </div>
+              <div class="card-back__item">
+                <span>Всего побед:</span>
+                <span>{{ tank.totalWins }}</span>
+              </div>
+              <div class="card-back__item">
+                <span>Общий процент:</span>
+                <span>{{ tank.totalWinRate | number: '1.0-2' }}%</span>
+              </div>
+              <div class="card-back__item">
+                <span>С/У:</span>
+                <span>{{ tank.totalAvgDamage | number: '1.0-0' }}</span>
+              </div>
+            </mat-card-content>
           </div>
-          <div class="tank-stats-item">
-            <span>С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
-          </div>
-        </mat-card-actions>
+        </div>
       </mat-card>
     </div>
 

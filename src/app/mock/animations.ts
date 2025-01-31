@@ -1,4 +1,4 @@
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
 
 export const ANIMATIONS = {
   buttonState: [
@@ -37,6 +37,30 @@ export const ANIMATIONS = {
       transition('void => *', animate('500ms ease-out')),
       // Переход от видимого к скрытому состоянию
       transition('* => void', animate('500ms ease-in'))
+    ])
+  ],
+  counter: [
+    trigger('flipDigit', [
+      transition(':increment', [
+        animate(
+          '0.5s ease-in-out',
+          keyframes([
+            style({transform: 'rotateX(0)', opacity: 1, offset: 0}),
+            style({transform: 'rotateX(-90deg)', opacity: 0.5, offset: 0.5}),
+            style({transform: 'rotateX(-180deg)', opacity: 0, offset: 1})
+          ])
+        )
+      ]),
+      transition(':decrement', [
+        animate(
+          '0.5s ease-in-out',
+          keyframes([
+            style({transform: 'rotateX(0)', opacity: 1, offset: 0}),
+            style({transform: 'rotateX(90deg)', opacity: 0.5, offset: 0.5}),
+            style({transform: 'rotateX(180deg)', opacity: 0, offset: 1})
+          ])
+        )
+      ])
     ])
   ]
 

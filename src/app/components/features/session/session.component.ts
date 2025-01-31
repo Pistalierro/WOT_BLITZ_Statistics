@@ -9,6 +9,7 @@ import {MatTableModule} from '@angular/material/table';
 import {CdkTableModule} from '@angular/cdk/table';
 import {MatSort} from '@angular/material/sort';
 import {getFlagUrl, tankTypes, toRoman} from '../../../mock/tank-utils';
+import {ANIMATIONS} from '../../../mock/animations';
 
 @Component({
   selector: 'app-session',
@@ -16,7 +17,8 @@ import {getFlagUrl, tankTypes, toRoman} from '../../../mock/tank-utils';
   imports: [...MATERIAL_MODULES, NgIf, DecimalPipe, MatTableModule, // Добавьте сюда MatTableModule
     CdkTableModule, NgForOf, NgStyle, NgClass,],
   templateUrl: './session.component.html',
-  styleUrl: './session.component.scss'
+  styleUrl: './session.component.scss',
+  animations: [ANIMATIONS.slideIn]
 })
 export class SessionComponent implements OnInit, OnDestroy {
 

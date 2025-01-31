@@ -7,6 +7,7 @@
   @extend %container;
 }
 
+// --- Управление сессией ---
 .session-controls {
   display: flex;
   gap: $gap-sm;
@@ -26,6 +27,7 @@
   }
 }
 
+// --- Статус сессии ---
 .session-status {
   margin-bottom: $gap;
 
@@ -38,50 +40,44 @@
   }
 }
 
-.session-stats {
-  margin-top: $gap;
-
-  h3 {
-    color: $color-light !important;
-    margin-bottom: $gap-xs;
-  }
-
-  @include sm {
-    h3 {
-      font-size: 1.5rem;
-    }
-  }
+::ng-deep mat-card {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-::ng-deep .mat-flat-button {
-  background: $color-accent !important;
-  color: $color-light !important;
+::ng-deep mat-card-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
 }
 
-p {
-  font-weight: 100;
-}
-
-h3 {
-  margin: $gap 0;
+::ng-deep mat-card {
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .card {
+  perspective: 1000px; // Добавляем 3D-эффект
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 260px; // Фиксированная высота карточек
   display: flex;
   flex-direction: column;
-  background-color: $color-deep-dark;
+  background-color: transparent;
   color: $color-gray;
-  overflow: hidden;
-  cursor: pointer;
-  @extend %box-shadow;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none;
 
   &:hover {
     transform: scale(1.03);
-    @extend %box-shadow;
   }
 
   &-grid {
+    margin-top: $gap-x2;
     display: grid;
     gap: $gap;
     @include lg-min {
@@ -98,7 +94,81 @@ h3 {
     }
   }
 
-  &-image-container {
+  &-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d; // Включаем 3D
+    transition: transform 0.6s ease-in-out;
+    position: relative;
+    background-color: $color-deep-dark;
+    border-radius: 4px;
+  }
+
+  &.flipped .card-inner {
+    transform: rotateY(180deg); // Анимация переворота
+  }
+
+  &-front,
+  &-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden; // Скрываем заднюю сторону
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: transparent;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  &-front {
+    color: $color-light;
+  }
+
+  &-back {
+    width: 100%;
+    color: $color-gray;
+    transform: rotateY(180deg); // Переворачиваем заднюю сторону
+
+    &__title {
+      margin: 5px 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    &__name {
+      font-family: $font-header;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    &__content {
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    &__item {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1rem;
+
+      img {
+        height: 20px;
+      }
+    }
+  }
+
+  &-image__container {
     position: relative;
     width: 100%;
     height: 200px;
@@ -109,77 +179,88 @@ h3 {
   }
 
   &-background {
-    top: 0;
     position: absolute;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-position: 50% 50%;
     background-size: cover;
+    background-position: center;
   }
 
   &-overlay {
     position: absolute;
     inset: 0;
-    background: rgba($color-dark, 0.4);
+    background-color: rgba($color-dark, 0.5);
   }
-}
 
-.tank {
-  &-image {
-    width: auto;
-    height: auto;
+  .tank-image {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  &-tier {
-    position: absolute;
-    top: $gap-sm;
-    left: $gap-sm;
-    color: $color-light;
+    transform: translate(-50%, -50%); // Центрируем изображение танка
     z-index: 1;
-    font-weight: bold;
-    font-size: 1.5rem;
-    @extend %text-shadow;
   }
 
-  &-type {
-    position: absolute;
-    top: $gap-sm;
-    right: $gap-sm;
-    width: 20px;
-    z-index: 1;
-    @extend %text-shadow;
+  .tank {
+    &-tier {
+      position: absolute;
+      top: $gap-sm;
+      left: $gap-sm;
+      color: $color-light;
+      font-weight: bold;
+      font-size: 1.5rem;
+      z-index: 1;
+      @extend %text-shadow;
+    }
+
+    &-type {
+      position: absolute;
+      top: $gap-sm;
+      right: $gap-sm;
+      width: 20px;
+      @extend %text-shadow;
+      z-index: 1;
+    }
+
+    &-name {
+      position: absolute;
+      bottom: $gap-sm;
+      left: $gap-sm;
+      color: $color-light;
+      font-size: 1.2rem;
+      @extend %text-shadow;
+      z-index: 1;
+    }
   }
 
-  &-name {
-    position: absolute;
-    bottom: $gap-sm;
-    left: $gap-sm;
-    color: $color-light;
-    z-index: 1;
-    font-size: 1.2rem;
-    @extend %text-shadow;
-  }
-
-  &-stats {
+  // --- Статистика танка ---
+  .tank-stats {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 5px 0;
+    width: 100%;
+    padding: $gap-sm;
 
-    &-item {
-      span {
-        font-size: 1.2rem;
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 1.2rem;
+    }
 
-      }
+    .tank-stat__icon {
+      font-size: 1.5rem;
     }
   }
 }
 
-
+:host ::ng-deep mat-card-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
