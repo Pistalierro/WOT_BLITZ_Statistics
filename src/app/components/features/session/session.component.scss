@@ -52,12 +52,12 @@
   flex-direction: column;
 }
 
-::ng-deep mat-card {
-  border: none !important;
-  box-shadow: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
+//::ng-deep mat-card {
+//  border: none !important;
+//  box-shadow: none !important;
+//  margin: 0 !important;
+//  padding: 0 !important;
+//}
 
 .card {
   perspective: 1000px; // Добавляем 3D-эффект
@@ -102,6 +102,8 @@
     position: relative;
     background-color: $color-deep-dark;
     border-radius: 4px;
+    contain: layout paint;
+    will-change: transform;
   }
 
   &.flipped .card-inner {
@@ -124,6 +126,7 @@
     background-color: transparent;
     overflow: hidden;
     border-radius: inherit;
+    will-change: transform;
   }
 
   &-front {
