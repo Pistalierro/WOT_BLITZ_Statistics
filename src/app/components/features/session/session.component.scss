@@ -18,6 +18,15 @@
   &-header {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    gap: $gap;
+    margin-bottom: $gap-x2;
+  }
+
+  &-title {
+    display: flex;
+    align-items: center;
     gap: $gap;
 
     span {
@@ -59,8 +68,11 @@
   }
 
   &-status {
-    margin-bottom: $gap;
-    min-height: $gap-sm * 5;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: $gap-sm * 3;
 
     .active-session {
       font-weight: bold;
@@ -80,12 +92,20 @@
   }
 
   &-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
+    padding: $gap-xs $gap-sm;
     font-size: 1rem;
     font-weight: bold;
-    display: inline-block;
+    border-radius: $gap;
     margin-bottom: $gap-sm;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    position: absolute;
+    @include md-min {
+      bottom: -80%;
+    }
+    @include md {
+      bottom: -40%;
+    }
+    left: 0;
 
     &--active {
       background: rgba(0, 255, 0, 0.2);
@@ -98,6 +118,9 @@
     }
   }
 
+  &-progress-bar {
+    min-height: $gap-xs;
+  }
 }
 
 .card-grid {

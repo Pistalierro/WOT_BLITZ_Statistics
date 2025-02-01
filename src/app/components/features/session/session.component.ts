@@ -18,7 +18,7 @@ import {ANIMATIONS} from '../../../mock/animations';
     CdkTableModule, NgForOf, NgStyle, NgClass,],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',
-  animations: [ANIMATIONS.slideIn]
+  animations: [ANIMATIONS.slideIn, ANIMATIONS.fadeIn],
 })
 export class SessionComponent implements OnInit, OnDestroy {
 

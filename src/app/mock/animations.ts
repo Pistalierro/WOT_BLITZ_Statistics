@@ -39,6 +39,19 @@ export const ANIMATIONS = {
       transition('* => void', animate('500ms ease-in'))
     ])
   ],
+
+  fadeIn: [
+    trigger('fadeScale', [
+      transition(':enter', [
+        style({opacity: 0, transform: 'scale(0.9)'}),
+        animate('300ms ease-out', style({opacity: 1, transform: 'scale(1)'}))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({opacity: 0, transform: 'scale(0.9)'}))
+      ])
+    ])
+  ],
+
   counter: [
     trigger('flipDigit', [
       transition(':increment', [
