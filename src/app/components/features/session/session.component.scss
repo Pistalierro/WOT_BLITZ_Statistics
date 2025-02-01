@@ -40,18 +40,6 @@
   }
 }
 
-::ng-deep mat-card {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-::ng-deep mat-card-content {
-  padding: 0 !important;
-  margin: 0 !important;
-  display: flex;
-  flex-direction: column;
-}
-
 // Сетка карточек
 .card-grid {
   margin-top: $gap-x2;
@@ -72,133 +60,92 @@
   }
 }
 
-// --- Карточка (flip) ---
-.card {
-  // Важно: perspective только здесь (и без transform).
-  perspective: 1000px;
-  -webkit-perspective: 1000px; // для iOS Safari
+/* Сбрасываем mat-card */
+::ng-deep mat-card {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
-  cursor: pointer;
+// Устраняем лишние отступы во вложенном контенте
+::ng-deep mat-card-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* -- Flip-карточка -- */
+.card {
   position: relative;
   width: 100%;
   height: 260px;
-  display: flex;
-  flex-direction: column;
+
+  // Родителю даём только perspective (без transform).
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+
+  cursor: pointer;
   background-color: transparent;
-  color: $color-gray;
-  // Убираем scale при hover, чтобы не было "двойной" трансформации
-  // &:hover {
-  //   transform: scale(1.03);
-  // }
 
-  border: none;
+  // Включаем 3D-флип при клике (через класс .flipped)
+  &.flipped {
+    .card-front {
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      z-index: 1; // уходит назад
+    }
 
-  .card-inner {
-    // Внутренний блок, который переворачиваем
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: $color-deep-dark;
+    .card-back {
+      transform: rotateY(0deg);
+      -webkit-transform: rotateY(0deg);
+      z-index: 2; // выходит вперёд
+    }
+  }
+
+  .card-front, .card-back {
+    position: absolute;
+    inset: 0;
     border-radius: 4px;
+    // Для iOS
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 
-    // 3D для самого блока
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    // 3D
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
 
     transition: transform 0.6s ease-in-out;
-    contain: layout paint;
     will-change: transform;
   }
 
-  &.flipped .card-inner {
-    // Поворот на 180°
-    transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-  }
-
-  // Передняя сторона
   .card-front {
-    position: absolute;
-    inset: 0;
-
-    // iOS Safari любит префикс
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    // Дополнительно явно ставим rotateY(0),
-    // чтобы у Safari не было "зеркальной" передней стороны
+    // В нормальном состоянии передняя сторона "лицом к пользователю"
     transform: rotateY(0deg);
     -webkit-transform: rotateY(0deg);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-color: transparent;
-    overflow: hidden;
-    border-radius: inherit;
+    z-index: 2; // при старте фронт сверху
+    background-color: $color-deep-dark;
     color: $color-light;
-    will-change: transform;
   }
 
-  // Задняя сторона
   .card-back {
-    position: absolute;
-    inset: 0;
+    // Задняя сторона изначально "развернута" на -180 градусов
+    transform: rotateY(-180deg);
+    -webkit-transform: rotateY(-180deg);
+
+    z-index: 1; // изначально сзади
+    background-color: $color-deep-dark;
     color: $color-gray;
-    // Аналогично префиксам
-    transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-color: transparent;
-    overflow: hidden;
-    border-radius: inherit;
-    will-change: transform;
-
-    &__title {
-      margin: 5px 0;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    &__name {
-      font-family: $font-header;
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-
-    &__content {
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    &__item {
-      display: flex;
-      width: 100%;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 1rem;
-
-      img {
-        height: 20px;
-      }
-    }
   }
 
-  // для пуша
-  // --- Стили передней стороны (изображение танка) ---
+  // Стили для "передней" части (наши изображения и т.п.)
   .card-image__container {
     position: relative;
     width: 100%;
@@ -211,9 +158,7 @@
 
   .card-background {
     position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-size: cover;
     background-position: center;
   }
@@ -235,39 +180,37 @@
     z-index: 1;
   }
 
-  .tank {
-    &-tier {
-      position: absolute;
-      top: $gap-sm;
-      left: $gap-sm;
-      color: $color-light;
-      font-weight: bold;
-      font-size: 1.5rem;
-      z-index: 1;
-      @extend %text-shadow;
-    }
-
-    &-type {
-      position: absolute;
-      top: $gap-sm;
-      right: $gap-sm;
-      width: 20px;
-      @extend %text-shadow;
-      z-index: 1;
-    }
-
-    &-name {
-      position: absolute;
-      bottom: $gap-sm;
-      left: $gap-sm;
-      color: $color-light;
-      font-size: 1.2rem;
-      @extend %text-shadow;
-      z-index: 1;
-    }
+  .tank-tier {
+    position: absolute;
+    top: $gap-sm;
+    left: $gap-sm;
+    color: $color-light;
+    font-weight: bold;
+    font-size: 1.5rem;
+    z-index: 2;
+    @extend %text-shadow;
   }
 
-  // --- Статистика танка ---
+  .tank-type {
+    position: absolute;
+    top: $gap-sm;
+    right: $gap-sm;
+    width: 20px;
+    @extend %text-shadow;
+    z-index: 2;
+  }
+
+  .tank-name {
+    position: absolute;
+    bottom: $gap-sm;
+    left: $gap-sm;
+    color: $color-light;
+    font-size: 1.2rem;
+    @extend %text-shadow;
+    z-index: 2;
+  }
+
+  // Статистика (Actions)
   .tank-stats {
     display: flex;
     align-items: center;
@@ -284,6 +227,39 @@
 
     .tank-stat__icon {
       font-size: 1.5rem;
+    }
+  }
+
+  // Стили задней стороны
+  .card-back__title {
+    margin: 5px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .card-back__name {
+    font-family: $font-header;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .card-back__content {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .card-back__item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+
+    img {
+      height: 20px;
     }
   }
 }
