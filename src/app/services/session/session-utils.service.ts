@@ -17,6 +17,7 @@ export class SessionUtilsService {
 
   async processSessionUpdate(options: { isFinal: boolean }): Promise<void> {
     const {isFinal} = options;
+    this.sessionState.loadingSignal.set(true);
 
     try {
       this.sessionState.sessionError.set(null);
@@ -80,8 +81,9 @@ export class SessionUtilsService {
       await updateDoc(sessionDocRef, updateData);
       console.log(`Сессия ${isFinal ? 'завершена' : 'обновлена'}:`, sessionDelta);
     } catch (error: any) {
-
       this.handleError(error, 'Ошибка при обновлении/завершении сессии');
+    } finally {
+      this.sessionState.loadingSignal.set(false);
     }
   }
 

@@ -65,9 +65,3 @@ export function getAchievementIcon(key: string): string {
   return `${basePath}/${key}.png`;
 }
 
-// export function getAchievementIcon(key: string): string {
-//   const icons: { [key: string]: string } = {
-//     markOfMastery: '/images/achievements/markOfMastery.png'
-//   };
-//   return icons[key] || 'path_to_icons/default.png';
-// }

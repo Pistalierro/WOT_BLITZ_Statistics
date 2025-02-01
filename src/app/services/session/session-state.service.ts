@@ -3,7 +3,7 @@ import {Auth} from '@angular/fire/auth';
 import {Firestore} from '@angular/fire/firestore';
 import {PlayerStoreService} from '../player-store.service';
 import {SessionDeltaInterface, StatsInterface} from '../../models/battle-session.model';
-import {Tank, TankSessionInterface} from '../../models/tanks-response.model';
+import {Tank} from '../../models/tanks-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class SessionStateService {
   intermediateStats = signal<any>(null);
   sessionStats = signal<SessionDeltaInterface | null>(null);
   startsTanksStats = signal<Tank[] | null>(null); // Начальные данные по танкам
-  intermediateTankStats = signal<TankSessionInterface[] | null>(null); // Промежуточные
+  loadingSignal = signal<boolean | null>(null);
 
   unsubscribeSnapshot: (() => void) | null = null;
 

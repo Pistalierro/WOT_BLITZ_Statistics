@@ -12,6 +12,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {CdkTableModule} from '@angular/cdk/table';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 export const MATERIAL_MODULES = [
   MatToolbarModule,
@@ -27,5 +28,6 @@ export const MATERIAL_MODULES = [
   MatSidenavModule,
   MatFormFieldModule,
   FormsModule,
-  CdkTableModule
+  CdkTableModule,
+  MatProgressBarModule
 ];

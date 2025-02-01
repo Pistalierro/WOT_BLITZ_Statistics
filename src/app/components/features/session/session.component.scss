@@ -7,40 +7,99 @@
   @extend %container;
 }
 
-// --- Управление сессией ---
-.session-controls {
-  display: flex;
-  gap: $gap-sm;
-  margin: $gap 0;
-
-  button {
-    background: $color-accent !important;
-    color: $color-light !important;
-    text-transform: uppercase;
-  }
-
-  @include sm {
-    flex-direction: column;
-    button {
-      width: 100%;
+.session {
+  &-container {
+    h3 {
+      text-align: center;
+      margin-bottom: $gap;
     }
   }
-}
 
-// --- Статус сессии ---
-.session-status {
-  margin-bottom: $gap;
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: $gap;
 
-  .active-session {
+    span {
+      font-size: 2.5rem;
+      color: $color-accent;
+    }
+  }
+
+  &-controls {
+    display: flex;
+    gap: $gap-xs * 3;
+    margin: $gap 0;
+
+    button {
+      background: $color-accent !important;
+      color: $color-light !important;
+      text-transform: uppercase;
+      transition: transform 0.2s ease-in-out;
+      font-weight: bold;
+
+      .actions-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $gap-sm;
+      }
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    @include sm {
+      flex-direction: column;
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  &-status {
+    margin-bottom: $gap;
+    min-height: $gap-sm * 5;
+
+    .active-session {
+      font-weight: bold;
+    }
+
+    .inactive-session {
+      color: $color-light !important;
+    }
+  }
+
+  &-data {
+    display: grid;
+    gap: $gap;
+
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: $gap-x2;
+  }
+
+  &-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 1rem;
     font-weight: bold;
+    display: inline-block;
+    margin-bottom: $gap-sm;
+
+    &--active {
+      background: rgba(0, 255, 0, 0.2);
+      color: lime;
+    }
+
+    &--inactive {
+      background: rgba(255, 0, 0, 0.2);
+      color: red;
+    }
   }
 
-  .inactive-session {
-    color: $color-light !important;
-  }
 }
 
-// Сетка карточек
 .card-grid {
   margin-top: $gap-x2;
   display: grid;
@@ -60,36 +119,24 @@
   }
 }
 
-/* Сбрасываем mat-card */
-::ng-deep mat-card {
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-// Устраняем лишние отступы во вложенном контенте
-::ng-deep mat-card-content {
-  padding: 0 !important;
-  margin: 0 !important;
-  display: flex;
-  flex-direction: column;
-}
-
-/* -- Flip-карточка -- */
 .card {
   position: relative;
   width: 100%;
   height: 260px;
-
-  // Родителю даём только perspective (без transform).
   perspective: 1000px;
   -webkit-perspective: 1000px;
 
   cursor: pointer;
   background-color: transparent;
+  @extend %box-shadow;
 
-  // Включаем 3D-флип при клике (через класс .flipped)
+  transition: transform 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    @extend %box-shadow;
+  }
+
   &.flipped {
     .card-front {
       transform: rotateY(180deg);
@@ -108,7 +155,6 @@
     position: absolute;
     inset: 0;
     border-radius: 4px;
-    // Для iOS
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 
@@ -117,7 +163,6 @@
     align-items: center;
     justify-content: center;
 
-    // 3D
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
 
@@ -126,26 +171,26 @@
   }
 
   .card-front {
-    // В нормальном состоянии передняя сторона "лицом к пользователю"
     transform: rotateY(0deg);
     -webkit-transform: rotateY(0deg);
+    border-radius: 4px;
+    overflow: hidden;
 
-    z-index: 2; // при старте фронт сверху
+    z-index: 2;
     background-color: $color-deep-dark;
     color: $color-light;
   }
 
   .card-back {
-    // Задняя сторона изначально "развернута" на -180 градусов
     transform: rotateY(-180deg);
     -webkit-transform: rotateY(-180deg);
 
     z-index: 1; // изначально сзади
-    background-color: $color-deep-dark;
+    //background-color: $color-deep-dark;
+    background: linear-gradient(135deg, $color-primary-dark, $color-deep-dark);
     color: $color-gray;
   }
 
-  // Стили для "передней" части (наши изображения и т.п.)
   .card-image__container {
     position: relative;
     width: 100%;
@@ -264,10 +309,23 @@
   }
 }
 
-:host ::ng-deep mat-card-content {
-  padding: 0 !important;
-  margin: 0 !important;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+:host ::ng-deep {
+  mat-card-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  mat-card-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
 }
+
+
+

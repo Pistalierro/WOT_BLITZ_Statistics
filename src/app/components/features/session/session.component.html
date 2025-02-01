@@ -1,14 +1,20 @@
 <div class="container">
   <div class="session-container">
-    <h2>Управление игровой сессией</h2>
+    <div class="session-header">
+      <h2>
+        <span class="material-symbols-outlined">stadia_controller</span>
+        Управление игровой сессией
+      </h2>
+    </div>
 
     <!-- Индикатор состояния -->
     <div class="session-status">
       <ng-container *ngIf="sessionActive(); else noSession">
-        <p class="active-session">Сессия активна</p>
+        <span class="session-badge session-badge--active">🟢 Сессия активна</span>
+        <mat-progress-bar *ngIf="sessionState.loadingSignal()" color="warn" mode="indeterminate"></mat-progress-bar>
       </ng-container>
       <ng-template #noSession>
-        <p class="inactive-session">Сессия неактивна. Для старта сессии нажмите "Начать сессию"</p>
+        <span class="session-badge session-badge--inactive">🔴 Сессия неактивна</span>
       </ng-template>
     </div>
 
@@ -19,15 +25,24 @@
 
     <!-- Управление сессией -->
     <div class="session-controls">
-      <button (click)="startSession()" *ngIf="!sessionActive()" color="primary" mat-flat-button>
-        Начать сессию
+      <button (click)="startSession()" *ngIf="!sessionActive()" mat-flat-button>
+        <div class="actions-container">
+          <span>Начать сессию</span>
+          <span class="material-symbols-outlined">line_start_arrow_notch</span>
+        </div>
       </button>
       <ng-container *ngIf="sessionActive()">
-        <button (click)="updateSession()" color="accent" mat-flat-button>
-          Обновить сессию
+        <button (click)="updateSession()" mat-flat-button>
+          <div class="actions-container">
+            <span>Обновить сессию</span>
+            <span class="material-symbols-outlined">refresh</span>
+          </div>
         </button>
-        <button (click)="endSession()" color="warn" mat-flat-button>
-          Завершить сессию
+        <button (click)="endSession()" mat-flat-button>
+          <div class="actions-container">
+            <span>Завершить сессию</span>
+            <span class="material-symbols-outlined">cancel</span>
+          </div>
         </button>
       </ng-container>
     </div>
@@ -41,32 +56,23 @@
       </div>
 
       <div *ngIf="sessionState.intermediateStats() as intermediateStats">
-        <h3>Промежуточные результаты:</h3>
+        <h3>{{ sessionState.sessionActive() ? 'Промежуточные результаты:' : 'Итоговый результат:' }} </h3>
         <p>Сыграно боёв: {{ intermediateStats.battles }}</p>
         <p>Побед: {{ intermediateStats.wins }}</p>
         <p>Винрейт: {{ intermediateStats.winRate | number: '1.0-2' }}%</p>
         <p>Средний урон: {{ intermediateStats.avgDamage | number: '1.0-0' }}</p>
       </div>
-
-      <div *ngIf="sessionState.sessionStats() as sessionStats">
-        <h3>Итоговая статистика за сессию:</h3>
-        <p>Сыграно боёв: {{ sessionStats.battles }}</p>
-        <p>Побед: {{ sessionStats.wins }}</p>
-        <p>Винрейт: {{ sessionStats.winRate | number: '1.0-2' }}%</p>
-        <p>Средний урон: {{ sessionStats.avgDamage | number: '1.0-0' }}</p>
-      </div>
     </div>
 
-    <h3>Промежуточная статистика по танкам:</h3>
-    <div *ngIf="intermediateTanksDelta.length > 0" class="card-grid">
+    <div *ngIf="intermediateTanksDelta.length > 0" [@slideUp] class="card-grid">
+      <h3>Промежуточная статистика по танкам:</h3>
 
       <!-- Перебираем массив танков и выводим карточки -->
       <mat-card
         (click)="toggleFlip(i)"
         *ngFor="let tank of tanksDelta; let i = index"
         [ngClass]="{'flipped': isFlipped[i]}"
-        class="card"
-      >
+        class="card">
 
         <div class="card-front">
           <mat-card-content class="card-image__container">
