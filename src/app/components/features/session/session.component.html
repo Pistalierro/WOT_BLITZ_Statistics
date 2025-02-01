@@ -54,6 +54,8 @@
         <h3>Стартовая статистика:</h3>
         <p>Сыграно боёв: {{ startStats.battles }}</p>
         <p>Побед: {{ startStats.wins }}</p>
+        <p>Винрейт: {{ (startStats.wins / startStats.battles) * 100 | number: '1.0-2' }}%</p>
+        <p>Средний урон: {{ startStats.damage_dealt / startStats.battles | number: '1.0-0' }}</p>
       </div>
 
       <div *ngIf="sessionState.intermediateStats() as intermediateStats">
