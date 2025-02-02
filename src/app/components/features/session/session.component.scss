@@ -332,6 +332,22 @@
   }
 }
 
+// Анимация чисел
+[appOdometer] {
+  display: inline-block;
+  min-width: 40px; // Фиксированная ширина для стабильности
+  font-variant-numeric: tabular-nums; // Выравнивание чисел
+  transition: opacity 0.3s ease;
+  font-weight: bold;
+  color: #4CAF50; // Цвет акцента
+}
+
+// Анимация при изменении
+:host ::ng-deep .odometer-animating {
+  opacity: 0.5;
+  transform: translateY(-5px);
+}
+
 :host ::ng-deep {
   mat-card-content {
     padding: 0 !important;
