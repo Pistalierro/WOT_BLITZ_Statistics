@@ -10,6 +10,10 @@ mat-form-field {
 
 .auth-dialog {
   padding: 20px 0;
+
+  &__title {
+    color: $color-gray-dark !important;
+  }
 }
 
 .action-buttons {
@@ -30,6 +34,21 @@ mat-form-field {
 
   button {
     flex: 0 1 auto; // кнопки занимают место только по размеру контента
+  }
+}
+
+.hint-text {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+
+  .hint-icon {
+    font-size: 14px;
+    height: 14px;
+    width: 14px;
+    margin-right: 4px;
+    color: #2196F3;
   }
 }
 

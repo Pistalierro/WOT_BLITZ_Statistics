@@ -16,7 +16,7 @@
     <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику игрока.</p>
   </div>
   <div *ngIf="playerStore.loading()">
-    <p class="loader"></p>
+    <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
   </div>
   <div *ngIf="playerStore.error()">
     <p class="error">{{ playerStore.error() }}</p>

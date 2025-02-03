@@ -64,8 +64,8 @@
       <!-- Стартовая статистика -->
       <div *ngIf="sessionState.startStats() as startStats">
         <h3>Стартовая статистика:</h3>
-        <p>Сыграно боёв: {{ startStats.battles }}</p>
-        <p>Побед: {{ startStats.wins }}</p>
+        <p>Сыграно боёв: {{ startStats.battles | number: '1.0-0' }}</p>
+        <p>Побед: {{ startStats.wins | number: '1.0-0' }}</p>
         <p>Винрейт: {{ (startStats.wins / startStats.battles) * 100 | number: '1.0-2' }}%</p>
         <p>Средний урон: {{ startStats.damage_dealt / startStats.battles | number: '1.0-0' }}</p>
       </div>
@@ -76,7 +76,7 @@
         <p>Сыграно боёв: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span></p>
         <p>Побед: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
         <p>Винрейт: <span [appOdometer]="intermediateStats.winRate">{{ intermediateStats.winRate | number: '1.0-2' }}</span>%</p>
-        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage | number: '1.0-0' }}</span></p>
+        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage | number }}</span></p>
       </div>
     </div>
 
@@ -84,30 +84,15 @@
     <div *ngIf="intermediateTanksDelta.length > 0">
       <h3>Промежуточная статистика по танкам:</h3>
       <div [@slideUp] class="card-grid">
-        <mat-card
-          (click)="toggleFlip(i)"
-          *ngFor="let tank of tanksDelta; let i = index"
-          [ngClass]="{'flipped': isFlipped[i]}"
-          class="card">
+        <mat-card (click)="toggleFlip(i)" *ngFor="let tank of tanksDelta; let i = index" [ngClass]="{'flipped': isFlipped[i]}" class="card">
 
           <!-- Передняя сторона карточки -->
           <div class="card-front">
             <mat-card-content class="card-image__container">
-              <div
-                [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}"
-                class="card-background"
-              >
-                <img
-                  [alt]="tank.name"
-                  [src]="tank.images?.preview"
-                  class="tank-image"
-                >
+              <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
+                <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
                 <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
-                <img
-                  [alt]="tank.type"
-                  [src]="tankTypes(tank.type)"
-                  class="tank-type"
-                >
+                <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
                 <div class="tank-name">{{ tank.name }}</div>
                 <div class="card-overlay"></div>
               </div>
@@ -117,14 +102,14 @@
             <mat-card-actions class="tank-stats">
               <div class="tank-stats__item">
                 <span class="material-symbols-outlined tank-stat__icon">swords</span>
-                <span>{{ tank.battles }}</span>
+                <span [appOdometer]="tank.battles">{{ tank.battles }}</span>
               </div>
               <div class="tank-stats__item">
                 <mat-icon class="stat-icon">emoji_flags</mat-icon>
                 <span>{{ tank.winRate | number: '1.0-0' }}%</span>
               </div>
               <div class="tank-stats__item">
-                <span>С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
+                <span [appOdometer]="tank.avgDamage">С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
               </div>
             </mat-card-actions>
           </div>

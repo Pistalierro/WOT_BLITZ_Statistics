@@ -1,5 +1,5 @@
 <div class="auth-dialog">
-  <h2 mat-dialog-title>{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
+  <h2 class="auth-dialog__title" mat-dialog-title>{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
   <mat-dialog-content class="mat-typography">
     <form (ngSubmit)="onSubmit()" [formGroup]="authForm" class="login-form">
       <mat-form-field appearance="outline">
@@ -11,7 +11,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Пароль:</mat-label>
-        <input formControlName="password" matInput placeholder="Введите пароль..." type="password"/>
+        <input formControlName="password" matInput placeholder="необязательно от аккаунта WG..." type="password"/>
         <mat-error *ngIf="authForm.get('password')?.hasError('required')">Пароль обязателен</mat-error>
       </mat-form-field>
 
@@ -25,7 +25,7 @@
 
       <mat-form-field *ngIf="!isLoginMode" appearance="outline">
         <mat-label>Никнейм:</mat-label>
-        <input formControlName="nickname" matInput placeholder="Укажите никнейм (WG)..." type="text"/>
+        <input formControlName="nickname" matInput placeholder="Укажите никнейм в точности как в игре..." type="text"/>
         <mat-error *ngIf="authForm.get('nickname')?.hasError('required')">
           Никнейм обязателен
         </mat-error>

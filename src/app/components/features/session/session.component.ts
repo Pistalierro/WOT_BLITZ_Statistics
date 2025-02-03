@@ -10,6 +10,7 @@ import {ANIMATIONS} from '../../../mock/animations';
 import {MATERIAL_MODULES} from '../../../mock/material-providers';
 import {OdometerDirective} from '../../../directives/odometer.directive';
 
+
 @Component({
   selector: 'app-session',
   standalone: true,
@@ -20,7 +21,7 @@ import {OdometerDirective} from '../../../directives/odometer.directive';
     OdometerDirective,
     NgStyle,
     NgClass,
-    NgForOf
+    NgForOf,
   ],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',

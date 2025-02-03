@@ -30,9 +30,7 @@ export class OdometerDirective implements OnChanges {
 
       // Форматирование для целых и дробных чисел
       this.el.nativeElement.textContent =
-        Number.isInteger(end)
-          ? Math.floor(currentValue)
-          : currentValue.toFixed(2);
+        Number.isInteger(end) ? Math.floor(currentValue) : currentValue.toFixed(0);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
