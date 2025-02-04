@@ -1,4 +1,4 @@
-<div *ngIf="playerStore.playerData() as data; else checkAuth">
+<div *ngIf="playerStore.searchedPlayerData() || playerStore.playerData() as data; else checkAuth">
   <h2>Общая статистика игрока</h2>
   <p>{{ data.nickname }} / {{ data.playerId }}</p>
   <p>Дата создания аккаунта: {{ data.created_at * 1000 | date: 'dd.MM.yy' }}</p>

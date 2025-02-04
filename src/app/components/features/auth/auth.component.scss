@@ -21,7 +21,7 @@ mat-form-field {
 
   @include sm-min {
     flex-direction: row;
-    padding: 16px 0; // для добавления пространства между кнопками и содержимым формы
+    padding: 16px 0;
   }
 
   @include sm {
@@ -33,22 +33,8 @@ mat-form-field {
   width: 100%;
 
   button {
-    flex: 0 1 auto; // кнопки занимают место только по размеру контента
+    flex: 0 1 auto;
   }
 }
 
-.hint-text {
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  color: #666;
-
-  .hint-icon {
-    font-size: 14px;
-    height: 14px;
-    width: 14px;
-    margin-right: 4px;
-    color: #2196F3;
-  }
-}
 

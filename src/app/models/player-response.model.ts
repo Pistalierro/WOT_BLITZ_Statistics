@@ -10,6 +10,10 @@ export interface PlayerInfoResponse {
   status: 'ok' | 'error';
   data: {
     [accountId: string]: {
+      rating: {
+        battles: number;
+        capture_points?: number | undefined;
+      };
       account_id: number;
       created_at: number;
       nickname: string;

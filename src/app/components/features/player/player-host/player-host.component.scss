@@ -36,3 +36,79 @@
     }
   }
 }
+
+:host {
+  display: block;
+  width: 100%;
+
+  .mat-mdc-form-field {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-container {
+    width: 100%;
+
+    ::ng-deep {
+      .mdc-text-field--outlined {
+        background-color: $color-deep-dark !important;
+        border-radius: 4px !important;
+
+        .mdc-notched-outline {
+          border-color: $color-accent !important;
+          border-width: 2px !important;
+        }
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $color-accent !important;
+        }
+
+        /* Цвет текста */
+        .mdc-text-field__input {
+          color: $color-gray !important;
+          font-size: 1rem !important;
+          caret-color: $color-accent !important;
+        }
+
+        /* Цвет плейсхолдера */
+        .mdc-text-field__input::placeholder {
+          color: $color-gray-dark !important;
+        }
+
+        /* Цвет лейбла */
+        .mdc-floating-label {
+          color: $color-accent !important;
+        }
+
+        /* Цвет лейбла при фокусе */
+        .mdc-floating-label--float-above {
+          color: $color-accent !important;
+        }
+
+        /* Иконка поиска */
+        .mat-mdc-form-field-icon-suffix {
+          color: $color-accent !important;
+        }
+      }
+    }
+  }
+}
+
+.form-action {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+
+  mat-icon {
+    color: $color-accent;
+  }
+}
+
+
+
+

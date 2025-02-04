@@ -7,10 +7,6 @@
   color: $color-light !important;
 }
 
-.mat-mdc-form-field .mdc-notched-outline {
-  border-color: $color-accent !important;
-}
-
 .mat-mdc-cell {
   border-bottom-color: $color-accent !important;
 }
@@ -29,44 +25,55 @@
   color: $color-light !important;
 }
 
-.mat-mdc-paginator {
-  color: $color-light !important;
-  background-color: $color-deep-dark !important;
-  border-radius: 0 0 4px 4px !important;
+
+.statistics-tanks-table {
+  .mat-mdc-paginator-icon {
+    fill: $color-light !important;
+  }
+
+  .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+    fill: $color-gray-dark !important;
+  }
+
+  .mat-mdc-select {
+    color: $color-light !important;
+  }
+
+  .mat-mdc-form-field .mdc-notched-outline {
+    border-color: $color-accent !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: $color-light !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label, .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label--float-above {
+    color: $color-gray !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: transparent !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    fill: $color-light !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    color: $color-light !important;
+    font-size: 1rem !important;
+  }
+
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    caret-color: $color-accent !important;
+  }
+
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    color: $color-light !important;
+  }
 }
 
-.mat-mdc-select {
-  color: $color-light !important;
-}
 
-.mat-mdc-select-arrow {
-  color: $color-light !important;
-}
-
-.mat-mdc-paginator-icon {
-  fill: $color-light !important;
-}
-
-.mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
-  fill: $color-gray-dark !important;
-}
-
-.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label, .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label--float-above {
-  color: $color-gray !important;
-}
-
-.mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: transparent !important;
-}
-
-.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
-  fill: $color-light !important;
-}
-
-.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
-  color: $color-light !important;
-  font-size: 1rem !important;
-}
 
 
 

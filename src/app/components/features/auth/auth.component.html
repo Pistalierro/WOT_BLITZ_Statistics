@@ -11,7 +11,10 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Пароль:</mat-label>
-        <input formControlName="password" matInput placeholder="необязательно от аккаунта WG..." type="password"/>
+        <input formControlName="password" matInput
+               matTooltip="Пароль может быть отличным от аккаутна в игре. Рекомендация использовать уникальный пароль."
+               matTooltipClass="custom-tooltip"
+               placeholder="Необязательно от аккаунта WG..." type="password"/>
         <mat-error *ngIf="authForm.get('password')?.hasError('required')">Пароль обязателен</mat-error>
       </mat-form-field>
 
@@ -25,14 +28,17 @@
 
       <mat-form-field *ngIf="!isLoginMode" appearance="outline">
         <mat-label>Никнейм:</mat-label>
-        <input formControlName="nickname" matInput placeholder="Укажите никнейм в точности как в игре..." type="text"/>
+        <input formControlName="nickname" matInput matTooltip="Укажите в точности ник который используете в игре"
+               matTooltipClass="custom-tooltip"
+               placeholder="Укажите никнейм в точности как в игре..."
+               type="text"/>
         <mat-error *ngIf="authForm.get('nickname')?.hasError('required')">
           Никнейм обязателен
         </mat-error>
       </mat-form-field>
 
       <mat-dialog-actions class="action-buttons">
-        <button (click)="toggleMode()" color="default" mat-raised-button>
+        <button (click)="toggleMode()" color="primary" mat-raised-button>
           {{ isLoginMode ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти' }}
         </button>
         <button [@buttonState]="buttonState" color="primary" mat-raised-button type="submit">

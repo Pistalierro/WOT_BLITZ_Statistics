@@ -30,7 +30,7 @@ export class PlayerVehiclesComponent implements AfterViewInit {
 
   protected tanksService = inject(TanksService);
   protected authService = inject(AuthService);
-  
+
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
@@ -48,29 +48,21 @@ export class PlayerVehiclesComponent implements AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
 
-    // Кастомный метод извлечения «значения для сортировки»
     this.dataSource.sortingDataAccessor = (tank, sortHeaderId) => {
       switch (sortHeaderId) {
         case 'nation':
-          return tank.nation; // строка 'usa', 'germany', ...
+          return tank.nation;
         case 'tier':
-          return tank.tier; // число 1..10
+          return tank.tier;
         case 'name':
-          return tank.name; // строка
-        // Если в displayedColumns у вас ещё есть 'win_rate', 'damage' и т.п.
+          return tank.name;
         case 'win_rate':
-          // Вычисляем процент
-          return tank.all.battles
-            ? (tank.all.wins / tank.all.battles) * 100
-            : 0;
+          return tank.all.battles ? (tank.all.wins / tank.all.battles) * 100 : 0;
         case 'battles':
           return tank.all.battles;
         case 'damage':
-          return tank.all.battles
-            ? tank.all.damage_dealt / tank.all.battles
-            : 0;
+          return tank.all.battles ? tank.all.damage_dealt / tank.all.battles : 0;
         default:
-          // Фолбек на случай, если добавили новую колонку
           return (tank as any)[sortHeaderId];
       }
     };

@@ -1,6 +1,15 @@
 <div class="container">
   <h2>Рады видеть вас, {{ authService.nicknameSignal() ? authService.nicknameSignal() : 'Гость' }}!</h2>
   <p>Здесь вы можете проанализировать вашу статистику по аккаунту, технику, просмотреть ваши награды.</p>
+  <form (ngSubmit)="onSubmit()" [formGroup]="searchPlayerForm" class="form-search">
+    <mat-form-field appearance="outline" class="form-container">
+      <mat-label class="form-label">Посмотреть статистику других игроков...</mat-label>
+      <input (keydown.enter)="onSubmit()" class="form-input" formControlName="name" matInput placeholder="Введите ник игрока" type="text">
+      <button aria-label="Clear" class="form-action" mat-icon-button matSuffix>
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </form>
 
   <mat-toolbar class="player-toolbar">
     <button mat-button routerLink="stat" routerLinkActive="active">Статистика</button>

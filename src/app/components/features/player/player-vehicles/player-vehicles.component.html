@@ -1,77 +1,78 @@
-<div [style.display]="tanksService.loading() ? 'flex' : 'none'" class="overlay">
-  <p>Загрузка данных о танках...</p>
+<div class="progress-bar">
+  <mat-progress-bar *ngIf="tanksService.loading()" color="warn" mode="indeterminate"></mat-progress-bar>
 </div>
 
-<div [style.display]="authService.userSignal() === null ? 'flex' : 'none'" class="overlay">
+<div *ngIf="authService.userSignal() === null" class="overlay">
   <p>Пожалуйста, авторизуйтесь, чтобы увидеть данные.</p>
 </div>
 
-<div [style.display]="authService.errorSignal() ? 'flex' : 'none'" class="overlay">
+<div *ngIf="authService.errorSignal()" class="overlay">
   <p class="error">{{ authService.errorSignal() }}</p>
 </div>
 
-<mat-form-field class="filter">
+<mat-form-field appearance="outline" class="filter">
   <mat-label>Filter</mat-label>
   <input #input (keyup)="applyFilter($event)" matInput placeholder="Начните вводить информацию...">
 </mat-form-field>
 
 <div class="mat-elevation-z8">
-  <table [dataSource]="dataSource" class="statistics-tanks-table" mat-table matSort>
-
-    <ng-container matColumnDef="mainInfo">
-      <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
-        <div class="header-buttons">
-          <span class="header-button" mat-sort-header="nation"><mat-icon>public</mat-icon></span>
-          <span class="header-button" mat-sort-header="tier">I-X</span>
-          <span class="header-button header-button--type" mat-sort-header="type">Тип</span>
-        </div>
-      </th>
-      <td *matCellDef="let row" class="main-info-cell" mat-cell>
-        <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
-          <div class="tier-label">{{ toRoman(row.tier) }}</div>
-          <img [alt]="row.type" [src]="tankTypes(row.type)" class="class-icon"/>
-          <div class="flag-content">
-            <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="row.images.preview" class="tank-icon-centered"/>
-            <ng-template #noImage><span class="no-image">Нет изображения</span></ng-template>
+  <div class="table-container">
+    <table [dataSource]="dataSource" class="statistics-tanks-table" mat-table matSort>
+      <!-- Основная информация -->
+      <ng-container matColumnDef="mainInfo">
+        <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
+          <div class="header-buttons">
+            <span class="header-button" mat-sort-header="nation" matTooltip="Сортировать по нации"><mat-icon>public</mat-icon></span>
+            <span class="header-button" mat-sort-header="tier" matTooltip="Сортировать по уровню">I-X</span>
+            <span class="header-button header-button--type" mat-sort-header="type" matTooltip="Сортировать по типу техники">Тип</span>
           </div>
-          <div class="tank-name">{{ row.name }}</div>
-        </div>
-      </td>
-    </ng-container>
+        </th>
+        <td *matCellDef="let row" class="main-info-cell" mat-cell>
+          <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
+            <div class="tier-label">{{ toRoman(row.tier) }}</div>
+            <img [alt]="row.type" [src]="tankTypes(row.type)" class="class-icon"/>
+            <div class="flag-content">
+              <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="row.images.preview" class="tank-icon-centered"/>
+              <ng-template #noImage><span class="no-image">Нет изображения</span></ng-template>
+            </div>
+            <div class="tank-name">{{ row.name }}</div>
+          </div>
+        </td>
+      </ng-container>
 
-    <!-- Win_Rate Column -->
-    <ng-container matColumnDef="win_rate">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        <mat-icon>emoji_flags</mat-icon>
-      </th>
-      <td *matCellDef="let row" class="win-rate" mat-cell>
-        {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
-      </td>
-    </ng-container>
+      <!-- Win_Rate Column -->
+      <ng-container matColumnDef="win_rate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+          <mat-icon>emoji_flags</mat-icon>
+        </th>
+        <td *matCellDef="let row" class="win-rate" mat-cell>
+          {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
+        </td>
+      </ng-container>
 
-    <!-- Battles Column -->
-    <ng-container matColumnDef="battles">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        <span class="material-symbols-outlined">swords</span>
-      </th>
-      <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
-    </ng-container>
+      <!-- Battles Column -->
+      <ng-container matColumnDef="battles">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+          <span class="material-symbols-outlined">swords</span>
+        </th>
+        <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
+      </ng-container>
 
-    <!-- Damage Column -->
-    <ng-container matColumnDef="damage">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
-      <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
-    </ng-container>
+      <!-- Damage Column -->
+      <ng-container matColumnDef="damage">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
+        <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
+      </ng-container>
 
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
 
-    <!-- Row shown when there is no matching data. -->
-    <tr *matNoDataRow class="mat-row">
-      <td class="mat-cell" colspan="4">Укажите технику {{ input.value }}</td>
-    </tr>
-  </table>
-
-  <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
+      <!-- Row shown when there is no matching data. -->
+      <tr *matNoDataRow class="mat-row">
+        <td class="mat-cell" colspan="4">Укажите технику {{ input.value }}</td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="5" aria-label="Select page of users"></mat-paginator>
 </div>
 

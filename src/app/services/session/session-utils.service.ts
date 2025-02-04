@@ -26,7 +26,7 @@ export class SessionUtilsService {
 
       const nickname = this.sessionState.playerStore.nickname();
       if (!nickname) throw new Error('Нет никнейма');
-      await this.sessionState.playerStore.loadPlayerData(nickname);
+      // await this.sessionState.playerStore.loadPlayerData(nickname);
 
       const accountId = this.playerStore.accountId();
       if (!accountId) throw new Error('Account ID отсутствует');

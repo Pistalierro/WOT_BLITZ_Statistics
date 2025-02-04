@@ -8,109 +8,110 @@ import {
 } from '../models/player-response.model';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
-import {catchError, firstValueFrom, throwError} from 'rxjs';
+import {catchError, firstValueFrom} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerStoreService {
-
   nickname = signal<string | null>(null);
   accountId = signal<number | null>(null);
   playerData = signal<PlayerData | null>(null);
+  searchedPlayerData = signal<PlayerData | null>(null);
 
-  loading = signal<boolean | null>(null);
+  loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
   private http = inject(HttpClient);
 
-  async loadPlayerData(nickname: string): Promise<void> {
+  async fetchAndSetPlayerData(nickname: string, targetSignal: typeof this.playerData): Promise<void> {
     if (!nickname) {
-      this.error.set('Никнейм отсутствует');
+      console.warn('Nickname is empty.');
       return;
     }
 
     this.loading.set(true);
     this.error.set(null);
-    this.playerData.set(null);
-    if (!this.accountId()) {
-      this.accountId.set(null);
-    }
+    targetSignal.set(null);
 
     try {
-      // 1. Получаем playerId
-      const searchUrl = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
-      const searchRes: PlayerSearchResponse = await firstValueFrom(
-        this.http.get<PlayerSearchResponse>(searchUrl).pipe(
-          catchError(err => throwError(() => new Error('Ошибка поиска игрока: ' + err.message)))
-        )
-      );
-
-      if (!searchRes.data.length) {
-        this.error.set('Игрок с таким никнеймом не найден');
-        return;
-      }
-
-      const playerId = searchRes.data[0].account_id;
-      if (playerId) this.accountId.set(playerId);
-
-      // 2. Получаем информацию об игроке
-      const infoUrl = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${playerId}&fields=created_at,nickname,statistics.all`;
-      const infoRes: PlayerInfoResponse = await firstValueFrom(
-        this.http.get<PlayerInfoResponse>(infoUrl).pipe(
-          catchError(err => throwError(() => new Error('Ошибка получения информации об игроке: ' + err.message)))
-        )
-      );
-
-      const playerInfo = infoRes.data?.[playerId];
-      if (!playerInfo) {
-        this.error.set('Информация об игроке не найдена');
-        return;
-      }
-
-      // 3. Получаем информацию о клане
-      const clanUrl = `${apiConfig.baseUrl}/clans/accountinfo/?application_id=${apiConfig.applicationId}&account_id=${playerId}`;
-      const clanRes: ClanAccountInfoResponse = await firstValueFrom(
-        this.http.get<ClanAccountInfoResponse>(clanUrl).pipe(
-          catchError(err => throwError(() => new Error('Ошибка получения информации о клане: ' + err.message)))
-        )
-      );
-
-      const clanId = clanRes.data[playerId]?.clan_id;
-      let clanInfo = null;
-      if (clanId) {
-        const clanInfoUrl = `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${clanId}`;
-        const clanInfoRes: ClanInfoResponse = await firstValueFrom(
-          this.http.get<ClanInfoResponse>(clanInfoUrl).pipe(
-            catchError(err => throwError(() => new Error('Ошибка получения информации о клане: ' + err.message)))
-          )
-        );
-
-        const clanData = clanInfoRes.data[clanId];
-        if (clanData) {
-          clanInfo = {
-            name: clanData.name,
-            tag: clanData.tag,
-          };
-        }
-      }
-
-      // 4. Формируем итоговую структуру PlayerData
-      const finalData: PlayerData = {
-        playerId,
-        created_at: playerInfo.created_at,
-        nickname: playerInfo.nickname,
-        statistics: playerInfo.statistics,
-        clan: clanInfo || undefined,
-      };
-
-      this.playerData.set(finalData);
-
+      const playerData = await this.fetchPlayerData(nickname);
+      targetSignal.set(playerData);
     } catch (error: any) {
-      this.error.set(error.message);
+      this.error.set(error.message || 'Произошла ошибка');
     } finally {
       this.loading.set(false);
     }
   }
-  
+
+  loadPlayerData(nickname: string): Promise<void> {
+    return this.fetchAndSetPlayerData(nickname, this.playerData);
+  }
+
+  loadSearchedPlayerData(nickname: string): Promise<void> {
+    return this.fetchAndSetPlayerData(nickname, this.searchedPlayerData);
+  }
+
+  private async fetchPlayerData(nickname: string): Promise<PlayerData> {
+    const searchUrl = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
+    const searchRes = await firstValueFrom(
+      this.http.get<PlayerSearchResponse>(searchUrl).pipe(
+        catchError(err => {
+          throw new Error('Ошибка поиска игрока: ' + err.message);
+        })
+      )
+    );
+
+    if (!searchRes.data.length) {
+      throw new Error('Игрок с таким никнеймом не найден');
+    }
+
+    const playerId = searchRes.data[0].account_id;
+    this.accountId.set(playerId);
+
+    const playerInfoUrl = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${playerId}`;
+    const infoRes = await firstValueFrom(
+      this.http.get<PlayerInfoResponse>(playerInfoUrl).pipe(
+        catchError(err => {
+          throw new Error('Ошибка получения информации об игроке: ' + err.message);
+        })
+      )
+    );
+
+    const playerFullInfo = infoRes.data?.[playerId];
+    if (!playerFullInfo) {
+      throw new Error('Информация об игроке не найдена');
+    }
+
+    let clanData = null;
+    const clanUrl = `${apiConfig.baseUrl}/clans/accountinfo/?application_id=${apiConfig.applicationId}&account_id=${playerId}`;
+    const clanRes = await firstValueFrom(
+      this.http.get<ClanAccountInfoResponse>(clanUrl).pipe(
+        catchError(err => {
+          throw new Error('Ошибка получения информации о клане: ' + err.message);
+        })
+      )
+    );
+
+    const clanId = clanRes.data[playerId]?.clan_id;
+    if (clanId) {
+      const clanFullInfoUrl = `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${clanId}`;
+      const clanFullInfoRes = await firstValueFrom(
+        this.http.get<ClanInfoResponse>(clanFullInfoUrl).pipe(
+          catchError(err => {
+            throw new Error('Ошибка получения информации о клане: ' + err.message);
+          })
+        )
+      );
+      clanData = clanFullInfoRes.data[clanId];
+    }
+
+    return {
+      playerId,
+      created_at: playerFullInfo.created_at,
+      nickname: playerFullInfo.nickname,
+      statistics: playerFullInfo.statistics,
+      clan: clanData || undefined
+    };
+  }
 }

@@ -2,4 +2,152 @@
 @use "../../../../../styles/presets/skin" as *;
 @use "../../../../../styles/mixins/mixins-media" as *;
 
+progress-bar {
+  min-height: $gap-xs;
+  transition: opacity 0.3s ease;
+  opacity: 1;
 
+  &.ng-animate {
+    opacity: 0;
+  }
+}
+
+
+.table-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  display: block;
+  width: 100%; /* или фиксированная ширина */
+}
+
+.statistics-tanks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.statistics-tanks-table thead {
+  position: sticky;
+  top: 0;
+  background-color: white; /* или любой другой цвет фона */
+  z-index: 1;
+}
+
+:host ::ng-deep {
+  /* Основной контейнер поля */
+  .mat-mdc-form-field {
+    width: 100%;
+
+    /* Контейнер текстового поля */
+    .mdc-text-field--outlined {
+      background-color: $color-deep-dark;
+
+      /* Контур (outline) */
+      .mdc-notched-outline {
+        border-color: $color-accent;
+        border-radius: 4px;
+
+        /* Передняя часть контура */
+        &__leading {
+          border-color: inherit;
+        }
+
+        /* Задняя часть контура */
+        &__trailing {
+          border-color: inherit;
+        }
+
+        /* Выемка для лейбла */
+        &__notch {
+          border-color: inherit;
+        }
+      }
+
+      /* Состояния */
+      &:hover .mdc-notched-outline {
+        border-color: $color-accent;
+      }
+
+      &.mdc-text-field--focused .mdc-notched-outline {
+        border-color: $color-accent;
+        border-width: 2px;
+      }
+    }
+
+    /* Поле ввода */
+    .mdc-text-field__input {
+      color: $color-light;
+      font-size: 14px;
+
+      /* Плейсхолдер */
+      &::placeholder {
+        color: $color-gray-light;
+      }
+    }
+
+    /* Лейбл */
+    .mdc-floating-label {
+      color: $color-accent;
+
+      /* Лейбл в активном состоянии */
+      &.mdc-floating-label--float-above {
+        color: $color-accent;
+        font-size: 16px;
+      }
+    }
+
+    /* Подсказки и ошибки */
+    .mat-mdc-form-field-subscript-wrapper {
+      font-size: 12px;
+
+      /* Текст ошибки */
+      .mat-mdc-form-field-error {
+        color: $color-accent;
+      }
+    }
+  }
+
+  .mat-mdc-paginator {
+    background-color: $color-deep-dark;
+    color: $color-gray;
+    border-radius: 0 0 4px 4px;
+    border-top: 1px solid #333;
+
+    &-container {
+      padding: 8px 16px;
+    }
+
+    &-navigation {
+    }
+
+    &-page-size-label {
+      font-size: 1rem;
+    }
+
+    .mat-mdc-select {
+      color: white;
+      font-size: 1rem;
+    }
+
+    .mat-mdc-select-value {
+      font-size: 1rem;
+    }
+
+    &-range-label {
+      font-size: 1rem;
+    }
+
+    &-icon {
+      fill: $color-accent;
+    }
+
+
+  }
+
+  .mat-mdc-select-arrow svg {
+    color: $color-accent;
+  }
+
+  .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+    fill: $color-gray-dark;
+  }
+}
