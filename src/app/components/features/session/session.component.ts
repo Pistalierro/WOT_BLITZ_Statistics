@@ -81,6 +81,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     try {
       await this.sessionActions.updateSession();
       this.cdr.detectChanges();
+      console.log('Intermediate Stats:', this.sessionState.intermediateStats());
     } catch (error) {
       console.error('Ошибка при обновлении сессии:', error);
     }
