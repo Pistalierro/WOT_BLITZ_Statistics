@@ -44,6 +44,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   private sessionMonitoring = inject(SessionMonitoringService);
   private cdr = inject(ChangeDetectorRef);
 
+
   constructor() {
     effect(() => {
       const sessionTanksList = this.sessionState.intermediateStats()?.tanksDelta;
