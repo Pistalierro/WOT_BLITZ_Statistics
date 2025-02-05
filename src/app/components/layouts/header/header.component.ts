@@ -1,5 +1,5 @@
 import {Component, inject, ViewChild} from '@angular/core';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
+import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
 import {NgIf} from '@angular/common';

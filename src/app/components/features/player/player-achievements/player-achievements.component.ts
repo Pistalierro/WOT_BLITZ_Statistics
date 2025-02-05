@@ -1,8 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {AchievementsService} from '../../../../services/achievements.service';
-import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
-import {getAchievementIcon, translateAchievementName} from '../../../../mock/achievements-utils';
-import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {NgForOf, NgIf} from '@angular/common';
+import {getAchievementIcon, translateAchievementName} from '../../../../shared/helpers/achievements-utils';
+import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 
 @Component({
   selector: 'app-player-achievements',
@@ -10,8 +10,7 @@ import {MATERIAL_MODULES} from '../../../../mock/material-providers';
   imports: [
     NgIf,
     NgForOf,
-    ...MATERIAL_MODULES,
-    KeyValuePipe
+    ...MATERIAL_MODULES
   ],
   templateUrl: './player-achievements.component.html',
   styleUrl: './player-achievements.component.scss'

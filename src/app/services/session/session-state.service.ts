@@ -2,8 +2,8 @@ import {inject, Injectable, signal} from '@angular/core';
 import {Auth} from '@angular/fire/auth';
 import {Firestore} from '@angular/fire/firestore';
 import {PlayerStoreService} from '../player-store.service';
-import {SessionDeltaInterface, StatsInterface} from '../../models/battle-session.model';
-import {Tank} from '../../models/tanks-response.model';
+import {SessionDeltaInterface, StatsInterface} from '../../models/session/battle-session.model';
+import {Tank} from '../../models/tank/tanks-response.model';
 
 @Injectable({
   providedIn: 'root'

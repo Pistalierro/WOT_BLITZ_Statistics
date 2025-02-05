@@ -1,14 +1,15 @@
 import {inject, Injectable, signal} from '@angular/core';
+
+import {HttpClient} from '@angular/common/http';
+import {apiConfig} from '../app.config';
+import {catchError, firstValueFrom} from 'rxjs';
 import {
   ClanAccountInfoResponse,
   ClanInfoResponse,
   PlayerData,
   PlayerInfoResponse,
   PlayerSearchResponse
-} from '../models/player-response.model';
-import {HttpClient} from '@angular/common/http';
-import {apiConfig} from '../app.config';
-import {catchError, firstValueFrom} from 'rxjs';
+} from '../models/player/player-response.model';
 
 @Injectable({
   providedIn: 'root'

@@ -1,10 +1,10 @@
 import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {doc, updateDoc} from '@angular/fire/firestore';
-import {SessionDataInterface, SessionDeltaInterface} from '../../models/battle-session.model';
+import {SessionDataInterface, SessionDeltaInterface} from '../../models/session/battle-session.model';
 import {TanksService} from '../tanks.service';
 import {PlayerStoreService} from '../player-store.service';
-import {Tank, TankDeltaInterface} from '../../models/tanks-response.model';
+import {Tank, TankDeltaInterface} from '../../models/tank/tanks-response.model';
 
 @Injectable({
   providedIn: 'root'

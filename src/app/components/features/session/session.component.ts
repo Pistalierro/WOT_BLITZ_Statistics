@@ -3,12 +3,13 @@ import {DecimalPipe, NgClass, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {SessionStateService} from '../../../services/session/session-state.service';
 import {SessionMonitoringService} from '../../../services/session/session-monitoring.service';
 import {SessionActionsService} from '../../../services/session/session-actions.service';
-import {TankDeltaInterface} from '../../../models/tanks-response.model';
+import {TankDeltaInterface} from '../../../models/tank/tanks-response.model';
 import {MatSort} from '@angular/material/sort';
-import {getFlagUrl, tankTypes, toRoman} from '../../../mock/tank-utils';
-import {ANIMATIONS} from '../../../mock/animations';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
-import {OdometerDirective} from '../../../directives/odometer.directive';
+import {getFlagUrl, tankTypes, toRoman} from '../../../shared/helpers/tank-utils';
+import {ANIMATIONS} from '../../../shared/helpers/animations';
+import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
+import {OdometerDirective} from '../../../shared/directives/odometer.directive';
+import {sanitizeUrl} from '../../../shared/helpers/utils';
 
 
 @Component({
@@ -40,10 +41,9 @@ export class SessionComponent implements OnInit, OnDestroy {
   protected readonly tankTypes = tankTypes;
   protected readonly toRoman = toRoman;
   protected readonly getFlagUrl = getFlagUrl;
-
+  protected readonly sanitizeUrl = sanitizeUrl;
   private sessionMonitoring = inject(SessionMonitoringService);
   private cdr = inject(ChangeDetectorRef);
-
 
   constructor() {
     effect(() => {

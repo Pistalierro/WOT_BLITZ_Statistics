@@ -32,7 +32,8 @@
             <div class="tier-label">{{ toRoman(row.tier) }}</div>
             <img [alt]="row.type" [src]="tankTypes(row.type)" class="class-icon"/>
             <div class="flag-content">
-              <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="row.images.preview" class="tank-icon-centered"/>
+              <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
+                   class="tank-icon-centered"/>
               <ng-template #noImage><span class="no-image">Нет изображения</span></ng-template>
             </div>
             <div class="tank-name">{{ row.name }}</div>

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
-import {ANIMATIONS} from '../../../mock/animations';
+import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
+import {ANIMATIONS} from '../../../shared/helpers/animations';
 
 @Component({
   selector: 'app-home',

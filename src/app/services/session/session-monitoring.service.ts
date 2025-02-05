@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {doc, getDoc, onSnapshot} from '@angular/fire/firestore';
 import {User} from '@angular/fire/auth';
-import {SessionDataInterface} from '../../models/battle-session.model';
+import {SessionDataInterface} from '../../models/session/battle-session.model';
 
 @Injectable({
   providedIn: 'root'

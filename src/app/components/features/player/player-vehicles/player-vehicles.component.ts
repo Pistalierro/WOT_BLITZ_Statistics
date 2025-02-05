@@ -1,13 +1,14 @@
 import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
 import {TanksService} from '../../../../services/tanks.service';
-import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {Tank} from '../../../../models/tanks-response.model';
+import {Tank} from '../../../../models/tank/tanks-response.model';
 import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
-import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../mock/tank-utils';
+import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../shared/helpers/tank-utils';
 import {AuthService} from '../../../../services/auth.service';
+import {sanitizeUrl} from '../../../../shared/helpers/utils';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -34,6 +35,7 @@ export class PlayerVehiclesComponent implements AfterViewInit {
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
+  protected readonly sanitizeUrl = sanitizeUrl;
 
   constructor() {
     effect(() => {

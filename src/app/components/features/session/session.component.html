@@ -86,7 +86,7 @@
           <div class="card-front">
             <mat-card-content class="card-image__container">
               <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
-                <img [alt]="tank.name" [src]="tank.images?.preview" class="tank-image">
+                <img [alt]="tank.name" [src]="sanitizeUrl(tank.images?.preview)" class="tank-image">
                 <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
                 <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
                 <div class="tank-name">{{ tank.name }}</div>

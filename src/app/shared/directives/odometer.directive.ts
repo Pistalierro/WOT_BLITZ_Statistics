@@ -15,7 +15,6 @@ export class OdometerDirective implements OnChanges {
         changes['value'].currentValue
       );
     }
-    console.log('Odometer update:', changes['value'].previousValue, '->', changes['value'].currentValue);
   }
 
   private animateValue(start: number, end: number): void {

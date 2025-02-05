@@ -1,4 +1,4 @@
-import {Tank, TankDeltaInterface} from './tanks-response.model';
+import {Tank, TankDeltaInterface} from '../tank/tanks-response.model';
 
 export interface StatsInterface {
   battles: number;

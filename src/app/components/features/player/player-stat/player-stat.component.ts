@@ -2,7 +2,7 @@ import {Component, inject} from '@angular/core';
 import {AuthService} from '../../../../services/auth.service';
 import {DatePipe, DecimalPipe, NgIf} from '@angular/common';
 import {PlayerStoreService} from '../../../../services/player-store.service';
-import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 
 @Component({
   selector: 'app-player-stat',

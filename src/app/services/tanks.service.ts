@@ -2,10 +2,11 @@ import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
-import {Tank, TankStatsResponse} from '../models/tanks-response.model';
+import {Tank, TankStatsResponse} from '../models/tank/tanks-response.model';
 import {PlayerStoreService} from './player-store.service';
 
 @Injectable({providedIn: 'root'})
+
 export class TanksService {
   tanksList = signal<Tank[]>([]);
   loading = signal<boolean>(false);
@@ -95,5 +96,9 @@ export class TanksService {
       this.error.set(err.message);
       return {};
     }
+  }
+
+  sanitizeUrl(url: string | undefined): string {
+    return url ? url.replace(/^http:/, 'https:') : 'assets/default-tank.png';
   }
 }

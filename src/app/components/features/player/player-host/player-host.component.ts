@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {AuthService} from '../../../../services/auth.service';
-import {MATERIAL_MODULES} from '../../../../mock/material-providers';
+import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PlayerStoreService} from '../../../../services/player-store.service';

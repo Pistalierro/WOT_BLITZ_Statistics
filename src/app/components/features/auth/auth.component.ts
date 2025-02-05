@@ -1,11 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {MATERIAL_MODULES} from '../../../mock/material-providers';
+import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth.service';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {MatDialogRef} from '@angular/material/dialog';
-import {ANIMATIONS} from '../../../mock/animations';
+import {ANIMATIONS} from '../../../shared/helpers/animations';
 
 @Component({
   selector: 'app-auth',
