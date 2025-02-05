@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Directive, ElementRef, inject, Input, OnChanges, SimpleChanges} from '@angular/core';
 
 @Directive({
   selector: '[appOdometer]',
@@ -6,9 +6,7 @@ import {Directive, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/c
 })
 export class OdometerDirective implements OnChanges {
   @Input('appOdometer') value: number = 0;
-
-  constructor(private el: ElementRef) {
-  }
+  private el = inject(ElementRef);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['value']) {
@@ -20,7 +18,7 @@ export class OdometerDirective implements OnChanges {
   }
 
   private animateValue(start: number, end: number): void {
-    const duration = 1000;
+    const duration = 750;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {

@@ -32,11 +32,7 @@
 
     <!-- Управление -->
     <div class="session-controls">
-      <button
-        (click)="startSession()"
-        *ngIf="!sessionActive()"
-        mat-flat-button
-      >
+      <button (click)="startSession()" *ngIf="!sessionActive()" mat-flat-button>
         <div class="actions-container">
           <span>Начать сессию</span>
           <span class="material-symbols-outlined">line_start_arrow_notch</span>
@@ -75,14 +71,14 @@
         <h3>{{ sessionState.sessionActive() ? 'Промежуточные результаты:' : 'Итоговый результат:' }}</h3>
         <p>Сыграно боёв: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span></p>
         <p>Побед: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
-        <p>Винрейт: <span [appOdometer]="intermediateStats.winRate">{{ intermediateStats.winRate | number: '1.0-2' }}</span>%</p>
-        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage | number }}</span></p>
+        <p>Винрейт: <span [appOdometer]="intermediateStats.winRate">{{ intermediateStats.winRate }}</span>%</p>
+        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage }}</span></p>
       </div>
     </div>
 
     <!-- Статистика по танкам -->
     <div *ngIf="intermediateTanksDelta.length > 0">
-      <h3>Промежуточная статистика по танкам:</h3>
+      <h3>{{ sessionState.sessionActive() ? 'Промежуточная статистика по танкам:' : 'Итоговая статистика по танкам:' }}</h3>
       <div [@slideUp] class="card-grid">
         <mat-card (click)="toggleFlip(i)" *ngFor="let tank of tanksDelta; let i = index" [ngClass]="{'flipped': isFlipped[i]}" class="card">
 
@@ -109,7 +105,8 @@
                 <span>{{ tank.winRate | number: '1.0-0' }}%</span>
               </div>
               <div class="tank-stats__item">
-                <span [appOdometer]="tank.avgDamage">С/У: {{ tank.avgDamage | number: '1.0-0' }}</span>
+                <span>С/У</span>
+                <span [appOdometer]="tank.avgDamage">{{ tank.avgDamage }}</span>
               </div>
             </mat-card-actions>
           </div>

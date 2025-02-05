@@ -3,6 +3,7 @@ import {SessionStateService} from './session-state.service';
 import {collection, doc, setDoc} from '@angular/fire/firestore';
 import {SessionUtilsService} from './session-utils.service';
 import {TanksService} from '../tanks.service';
+import {PlayerStoreService} from '../player-store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class SessionActionsService {
   private sessionState = inject(SessionStateService);
   private sessionUtils = inject(SessionUtilsService);
   private tanksService = inject(TanksService);
+  private playerStore = inject(PlayerStoreService);
 
   async startSession(): Promise<void> {
     try {
@@ -22,7 +24,7 @@ export class SessionActionsService {
         return;
       }
 
-      const playerData = this.sessionState.playerStore.playerData();
+      const playerData = this.playerStore.playerData();
       if (!playerData) throw new Error('Нет данных об игроке.');
 
       const startStatsValue = playerData.statistics.all;

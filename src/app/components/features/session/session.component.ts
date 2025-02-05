@@ -1,4 +1,4 @@
-import {Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DecimalPipe, NgClass, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {SessionStateService} from '../../../services/session/session-state.service';
 import {SessionMonitoringService} from '../../../services/session/session-monitoring.service';
@@ -42,6 +42,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   protected readonly getFlagUrl = getFlagUrl;
 
   private sessionMonitoring = inject(SessionMonitoringService);
+  private cdr = inject(ChangeDetectorRef);
 
   constructor() {
     effect(() => {
@@ -78,6 +79,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   async updateSession(): Promise<void> {
     try {
       await this.sessionActions.updateSession();
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Ошибка при обновлении сессии:', error);
     }
