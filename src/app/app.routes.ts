@@ -34,5 +34,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/features/session/session.component')
       .then(m => m.SessionComponent),
     canActivate: [authGuard],
+  },
+  {
+    path: 'clans',
+    loadComponent: () => import('./components/features/clans/clans.component')
+      .then(m => m.ClansComponent),
   }
 ];

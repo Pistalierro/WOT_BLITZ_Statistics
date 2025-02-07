@@ -3,11 +3,20 @@
 @use "../../../../styles/presets/variables" as *;
 @use "../../../../styles/presets/skin" as *;
 
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 .custom-toolbar {
   background-color: $color-deep-dark;
   color: $color-light;
   height: $gap-x3;
   padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 
   .container {
     @extend %container;
@@ -93,11 +102,8 @@
   }
 }
 
-.sidenav-container {
-  height: calc(100vh - $gap-x3);
-}
-
 .sidenav {
+  height: 100%;
   width: $gap-x5 * 2;
   background-color: $color-deep-dark;
   color: $color-light;
@@ -106,7 +112,6 @@
   padding: $gap;
 
   .mobile-navigation {
-
     button {
       width: 100%;
       display: block;
@@ -120,11 +125,12 @@
 .content-container {
   position: relative;
   min-height: calc(100vh - $gap-x3);
+  height: 100%;
   padding-top: $gap-x2;
   padding-bottom: $gap-x2;
   background-color: $color-dark;
-  overflow: hidden;
-  z-index: -2;
+  overflow: auto;
+  z-index: -1;
 
   &::before {
     content: '';

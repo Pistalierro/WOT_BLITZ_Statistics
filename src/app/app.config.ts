@@ -17,19 +17,10 @@ const firebaseConfig = {
   appId: '1:16894861011:web:484ef3fa5e7d5ab5e73e26'
 };
 
-
 export const apiConfig = {
   baseUrl: 'https://api.wotblitz.eu/wotb',
   applicationId: '8b707eb789d2bbc368fd873f5406b32d',
 };
-
-function setViewportHeight(): void {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-window.addEventListener('resize', setViewportHeight);
-setViewportHeight();
 
 export const appConfig: ApplicationConfig = {
   providers: [
