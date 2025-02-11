@@ -239,11 +239,11 @@ export class ClanService {
   }
 
   private saveToStorage(key: string, data: any): void {
-    localStorage.setItem(key, JSON.stringify(data));
+    sessionStorage.setItem(key, JSON.stringify(data));
   }
 
   private loadFromStorage<T>(key: string): T | null {
-    const stored = localStorage.getItem(key);
+    const stored = sessionStorage.getItem(key);
     return stored ? JSON.parse(stored) : null;
   }
 }
