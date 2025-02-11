@@ -23,10 +23,14 @@ export class ClanService {
   private clanUtilsService = inject(ClanUtilsService);
 
   constructor() {
-    this.loadAllClansIdsFromStorage();
-    this.loadBigClansIdsFromStorage();
-    this.loadTopClanIdsFromStorage();
-    this.loadTopClanDetailsFromStorage();
+    this.allClansIds = this.loadFromStorage<number[]>('allClanIds') || [];
+    this.largeClansIds = this.loadFromStorage<number[]>('largeClansIds') || [];
+    this.topClanIds = this.loadFromStorage<number[]>('topClanIds') || [];
+
+    const storedTopClanDetails = this.loadFromStorage<ExtendedClanDetails[]>('topClanDetails');
+    if (storedTopClanDetails) {
+      this.topClanDetails.set(storedTopClanDetails);
+    }
   }
 
   async getAllClansIds(): Promise<void> {
@@ -65,7 +69,7 @@ export class ClanService {
         10000
       );
 
-      localStorage.setItem('allClanIds', JSON.stringify(this.allClansIds));
+      this.saveToStorage('allClansIds', this.allClansIds);
 
       console.log(`📌 Всего clan_id в списке: ${this.allClansIds.length}`);
       console.log('✅ Загрузка завершена!');
@@ -117,7 +121,7 @@ export class ClanService {
         }
       );
 
-      localStorage.setItem('largeClansIds', JSON.stringify(this.largeClansIds));
+      this.saveToStorage('largeClansIds', this.largeClansIds);
       console.log(`📌 Кланы с 20+ участниками: ${this.largeClansIds.length}`);
     } catch (err: any) {
       console.log(err);
@@ -148,7 +152,6 @@ export class ClanService {
         (page) => {
           const chunkStart = (page - 1) * this.limit;
           const chunkIds = this.largeClansIds.slice(chunkStart, chunkStart + this.limit);
-
           return `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${chunkIds.join(',')}`;
         },
         this.totalPages,
@@ -167,7 +170,6 @@ export class ClanService {
               result.push({...clanData, winRate: 0} as ExtendedClanDetails);
             }
           }
-
           return result;
         }
       );
@@ -199,8 +201,7 @@ export class ClanService {
 
       const top50 = filteredClans.slice(0, 50);
       this.topClanIds = top50.map(clan => clan.clan_id);
-
-      localStorage.setItem('topClanIds', JSON.stringify(this.topClanIds));
+      this.saveToStorage('topClanIds', this.topClanIds);
 
       console.log('✅ Топ-50 кланов по winRate:', this.topClanIds);
     } catch (err: any) {
@@ -252,35 +253,12 @@ export class ClanService {
     }
   }
 
-  private loadAllClansIdsFromStorage(): void {
-    const storeClanIds = localStorage.getItem('allClanIds');
-    if (storeClanIds) {
-      this.allClansIds = JSON.parse(storeClanIds);
-      // console.log('🔄 Загружены ID всех кланов из localStorage:', this.allClansIds);
-    }
+  private saveToStorage(key: string, data: any): void {
+    localStorage.setItem(key, JSON.stringify(data));
   }
 
-  private loadBigClansIdsFromStorage(): void {
-    const storedLargeClansIds = localStorage.getItem('largeClansIds');
-    if (storedLargeClansIds) {
-      this.largeClansIds = JSON.parse(storedLargeClansIds);
-      // console.log('🔄 Загружены кланы с 20+ участниками из localStorage:', this.largeClansIds);
-    }
-  }
-
-  private loadTopClanIdsFromStorage(): void {
-    const storedTopIds = localStorage.getItem('topClanIds');
-    if (storedTopIds) {
-      this.topClanIds = JSON.parse(storedTopIds);
-      console.log('🔄 Загружены топ-50 кланов из localStorage:', this.topClanIds);
-    }
-  }
-
-  private loadTopClanDetailsFromStorage(): void {
-    const storedTopCLanDetails = localStorage.getItem('topClanDetails');
-    if (storedTopCLanDetails) {
-      this.topClanDetails.set(JSON.parse(storedTopCLanDetails));
-      console.log('🔄 Загружены топ-50 кланов из localStorage:', this.topClanDetails());
-    }
+  private loadFromStorage<T>(key: string): T | null {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : null;
   }
 }

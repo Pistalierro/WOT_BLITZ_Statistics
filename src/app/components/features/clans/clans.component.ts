@@ -25,18 +25,10 @@ export class ClansComponent implements OnInit {
     this.clanService.getTopClanDetails().then();
   }
 
-  // async getTopClansIds() {
-  //   await this.clanService.getTopClansIds();
-  //   this.topClanIds = [...this.clanService.topClanIds];
-  // }
-
-
-  // async getTopClanDetails() {
-  //   await this.clanService.getTopClanDetails();
-  // }
-
-  // private loadClanIds(): void {
-  //   this.allClanIds = this.clanService.allClansIds;
-  //   this.topClanIds = this.clanService.topClanIds;
-  // }
+  async updateAllData(): Promise<void> {
+    await this.clanService.getAllClansIds().then();
+    await this.clanService.getBigClansIds().then();
+    await this.clanService.getTopClansIds().then();
+    await this.clanService.getTopClanDetails().then();
+  }
 }
