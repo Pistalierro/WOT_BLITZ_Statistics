@@ -55,18 +55,13 @@ export class ClanService {
       console.log('✅ Всего кланов найдено: ', this.totalClans);
 
       this.allClansIds = await this.clanUtilsService.fetchPaginatedData<ClanListEntry, number>(
-        this.http,
         (page) => `${apiConfig.baseUrl}/clans/list/?application_id=${apiConfig.applicationId}&limit=${this.limit}&page_no=${page}`,
         this.totalPages,
-        this.batchSize,
         (response) => response.status === 'ok' && response.data
-          ? (
-            Array.isArray(response.data) // ✅ Проверяем, массив ли `data`
-              ? response.data.map(clan => clan.clan_id)
-              : Object.values(response.data).map((clan: ClanListEntry) => clan.clan_id) // ✅ Преобразуем `Record<number, ClanListEntry>` в массив
-          )
-          : [],
-        10000
+          ? Array.isArray(response.data)
+            ? response.data.map(clan => clan.clan_id)
+            : Object.values(response.data).map((clan: ClanListEntry) => clan.clan_id)
+          : []
       );
 
       this.saveToStorage('allClansIds', this.allClansIds);
@@ -99,7 +94,6 @@ export class ClanService {
       this.error.set(null);
 
       await this.clanUtilsService.fetchPaginatedData<ClanDetails, ClanDetails>(
-        this.http,
         (page) => {
           {
             const chunkStart = (page - 1) * this.limit;
@@ -108,7 +102,6 @@ export class ClanService {
           }
         },
         this.totalPages,
-        this.batchSize,
         (response) => {
           if (response.status === 'ok' && response.data) {
             this.largeClansIds.push(
@@ -148,14 +141,12 @@ export class ClanService {
 
       // Загрузка страниц с информацией о кланах
       const allClans = await this.clanUtilsService.fetchPaginatedData<ClanDetails, ExtendedClanDetails>(
-        this.http,
         (page) => {
           const chunkStart = (page - 1) * this.limit;
           const chunkIds = this.largeClansIds.slice(chunkStart, chunkStart + this.limit);
           return `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${chunkIds.join(',')}`;
         },
         this.totalPages,
-        this.batchSize,
         (response) => {
           const result: ExtendedClanDetails[] = [];
 
@@ -183,13 +174,7 @@ export class ClanService {
         clan.winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
       }
 
-      const filteredClans = allClans.filter(
-        clan => clan &&
-          typeof clan.clan_id === 'number' &&
-          clan.clan_id > 0 &&
-          typeof clan.winRate === 'number' &&
-          clan.winRate > 0
-      );
+      const filteredClans = allClans.filter(clan => clan && typeof clan.clan_id === 'number' && clan.clan_id > 0 && typeof clan.winRate === 'number' && clan.winRate > 0);
 
       if (!filteredClans.length) {
         console.warn('⚠ После фильтрации по winRate > 0 нет кланов');

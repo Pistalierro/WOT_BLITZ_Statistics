@@ -85,12 +85,11 @@ export class ClanUtilsService {
   }
 
   async fetchPaginatedData<T, R>(
-    http: HttpClient,
     urlGenerator: (page: number) => string,
     totalPages: number,
-    batchSize: number = 10,
-    processResponse: (response: ApiResponse<T>) => R[], // ✅ Теперь можно возвращать `T[]` или `R[]`
-    requestTimeout: number = 5000
+    processResponse: (response: ApiResponse<T>) => R[],
+    batchSize: number = 10,        // ✅ Значение по умолчанию, можно не передавать
+    requestTimeout: number = 5000  // ✅ Таймаут тоже дефолтный
   ): Promise<R[]> {
     const allData: R[] = [];
 
@@ -103,7 +102,7 @@ export class ClanUtilsService {
         for (let j = 0; j < batchSize && i + j <= totalPages; j++) {
           const url = urlGenerator(i + j);
           batchRequests.push(
-            lastValueFrom(http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)))
+            lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)))
           );
         }
 

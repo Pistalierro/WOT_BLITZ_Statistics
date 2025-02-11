@@ -10,7 +10,7 @@
   <ng-template #content>
     <div *ngIf="clanService.topClanDetails() as clans">
       <div *ngFor="let clan of clans">
-        <p>Клан: {{ clan.name }} [{{ clan.tag }}]</p>
+        <p>Клан: "{{ clan.name }}" [{{ clan.tag }}]</p>
         <p>WinRate: {{ clan.winRate | number: '1.0-2' }}%</p>
         <p>Игроков в клане: {{ clan.members_count }}</p>
         <hr>
