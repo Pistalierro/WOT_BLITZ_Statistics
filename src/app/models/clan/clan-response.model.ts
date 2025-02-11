@@ -1,27 +1,38 @@
+export interface ApiResponse<T> {
+  status: string;
+  meta?: {
+    count: number;
+    total?: number;
+  };
+  data: T[] | Record<number, T>; // ✅ Поддержка массивов и объектов
+}
+
+
 export interface ClanListEntry {
   clan_id: number; // ID клана
   name: string; // Название клана
   tag: string; // Тег клана
   members_count: number; // Количество участников
+  created_at: number; // Дата создания клана (epoch time)
 }
 
 export interface ClanListResponse {
-  status: string; // Статус ответа
+  status: string; // Статус ответа (например, "ok")
   meta: {
-    count: number; // Количество записей
-    total: number;
+    count: number; // Количество записей на странице
+    total: number; // Общее количество записей
   };
-  data: ClanListEntry[]; // Список кланов
+  data: ClanListEntry[]; // Список кланов в виде массива
 }
 
 export interface ClanDetails {
   clan_id: number; // ID клана
   name: string; // Название клана
   tag: string; // Тег клана
-  members_count: number; // Количество участников
-  creator_name: string; // Имя создателя клана
-  created_at: number; // Дата создания клана (UNIX timestamp)
-  description: string; // Описание клана
+  members_count?: number; // Количество участников
+  creator_name?: string; // Имя создателя клана
+  created_at?: number; // Дата создания клана (UNIX timestamp)
+  description?: string; // Описание клана
   leader_name: string; // Имя лидера клана
   recruiting_options: {
     vehicles_level: number; // Уровень техники для вступления
@@ -36,18 +47,23 @@ export interface ClanDetails {
   emblem_set_id: number; // ID эмблемы клана
   creator_id: number; // ID создателя клана
   motto: string; // Девиз клана
-  renamed_at: number; // Дата переименования клана (UNIX timestamp)
-  old_name: string | null; // Старое название клана
-  old_tag: string | null; // Старый тег клана
+  renamed_at?: number; // Дата переименования клана (UNIX timestamp)
+  old_name?: string | null; // Старое название клана
+  old_tag?: string | null; // Старый тег клана
   leader_id: number; // ID лидера клана
 }
 
-export interface ClanDetailsResponse {
+export interface ClanInfoResponse {
   status: string; // Статус ответа
   meta: {
     count: number; // Количество записей
+    total: number;
   };
   data: {
     [clanId: number]: ClanDetails; // Данные о клане по его ID
   };
+}
+
+export interface ExtendedClanDetails extends ClanDetails {
+  winRate: number;
 }

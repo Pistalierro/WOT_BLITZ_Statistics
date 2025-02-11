@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {ClanService} from '../../../services/clan.service';
+import {ClanService} from '../../../services/clan/clan.service';
 import {DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 
@@ -17,30 +17,26 @@ import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 })
 export class ClansComponent implements OnInit {
   allClanIds: number[] = [];
+  largeClansIds: number[] = [];
   topClanIds: number[] = [];
   clanService = inject(ClanService);
 
   ngOnInit() {
-    this.clanService.getTopClanDetails();
+    this.clanService.getTopClanDetails().then();
   }
 
+  // async getTopClansIds() {
+  //   await this.clanService.getTopClansIds();
+  //   this.topClanIds = [...this.clanService.topClanIds];
+  // }
 
-  async getAllClanIds(): Promise<void> {
-    await this.clanService.getAllClanIds();
-    this.allClanIds = [...this.clanService.allClanIds];
-  }
 
-  async getTopClanIds(): Promise<void> {
-    await this.clanService.getTopClanIds();
-    this.topClanIds = [...this.clanService.topClanIds];
-  }
+  // async getTopClanDetails() {
+  //   await this.clanService.getTopClanDetails();
+  // }
 
-  async getTopClanDetails() {
-    await this.clanService.getTopClanDetails();
-  }
-
-  private loadClanIds(): void {
-    this.allClanIds = this.clanService.allClanIds;
-    this.topClanIds = this.clanService.topClanIds;
-  }
+  // private loadClanIds(): void {
+  //   this.allClanIds = this.clanService.allClansIds;
+  //   this.topClanIds = this.clanService.topClanIds;
+  // }
 }
