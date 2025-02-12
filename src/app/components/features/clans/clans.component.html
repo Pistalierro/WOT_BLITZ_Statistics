@@ -1,21 +1,70 @@
 <div class="container">
   <div class="actions">
-    <!--    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>-->
     <!--        <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
+    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>
   </div>
 
-  <ng-container *ngIf="clanService.loading(); else content">
+  <div *ngIf="!clanService.topClanDetails()">
     <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
-  </ng-container>
+  </div>
 
-  <ng-template #content>
-    <div *ngIf="clanService.topClanDetails() as clans">
-      <div *ngFor="let clan of clans">
-        <p>Клан: "{{ clan.name }}" [{{ clan.tag }}]</p>
-        <p>WinRate: {{ clan.winRate | number: '1.0-2' }}%</p>
-        <p>Игроков в клане: {{ clan.members_count }}</p>
-        <hr>
-      </div>
-    </div>
-  </ng-template>
+  <div class="clans-table-container">
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Фильтр по кланам</mat-label>
+      <input #input (keyup)="applyFilter($event)" matInput placeholder="Введите запрос...">
+    </mat-form-field>
+
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+
+      <!-- № Column -->
+      <ng-container matColumnDef="index">
+        <th *matHeaderCellDef mat-header-cell> Место</th>
+        <td *matCellDef="let clan; let i = index" mat-cell>
+          {{ getRowIndex(i) }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th *matHeaderCellDef mat-header-cell> Имя</th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
+      </ng-container>
+
+      <!-- Tag Column -->
+      <ng-container matColumnDef="tag">
+        <th *matHeaderCellDef mat-header-cell> Клан тег</th>
+        <td *matCellDef="let clan" mat-cell> [{{ clan.tag }}]</td>
+      </ng-container>
+
+      <!-- Members Column -->
+      <ng-container matColumnDef="leader_name">
+        <th *matHeaderCellDef mat-header-cell> Глава клана</th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.leader_name }}</td>
+      </ng-container>
+
+      <!-- Members Column -->
+      <ng-container matColumnDef="membersCount">
+        <th *matHeaderCellDef mat-header-cell> Игроков в клане</th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.members_count }}</td>
+      </ng-container>
+
+      <!-- winRate Column -->
+      <ng-container matColumnDef="winRate">
+        <th *matHeaderCellDef mat-header-cell> Процент Побед</th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.winRate | number: '1.0-2' }}%</td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr *matNoDataRow class="mat-row">
+        <td class="mat-cell" colspan="5">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 50]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
+
+  </div>
+
 </div>

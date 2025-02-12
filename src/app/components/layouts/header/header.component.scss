@@ -124,7 +124,7 @@ mat-toolbar {
 
 .content-container {
   position: relative;
-  min-height: calc(100vh - $gap-x3);
+  min-height: calc(100vh - 220px);
   height: 100%;
   padding-top: $gap-x2;
   padding-bottom: $gap-x2;

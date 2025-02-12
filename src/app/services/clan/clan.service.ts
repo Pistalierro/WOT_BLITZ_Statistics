@@ -5,7 +5,6 @@ import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {apiConfig} from '../../app.config';
 import {ClanUtilsService} from './clan-utils.service';
 import {ClanFirestoreService} from './clan-firestore.service';
-import {Auth} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,6 @@ export class ClanService {
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
   private firestoreService = inject(ClanFirestoreService);
-  private auth = inject(Auth);
 
   constructor() {
     void this.initData();
@@ -171,11 +169,25 @@ export class ClanService {
         return;
       }
 
-      for (const clan of allClans) {
-        clan.winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+      const batchSize = 20;
+      for (let i = 0; i < allClans.length; i += batchSize) {
+        const batch = allClans.slice(i, i + batchSize);
+        await Promise.all(
+          batch.map(async (clan) => {
+            clan.winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+          })
+        );
+        if ((i / batchSize) % 5 === 0) { // Каждые 5 батчей (раз в 100 кланов при batchSize=20)
+          console.clear();
+          console.log(`✅ Обработано ${Math.min(i + batchSize, allClans.length)} из ${allClans.length}`);
+        }
       }
 
-      const filteredClans = allClans.filter(clan => clan && typeof clan.clan_id === 'number' && clan.clan_id > 0 && typeof clan.winRate === 'number' && clan.winRate > 0);
+      const filteredClans = allClans.filter(clan =>
+        clan && typeof clan.clan_id === 'number' &&
+        clan.clan_id > 0 && typeof clan.winRate === 'number' &&
+        clan.winRate > 0 &&
+        clan.winRate < 80);
 
       if (!filteredClans.length) {
         console.warn('⚠ После фильтрации по winRate > 0 нет кланов');

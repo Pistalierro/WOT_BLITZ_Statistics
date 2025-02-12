@@ -7,6 +7,8 @@ import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 import {provideHttpClient} from '@angular/common/http';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {getAuth, provideAuth} from '@angular/fire/auth';
+import {MatPaginatorIntl} from '@angular/material/paginator';
+import {CustomPaginatorIntl} from './shared/services/custom-paginator-intl.service';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDW5NiM16RpmnaXpuK3LSVhIToNW-EigyM',
@@ -30,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     provideHttpClient(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    {provide: MatPaginatorIntl, useClass: CustomPaginatorIntl}
   ]
 };

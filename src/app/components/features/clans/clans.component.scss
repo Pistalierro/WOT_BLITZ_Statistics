@@ -12,3 +12,98 @@
     margin-bottom: 20px;
   }
 }
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+th {
+  color: $color-accent !important;
+  font-size: 1rem;
+}
+
+td {
+  border-bottom: 2px solid $color-dark !important;
+  color: $color-gray;
+  font-size: 1.2rem;
+}
+
+mat-paginator {
+  background-color: $color-deep-dark !important;
+  color: $color-accent !important;
+  border-radius: 0 0 4px 4px !important;
+}
+
+:host ::ng-deep {
+  .filter {
+    width: 40%;
+
+    .mat-mdc-text-field-wrapper {
+      background-color: $color-deep-dark !important; // замените на нужный цвет
+    }
+
+    .mdc-floating-label {
+      color: $color-accent !important; // Замените на нужный цвет
+    }
+
+    input::placeholder {
+      color: $color-gray !important; // Замените на нужный цвет
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-accent !important; // Замените на нужный цвет
+    }
+  }
+
+  .mat-mdc-paginator-page-size {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-accent !important; // Замените на нужный цвет рамки
+    }
+  }
+
+
+  .mat-mdc-paginator-page-size-label {
+    font-weight: bold;
+  }
+
+  .mat-mdc-paginator-page-size {
+    border-radius: 5px;
+    color: $color-accent !important;
+
+    .mat-mdc-select-value {
+      color: $color-accent !important;
+      font-weight: bold;
+    }
+
+    .mat-mdc-select-arrow {
+      color: $color-accent !important;
+    }
+  }
+
+  .mat-mdc-paginator-icon {
+    fill: $color-accent !important;
+  }
+
+  .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
+    fill: $color-gray-dark !important;
+  }
+}
+
+::ng-deep .cdk-overlay-container {
+  .mat-mdc-select-panel {
+    background-color: $color-deep-dark !important; // Фон выпадающего списка
+  }
+
+  .mat-mdc-option {
+    color: $color-gray !important; // Цвет текста внутри списка
+  }
+}
