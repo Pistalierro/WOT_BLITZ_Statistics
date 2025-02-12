@@ -4,6 +4,7 @@ import {apiConfig} from '../../app.config';
 import {lastValueFrom, timeout} from 'rxjs';
 import {PlayerData} from '../../models/player/player-response.model';
 import {ApiResponse} from '../../models/clan/clan-response.model';
+import {ClanFirestoreService} from './clan-firestore.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import {ApiResponse} from '../../models/clan/clan-response.model';
 export class ClanUtilsService {
 
   private http = inject(HttpClient);
+  private firestoreService = inject(ClanFirestoreService);
 
   async getClanWinRate(membersIds: number[]): Promise<number> {
     if (!Array.isArray(membersIds) || membersIds.length === 0) {
@@ -131,4 +133,45 @@ export class ClanUtilsService {
   delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  async loadDataWithFallback<T extends any[]>(key: string, stateRef: T): Promise<T> {
+    console.log(`📌 Загружаем '${key}'...`);
+
+    // 1️⃣ Проверяем localStorage
+    const localData = this.loadFromStorage<T>(key);
+    if (localData && localData.length > 0) {
+      console.log(`✅ '${key}' загружен из localStorage: ${localData.length}`);
+      return localData;
+    }
+
+    console.warn(`⚠ '${key}' отсутствует в localStorage, загружаем из Firestore...`);
+
+    // 2️⃣ Загружаем из Firestore
+    const firestoreData = await this.firestoreService.loadCollection<T>(key);
+
+    // 3️⃣ Если данные нашлись в Firestore, сохраняем в localStorage
+    if (firestoreData && firestoreData.length > 0) {
+      this.saveToStorage(key, firestoreData);
+      console.log(`✅ '${key}' загружен из Firestore: ${firestoreData.length}`);
+      return firestoreData;
+    }
+
+    // 4️⃣ Если ничего нет, возвращаем пустой массив, а не вызываем сам себя снова
+    console.warn(`⚠ '${key}' не найден ни в localStorage, ни в Firestore. Возвращаем пустой массив.`);
+    return [] as unknown as T;
+  }
+
+
+  saveToStorage<T>(key: string, data: T): void {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  loadFromStorage<T>(key: string): T | null {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : null;
+  }
+
+
 }
+
+

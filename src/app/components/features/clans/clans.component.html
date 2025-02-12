@@ -1,6 +1,7 @@
 <div class="container">
   <div class="actions">
-    <!--    <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
+    <!--    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>-->
+    <!--        <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
   </div>
 
   <ng-container *ngIf="clanService.loading(); else content">

@@ -4,6 +4,8 @@ import {ClanDetails, ClanInfoResponse, ClanListEntry, ClanListResponse, Extended
 import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {apiConfig} from '../../app.config';
 import {ClanUtilsService} from './clan-utils.service';
+import {ClanFirestoreService} from './clan-firestore.service';
+import {Auth} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -19,18 +21,12 @@ export class ClanService {
   totalClans = 0;
   private http = inject(HttpClient);
   private limit = 100;
-  private batchSize = 10;
   private clanUtilsService = inject(ClanUtilsService);
+  private firestoreService = inject(ClanFirestoreService);
+  private auth = inject(Auth);
 
   constructor() {
-    this.allClansIds = this.loadFromStorage<number[]>('allClanIds') || [];
-    this.largeClansIds = this.loadFromStorage<number[]>('largeClansIds') || [];
-    this.topClanIds = this.loadFromStorage<number[]>('topClanIds') || [];
-
-    const storedTopClanDetails = this.loadFromStorage<ExtendedClanDetails[]>('topClanDetails');
-    if (storedTopClanDetails) {
-      this.topClanDetails.set(storedTopClanDetails);
-    }
+    void this.initData();
   }
 
   async getAllClansIds(): Promise<void> {
@@ -64,9 +60,12 @@ export class ClanService {
           : []
       );
 
-      this.saveToStorage('allClansIds', this.allClansIds);
-
+      this.clanUtilsService.saveToStorage('allClansIds', this.allClansIds);
       console.log(`📌 Всего clan_id в списке: ${this.allClansIds.length}`);
+
+      await this.firestoreService.saveData('allClansIds', this.allClansIds);
+      console.log('✅ Данные `allClansIds` успешно сохранены в localStorage и Firestore!');
+
       console.log('✅ Загрузка завершена!');
     } catch (err: any) {
       this.error.set(err.message);
@@ -78,10 +77,7 @@ export class ClanService {
 
   async getBigClansIds(): Promise<void> {
     this.largeClansIds = [];
-    if (!this.allClansIds.length) {
-      console.warn('⚠ Нет сохранённых ID кланов!');
-      return;
-    }
+    if (!this.allClansIds.length) console.log('⚠ Массив allClansIds перед запуском getBigClansIds() пуст');
 
     if (!this.totalPages || this.totalPages <= 0) {
       this.totalPages = Math.ceil(this.allClansIds.length / this.limit);
@@ -114,7 +110,12 @@ export class ClanService {
         }
       );
 
-      this.saveToStorage('largeClansIds', this.largeClansIds);
+      this.clanUtilsService.saveToStorage('largeClansIds', this.largeClansIds);
+      console.log('✅ `largeClansIds` сохранены в localStorage');
+
+      await this.firestoreService.saveData('largeClansIds', this.largeClansIds);
+      console.log('✅ `largeClansIds` сохранены в Firestore');
+
       console.log(`📌 Кланы с 20+ участниками: ${this.largeClansIds.length}`);
     } catch (err: any) {
       console.log(err);
@@ -186,7 +187,12 @@ export class ClanService {
 
       const top50 = filteredClans.slice(0, 50);
       this.topClanIds = top50.map(clan => clan.clan_id);
-      this.saveToStorage('topClanIds', this.topClanIds);
+
+      this.clanUtilsService.saveToStorage('topClanIds', this.topClanIds);
+      console.log('✅ `topClanIds` сохранены в localStorage');
+
+      await this.firestoreService.saveData('topClanIds', this.topClanIds);
+      console.log('✅ `topClanIds` сохранены в Firestore');
 
       console.log('✅ Топ-50 кланов по winRate:', this.topClanIds);
     } catch (err: any) {
@@ -227,9 +233,12 @@ export class ClanService {
       extendedClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
 
       this.topClanDetails.set(extendedClans);
-      localStorage.setItem('topClanDetails', JSON.stringify(extendedClans));
 
-      console.log('✅ Данные ТОП кланов обновлены и сохранены в localStorage');
+      this.clanUtilsService.saveToStorage('topClanDetails', extendedClans);
+      console.log('✅ `topClanDetails` сохранены в localStorage');
+
+      await this.firestoreService.saveData('topClanDetails', extendedClans);
+      console.log('✅ `topClanDetails` сохранены в Firestore');
     } catch (error: any) {
       this.error.set(error.message);
       console.error('❌ Ошибка при получении данных о кланах:', error.message);
@@ -238,12 +247,28 @@ export class ClanService {
     }
   }
 
-  private saveToStorage(key: string, data: any): void {
-    sessionStorage.setItem(key, JSON.stringify(data));
-  }
+  async initData(): Promise<void> {
+    console.log('📌 Инициализация `ClanService`...');
 
-  private loadFromStorage<T>(key: string): T | null {
-    const stored = sessionStorage.getItem(key);
-    return stored ? JSON.parse(stored) : null;
+    this.allClansIds = await this.clanUtilsService.loadDataWithFallback('allClansIds', this.allClansIds);
+    this.largeClansIds = await this.clanUtilsService.loadDataWithFallback('largeClansIds', this.largeClansIds);
+    this.topClanIds = await this.clanUtilsService.loadDataWithFallback('topClanIds', this.topClanIds);
+
+    console.log('✅ Данные загружены:', {
+      allClansIds: this.allClansIds.length,
+      largeClansIds: this.largeClansIds.length,
+      topClanIds: this.topClanIds.length
+    });
+
+    this.firestoreService.loadCollection<ExtendedClanDetails[]>('topClanDetails')
+      .then(firestoreData => {
+        if (firestoreData && firestoreData.length > 0) {
+          this.topClanDetails.set(firestoreData);
+          console.log('✅ `topClanDetails` загружены из Firestore');
+        } else console.warn('⚠ В Firestore нет `topClanDetails`');
+      }).catch(error => {
+      console.error('❌ Ошибка при загрузке `topClanDetails` из Firestore:', error.message);
+      this.error.set(error.message);
+    });
   }
 }

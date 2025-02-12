@@ -16,19 +16,16 @@ import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
   styleUrl: './clans.component.scss'
 })
 export class ClansComponent implements OnInit {
-  allClanIds: number[] = [];
-  largeClansIds: number[] = [];
-  topClanIds: number[] = [];
   clanService = inject(ClanService);
 
   ngOnInit() {
-    this.clanService.getTopClanDetails().then();
+    this.clanService.getTopClanDetails();
   }
 
   async updateAllData(): Promise<void> {
-    await this.clanService.getAllClansIds().then();
-    await this.clanService.getBigClansIds().then();
-    await this.clanService.getTopClansIds().then();
-    await this.clanService.getTopClanDetails().then();
+    await this.clanService.getAllClansIds();
+    await this.clanService.getBigClansIds();
+    await this.clanService.getTopClansIds();
+    await this.clanService.getTopClanDetails();
   }
 }
