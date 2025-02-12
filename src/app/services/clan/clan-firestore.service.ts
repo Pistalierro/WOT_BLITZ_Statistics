@@ -22,7 +22,6 @@ export class ClanFirestoreService {
       } else {
         const ref = doc(this.firestore, 'clanData', key);
         await setDoc(ref, {data: [...data]}); // 👈 Копируем массив, чтобы избежать мутации
-        console.log(`✅ '${key}' сохранен в Firestore`);
       }
     } catch (error: any) {
       console.error(`❌ Ошибка при сохранении '${key}' в Firestore:`, error.message);
@@ -35,7 +34,6 @@ export class ClanFirestoreService {
       const snapshot = await getDoc(ref);
 
       if (snapshot.exists() && snapshot.data()?.['data']) {
-        console.log(`✅ '${key}' загружен из Firestore`);
         return snapshot.data()['data'] as unknown as T; // 👈 Безопасное приведение к массиву
       }
 
@@ -50,7 +48,6 @@ export class ClanFirestoreService {
     try {
       const firestoreData = await this.loadData<T>(key);
       if (firestoreData.length > 0) {
-        console.log(`✅ Данные '${key}' загружены из Firestore:`, firestoreData.length);
         return firestoreData;
       } else {
         console.warn(`⚠ В Firestore нет данных '${key}', загружаем заново`);

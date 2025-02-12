@@ -39,7 +39,6 @@ export class ClanUtilsService {
 
       const validMembers = rawData.filter((member: PlayerData) => {
         if (!member) {
-          console.warn('⚠ Один из игроков оказался null или undefined');
           return false;
         }
 
@@ -135,12 +134,8 @@ export class ClanUtilsService {
   }
 
   async loadDataWithFallback<T extends any[]>(key: string, stateRef: T): Promise<T> {
-    console.log(`📌 Загружаем '${key}'...`);
-
-    // 1️⃣ Проверяем localStorage
     const localData = this.loadFromStorage<T>(key);
     if (localData && localData.length > 0) {
-      console.log(`✅ '${key}' загружен из localStorage: ${localData.length}`);
       return localData;
     }
 
@@ -152,7 +147,6 @@ export class ClanUtilsService {
     // 3️⃣ Если данные нашлись в Firestore, сохраняем в localStorage
     if (firestoreData && firestoreData.length > 0) {
       this.saveToStorage(key, firestoreData);
-      console.log(`✅ '${key}' загружен из Firestore: ${firestoreData.length}`);
       return firestoreData;
     }
 

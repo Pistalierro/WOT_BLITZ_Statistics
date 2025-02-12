@@ -13,6 +13,18 @@
   }
 }
 
+.hide {
+  &--mobile {
+    @include sm {
+      display: none;
+    }
+  }
+
+  &--tablet {
+
+  }
+}
+
 table {
   width: 100%;
 }
@@ -30,7 +42,12 @@ th {
 td {
   border-bottom: 2px solid $color-dark !important;
   color: $color-gray;
-  font-size: 1.2rem;
+  @include md-min {
+    font-size: 1.2rem;
+  }
+  @include md-min {
+    font-size: 1rem;
+  }
 }
 
 mat-paginator {
@@ -41,7 +58,7 @@ mat-paginator {
 
 :host ::ng-deep {
   .filter {
-    width: 40%;
+    width: 100%;
 
     .mat-mdc-text-field-wrapper {
       background-color: $color-deep-dark !important; // замените на нужный цвет

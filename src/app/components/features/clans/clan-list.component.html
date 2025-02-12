@@ -1,7 +1,7 @@
 <div class="container">
   <div class="actions">
     <!--        <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
-    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>
+    <!--    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>-->
   </div>
 
   <div *ngIf="!clanService.topClanDetails()">
@@ -18,7 +18,9 @@
 
       <!-- № Column -->
       <ng-container matColumnDef="index">
-        <th *matHeaderCellDef mat-header-cell> Место</th>
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-icon>emoji_events</mat-icon>
+        </th>
         <td *matCellDef="let clan; let i = index" mat-cell>
           {{ getRowIndex(i) }}
         </td>
@@ -26,7 +28,7 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell> Имя</th>
+        <th *matHeaderCellDef mat-header-cell> Название</th>
         <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
       </ng-container>
 
@@ -44,13 +46,25 @@
 
       <!-- Members Column -->
       <ng-container matColumnDef="membersCount">
-        <th *matHeaderCellDef mat-header-cell> Игроков в клане</th>
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-icon>group</mat-icon>
+        </th>
         <td *matCellDef="let clan" mat-cell> {{ clan.members_count }}</td>
       </ng-container>
 
       <!-- winRate Column -->
+      <ng-container matColumnDef="created_at">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-icon>event</mat-icon>
+        </th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.created_at * 1000 | date: 'dd.MM.yyyy' }}</td>
+      </ng-container>
+
+      <!-- winRate Column -->
       <ng-container matColumnDef="winRate">
-        <th *matHeaderCellDef mat-header-cell> Процент Побед</th>
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-icon>flag</mat-icon>
+        </th>
         <td *matCellDef="let clan" mat-cell> {{ clan.winRate | number: '1.0-2' }}%</td>
       </ng-container>
 
@@ -59,7 +73,7 @@
 
       <!-- Row shown when there is no matching data. -->
       <tr *matNoDataRow class="mat-row">
-        <td class="mat-cell" colspan="5">No data matching the filter "{{ input.value }}"</td>
+        <td class="mat-cell" colspan="7">No data matching the filter "{{ input.value }}"</td>
       </tr>
 
     </table>
