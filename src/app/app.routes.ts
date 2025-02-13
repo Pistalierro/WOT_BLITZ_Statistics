@@ -44,5 +44,6 @@ export const routes: Routes = [
     path: 'clans/:id',
     loadComponent: () => import('./components/features/clans/clan-details/clan-details.component')
       .then(m => m.ClanDetailsComponent),
+    // resolve: {clan: clanResolver}
   }
 ];

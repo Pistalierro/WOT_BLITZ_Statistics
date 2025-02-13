@@ -53,6 +53,10 @@ export interface ClanDetails {
   leader_id: number; // ID лидера клана
 }
 
+export interface ExtendedClanDetails extends ClanDetails {
+  winRate: number | null;
+}
+
 export interface ClanInfoResponse {
   status: string; // Статус ответа
   meta: {
@@ -62,8 +66,4 @@ export interface ClanInfoResponse {
   data: {
     [clanId: number]: ClanDetails; // Данные о клане по его ID
   };
-}
-
-export interface ExtendedClanDetails extends ClanDetails {
-  winRate: number;
 }

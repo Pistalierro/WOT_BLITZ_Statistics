@@ -68,7 +68,7 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr (click)="navigateToClanDetails(row.tag)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
+      <tr (click)="navigateToClanDetails(row.clan_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
 
       <!-- Row shown when there is no matching data. -->
       <tr *matNoDataRow class="mat-row">

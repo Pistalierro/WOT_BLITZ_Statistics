@@ -53,6 +53,9 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (!this.clanService.topClanDetails()) {
+      void this.clanService.getTopClanDetails();
+    }
     void this.clanService.getTopClanDetails();
   }
 
@@ -76,7 +79,7 @@ export class ClanListComponent implements OnInit, AfterViewInit {
     return this.paginator ? index + 1 + this.paginator.pageIndex * this.paginator.pageSize : index + 1;
   }
 
-  navigateToClanDetails(clanTag: string) {
-    this.router.navigate(['/clans', clanTag]);
+  navigateToClanDetails(clanId: number): void {
+    void this.router.navigate(['/clans', clanId]);
   }
 }

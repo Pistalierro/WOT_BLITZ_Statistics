@@ -18,6 +18,7 @@ export class ClanService {
   topClanDetails = signal<ExtendedClanDetails [] | null>(null);
   totalPages = 0;
   totalClans = 0;
+  clanDetails = signal<ExtendedClanDetails | null>(null);
   private http = inject(HttpClient);
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
@@ -215,32 +216,65 @@ export class ClanService {
       this.loading.set(true);
       this.error.set(null);
 
-      const url = `https://api.wotblitz.eu/wotb/clans/info/?application_id=8b707eb789d2bbc368fd873f5406b32d&clan_id=${this.topClanIds.join(',')}`;
-      const res = await lastValueFrom(this.http.get<ClanInfoResponse>(url));
-
-      if (!res || !res.data) {
-        console.warn('⚠ API не вернул данные о кланах');
+      const cachedData = await this.clanUtilsService.loadDataWithFallback<ExtendedClanDetails[]>('topClanDetails', []);
+      if (cachedData.length > 0) {
+        console.log('✅ Загружены топ-кланы из кеша');
+        this.topClanDetails.set(cachedData);
         return;
       }
 
-      const clansList = Object.values(res.data) as ClanDetails[];
+      const batchSize = 10;
+      const batches = this.clanUtilsService.chunkArray(this.topClanIds, batchSize);
 
-      const extendedClans: ExtendedClanDetails[] = await Promise.all(
-        clansList.map(async (clan) => {
-          const winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
-          return {...clan, winRate};
-        })
-      );
+      const extendedClans: ExtendedClanDetails[] = [];
 
-      extendedClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
+      for (const batch of batches) {
+        const url = `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${batch.join(',')}`;
+        const res = await lastValueFrom(this.http.get<ClanInfoResponse>(url));
 
-      this.topClanDetails.set(extendedClans);
+        if (!res || !res.data) console.warn(`⚠ API не вернул данные о кланах в батче: ${batch}`);
+
+        const clanList = Object.values(res.data) as ClanDetails[];
+        const batchResults = await Promise.all(
+          clanList.map(async (clan) => {
+            const winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+            return {...clan, winRate};
+          })
+        );
+        extendedClans.push(...batchResults);
+        extendedClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
+
+        this.topClanDetails.set([...extendedClans]);
+      }
 
       this.clanUtilsService.saveToStorage('topClanDetails', extendedClans);
       await this.firestoreService.saveData('topClanDetails', extendedClans);
     } catch (error: any) {
       this.error.set(error.message);
       console.error('❌ Ошибка при получении данных о кланах:', error.message);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async getClanDetailsById(clanId: number): Promise<void> {
+    try {
+      this.loading.set(true);
+      this.error.set(null);
+      const url = `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${clanId}`;
+      const res = await firstValueFrom(this.http.get<ClanInfoResponse>(url));
+      if (!res || !res.data || !res.data[clanId]) {
+        console.warn(`⚠ API не вернул данные о клане с ID: ${clanId}`);
+        this.error.set('Данные о клане не найдены.');
+        return;
+      }
+
+      const clan = res.data[clanId];
+      const winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+      this.clanDetails.set({...clan, winRate});
+    } catch (error: any) {
+      console.error(`❌ Ошибка при получении данных о клане ${clanId}:`, error);
+      this.error.set('Ошибка загрузки данных о клане.');
     } finally {
       this.loading.set(false);
     }

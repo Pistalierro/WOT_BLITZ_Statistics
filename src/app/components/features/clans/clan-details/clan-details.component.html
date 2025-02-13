@@ -1,4 +1,15 @@
 <div class="container">
-  <!--  <router-outlet></router-outlet>-->
   <h2>Детальная информация о клане</h2>
+  <div class="progress-bar">
+    <mat-progress-bar *ngIf="clanService.loading()" color="warn" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div *ngIf="clanService.clanDetails() as clan">
+    <p>Название: {{ clan.name }}</p>
+    <p>WinRate: {{ clan.winRate | number: '1.2-2' }}%</p>
+  </div>
+  <div>
+    <button (click)="goBack()" color="primary" mat-flat-button type="button">Назад</button>
+  </div>
+
 </div>

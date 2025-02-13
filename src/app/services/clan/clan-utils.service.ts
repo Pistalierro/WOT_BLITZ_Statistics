@@ -22,21 +22,17 @@ export class ClanUtilsService {
 
     try {
       const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=statistics.all.battles,statistics.all.wins`;
-
       const res: any = await lastValueFrom(this.http.get(url));
       if (!res || !res.data) {
         console.warn('⚠ Пустой ответ API для списка игроков, возвращаю 0');
         return 0;
       }
-
       const rawData = Object.values(res.data) as PlayerData[];
 
       if (!rawData.length) {
         console.warn('⚠ Не пришли данные ни по одному игроку, возвращаю 0');
         return 0;
       }
-
-
       const validMembers = rawData.filter((member: PlayerData) => {
         if (!member) {
           return false;
@@ -51,7 +47,6 @@ export class ClanUtilsService {
           console.warn('⚠ Игрок без поля "statistics.all" — пропускаем');
           return false;
         }
-
         return true;
       });
 
@@ -66,8 +61,6 @@ export class ClanUtilsService {
       for (const member of validMembers) {
         const battles = member.statistics.all.battles || 0;
         const wins = member.statistics.all.wins || 0;
-
-
         totalBattles += battles;
         totalWins += wins;
       }
@@ -76,9 +69,7 @@ export class ClanUtilsService {
         console.warn('⚠ Ноль боёв у всех, winRate = 0');
         return 0;
       }
-
       return (totalWins / totalBattles) * 100;
-
     } catch (err: any) {
       console.error('❌ Ошибка при вычислении winRate:', err.message);
       return 0;
@@ -133,39 +124,58 @@ export class ClanUtilsService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async loadDataWithFallback<T extends any[]>(key: string, stateRef: T): Promise<T> {
-    const localData = this.loadFromStorage<T>(key);
+  async loadDataWithFallback<T extends any[]>(key: string, stateRef: T, maxAgeMinutes: number = 30): Promise<T> {
+    const localData = this.loadFromStorage<T>(key, maxAgeMinutes);
     if (localData && localData.length > 0) {
       return localData;
     }
 
-    console.warn(`⚠ '${key}' отсутствует в localStorage, загружаем из Firestore...`);
-
-    // 2️⃣ Загружаем из Firestore
+    console.warn(`⚠ '${key}' отсутствует в localStorage или устарело, загружаем из Firestore...`);
     const firestoreData = await this.firestoreService.loadCollection<T>(key);
 
-    // 3️⃣ Если данные нашлись в Firestore, сохраняем в localStorage
     if (firestoreData && firestoreData.length > 0) {
       this.saveToStorage(key, firestoreData);
       return firestoreData;
     }
 
-    // 4️⃣ Если ничего нет, возвращаем пустой массив, а не вызываем сам себя снова
     console.warn(`⚠ '${key}' не найден ни в localStorage, ни в Firestore. Возвращаем пустой массив.`);
     return [] as unknown as T;
   }
 
-
   saveToStorage<T>(key: string, data: T): void {
-    localStorage.setItem(key, JSON.stringify(data));
+    const timestamp = Date.now();
+    const storedData = {data, timestamp};
+    localStorage.setItem(key, JSON.stringify(storedData));
   }
 
-  loadFromStorage<T>(key: string): T | null {
+  loadFromStorage<T>(key: string, maxAgeMinutes: number = 30): T | null {
     const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : null;
+    if (!stored) return null;
+
+    try {
+      const {data, timestamp} = JSON.parse(stored);
+      const elapsedMinutes = (Date.now() - timestamp) / 60000;
+
+      if (elapsedMinutes < maxAgeMinutes) {
+        console.log(`✅ '${key}' загружен из localStorage (данные свежие, ${elapsedMinutes.toFixed(1)} мин назад)`);
+        return data;
+      } else {
+        console.warn(`⚠ '${key}' устарело (${elapsedMinutes.toFixed(1)} мин назад), удаляем из localStorage...`);
+        localStorage.removeItem(key);  // ❗ Удаляем устаревшие данные
+        return null;
+      }
+    } catch (error) {
+      console.error(`❌ Ошибка при разборе данных из localStorage:`, error);
+      return null;
+    }
   }
 
 
+  chunkArray<T>(array: T[], size: number): T[][] {
+    return Array.from({length: Math.ceil(array.length / size)}, (_, i) =>
+      array.slice(i * size, i * size + size)
+    );
+  }
 }
 
 
