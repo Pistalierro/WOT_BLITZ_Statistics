@@ -26,7 +26,6 @@
         </td>
       </ng-container>
 
-      <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell> Название</th>
         <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
@@ -38,7 +37,7 @@
         <td *matCellDef="let clan" mat-cell> [{{ clan.tag }}]</td>
       </ng-container>
 
-      <!-- Members Column -->
+      <!-- Leader Name Column (скрыто по умолчанию, показываем > 768px) -->
       <ng-container matColumnDef="leader_name">
         <th *matHeaderCellDef mat-header-cell> Глава клана</th>
         <td *matCellDef="let clan" mat-cell> {{ clan.leader_name }}</td>
@@ -52,7 +51,7 @@
         <td *matCellDef="let clan" mat-cell> {{ clan.members_count }}</td>
       </ng-container>
 
-      <!-- winRate Column -->
+      <!-- Date Column -->
       <ng-container matColumnDef="created_at">
         <th *matHeaderCellDef mat-header-cell>
           <mat-icon>event</mat-icon>

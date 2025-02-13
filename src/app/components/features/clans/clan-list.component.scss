@@ -13,17 +13,16 @@
   }
 }
 
-.hide {
-  &--mobile {
-    @include sm {
-      display: none;
-    }
+.hide-mobile,
+.hide-desktop {
+  @include lg-min {
+    display: table-cell;
   }
-
-  &--tablet {
-
+  @include lg {
+    display: none;
   }
 }
+
 
 table {
   width: 100%;

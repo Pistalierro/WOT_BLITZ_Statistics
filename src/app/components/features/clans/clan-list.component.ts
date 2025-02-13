@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ExtendedClanDetails} from '../../../models/clan/clan-response.model';
 import {MatPaginator} from '@angular/material/paginator';
 import {BreakpointObserver} from '@angular/cdk/layout';
+import {DISPLAY_SIZE_LG_MIN, DISPLAY_SIZE_MD_LG, DISPLAY_SIZE_SM, DISPLAY_SIZE_SM_MD,} from '../../../mock/clan-utils';
 
 @Component({
   selector: 'app-clans',
@@ -21,7 +22,7 @@ import {BreakpointObserver} from '@angular/cdk/layout';
 })
 export class ClanListComponent implements OnInit, AfterViewInit {
   clanService = inject(ClanService);
-  displayedColumns: string[] = ['index', 'tag', 'name', 'leader_name', 'membersCount', 'created_at', 'winRate'];
+  displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   private breakpointObserver = inject(BreakpointObserver);
@@ -32,14 +33,21 @@ export class ClanListComponent implements OnInit, AfterViewInit {
       if (clanList) this.dataSource.data = clanList;
     });
 
-    // this.breakpointObserver.observe([
-    //   '(max-width: 992px)',
-    //   '(max-width: 768px)',
-    //   '(max-width: 576px)',
-    // ]).subscribe(result => {
-    //   if (result.breakpoints['(max-width: 576px)']) this.displayedColumns = ['index', 'tag', 'membersCount', 'winRate'];
-    //   if (result.breakpoints['(max-width: 768px)']) this.displayedColumns = ['index', 'tag', 'name', 'membersCount', 'created_at', 'winRate'];
-    // });
+    this.breakpointObserver.observe([
+      '(max-width: 992px)',
+      '(max-width: 768px)',
+      '(max-width: 576px)',
+    ]).subscribe(result => {
+      if (result.breakpoints['(max-width: 576px)']) {
+        this.displayedColumns = DISPLAY_SIZE_SM; // Самый узкий размер
+      } else if (result.breakpoints['(max-width: 768px)']) {
+        this.displayedColumns = DISPLAY_SIZE_SM_MD;
+      } else if (result.breakpoints['(max-width: 992px)']) {
+        this.displayedColumns = DISPLAY_SIZE_MD_LG;
+      } else {
+        this.displayedColumns = DISPLAY_SIZE_LG_MIN; // Если шире 992px — показываем все колонки
+      }
+    });
   }
 
   ngOnInit() {
