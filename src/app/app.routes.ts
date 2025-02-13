@@ -37,7 +37,12 @@ export const routes: Routes = [
   },
   {
     path: 'clans',
-    loadComponent: () => import('./components/features/clans/clan-list.component')
+    loadComponent: () => import('./components/features/clans/clan-list/clan-list.component')
       .then(m => m.ClanListComponent),
+  },
+  {
+    path: 'clans/:id',
+    loadComponent: () => import('./components/features/clans/clan-details/clan-details.component')
+      .then(m => m.ClanDetailsComponent),
   }
 ];

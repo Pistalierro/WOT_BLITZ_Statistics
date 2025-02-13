@@ -1,7 +1,7 @@
-@use "../../../../styles/mixins/extends" as *;
-@use "../../../../styles/mixins/mixins-media" as *;
-@use "../../../../styles/presets/variables" as *;
-@use "../../../../styles/presets/skin" as *;
+@use "../../../../../styles/mixins/extends" as *;
+@use "../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../styles/presets/variables" as *;
+@use "../../../../../styles/presets/skin" as *;
 
 .container {
   @extend %container;
@@ -21,6 +21,16 @@
   @include lg {
     display: none;
   }
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.clickable-row:hover {
+  background-color: $color-dark;
+  color: $color-light;
 }
 
 
