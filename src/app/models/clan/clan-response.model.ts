@@ -67,3 +67,8 @@ export interface ClanInfoResponse {
     [clanId: number]: ClanDetails; // Данные о клане по его ID
   };
 }
+
+export interface ClanShortInfo {
+  name: string;
+  tag: string;
+}
