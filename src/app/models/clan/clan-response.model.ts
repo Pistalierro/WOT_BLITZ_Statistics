@@ -68,7 +68,16 @@ export interface ClanInfoResponse {
   };
 }
 
-export interface ClanShortInfo {
+export interface BasicClanData {
+  clan_id: number;
   name: string;
   tag: string;
+  members_count: number;
+  created_at: number;
+}
+
+export interface KeyValueRecord {
+  key: string;       // уникальный ключ, по которому будем искать
+  data: any;         // любые сериализуемые данные (массив, объект, строка, etc.)
+  timestamp: number; // время сохранения
 }

@@ -1,13 +1,15 @@
 import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
 import {ClanService} from '../../../../services/clan/clan.service';
-import {DatePipe, DecimalPipe, NgIf} from '@angular/common';
+import {DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
-import {ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
+import {BasicClanData, ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
 import {MatPaginator} from '@angular/material/paginator';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {DISPLAY_SIZE_LG_MIN, DISPLAY_SIZE_MD_LG, DISPLAY_SIZE_SM, DISPLAY_SIZE_SM_MD,} from '../../../../mock/clan-utils';
 import {Router} from '@angular/router';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {debounceTime} from 'rxjs';
 
 @Component({
   selector: 'app-clan-list',
@@ -16,7 +18,9 @@ import {Router} from '@angular/router';
     NgIf,
     ...MATERIAL_MODULES,
     DecimalPipe,
-    DatePipe
+    DatePipe,
+    ReactiveFormsModule,
+    NgForOf
   ],
   templateUrl: './clan-list.component.html',
   styleUrl: './clan-list.component.scss'
@@ -25,9 +29,12 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   clanService = inject(ClanService);
   displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
+  form!: FormGroup;
+  suggestedClans: BasicClanData[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
+  private fb = inject(FormBuilder);
 
   constructor() {
     effect(() => {
@@ -57,6 +64,8 @@ export class ClanListComponent implements OnInit, AfterViewInit {
       void this.clanService.getTopClanDetails();
     }
     void this.clanService.getTopClanDetails();
+    this.initForm();
+    this.setupSearchListener();
   }
 
   ngAfterViewInit() {
@@ -64,7 +73,7 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   }
 
   async updateAllData(): Promise<void> {
-    await this.clanService.getAllClansIds();
+    await this.clanService.getAllClansData();
     await this.clanService.getBigClansIds();
     await this.clanService.getTopClansIds();
     await this.clanService.getTopClanDetails();
@@ -81,5 +90,37 @@ export class ClanListComponent implements OnInit, AfterViewInit {
 
   navigateToClanDetails(clanId: number): void {
     void this.router.navigate(['/clans', clanId]);
+  }
+
+  initForm(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+    });
+  }
+
+  async onSubmit(): Promise<void> {
+    const nameValue = this.form.value.name;
+    const clanId = await this.clanService.getClanDetailsByName(nameValue);
+    if (clanId) {
+      this.navigateToClanDetails(clanId);
+    } else {
+      console.warn('Клан не найден, остаёмся на этой же странице');
+    }
+  }
+
+  setupSearchListener(): void {
+    this.form.get('name')!.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(async (searchTerm: string) => {
+        this.suggestedClans = await this.clanService.suggestClans(searchTerm);
+      });
+  }
+
+  async selectClan(clan: BasicClanData): Promise<void> {
+    this.form.patchValue({name: `${clan.name} [${clan.tag}]`});
+    this.suggestedClans = [];
+
+    await this.clanService.getClanDetailsById(clan.clan_id);
+    this.navigateToClanDetails(clan.clan_id);
   }
 }

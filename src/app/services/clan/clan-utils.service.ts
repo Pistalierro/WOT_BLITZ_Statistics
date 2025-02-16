@@ -5,6 +5,7 @@ import {lastValueFrom, timeout} from 'rxjs';
 import {PlayerData} from '../../models/player/player-response.model';
 import {ApiResponse} from '../../models/clan/clan-response.model';
 import {ClanFirestoreService} from './clan-firestore.service';
+import {ClanIndexedDbService} from './clan-indexeddb.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class ClanUtilsService {
 
   private http = inject(HttpClient);
   private firestoreService = inject(ClanFirestoreService);
+  private indexedDbService = inject(ClanIndexedDbService);
 
   async getClanWinRate(membersIds: number[]): Promise<number> {
     if (!Array.isArray(membersIds) || membersIds.length === 0) {
@@ -110,6 +112,7 @@ export class ClanUtilsService {
 
         pagesLoaded += batchResponses.length;
         const progressPercent = ((pagesLoaded / totalPages) * 100).toFixed(2);
+        console.clear();
         console.log(`✅ Загружено страниц: ${i}-${Math.min(i + batchSize - 1, totalPages)} | 📊 Прогресс: ${progressPercent}%`);
         await this.delay(1000);
       }
@@ -124,56 +127,47 @@ export class ClanUtilsService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async loadDataWithFallback<T extends any[]>(key: string, stateRef: T, maxAgeMinutes: number = 30): Promise<T> {
-    const localData = this.loadFromStorage<T>(key, maxAgeMinutes);
-    if (localData && localData.length > 0) {
-      return localData;
-    }
-
-    console.warn(`⚠ '${key}' отсутствует в localStorage или устарело, загружаем из Firestore...`);
-    const firestoreData = await this.firestoreService.loadCollection<T>(key);
-
-    if (firestoreData && firestoreData.length > 0) {
-      this.saveToStorage(key, firestoreData);
-      return firestoreData;
-    }
-
-    console.warn(`⚠ '${key}' не найден ни в localStorage, ни в Firestore. Возвращаем пустой массив.`);
-    return [] as unknown as T;
-  }
-
-  saveToStorage<T>(key: string, data: T): void {
-    const timestamp = Date.now();
-    const storedData = {data, timestamp};
-    localStorage.setItem(key, JSON.stringify(storedData));
-  }
-
-  loadFromStorage<T>(key: string, maxAgeMinutes: number = 30): T | null {
-    const stored = localStorage.getItem(key);
-    if (!stored) return null;
-
+  async loadDataWithFallback<T extends any[]>(key: string, maxAgeMinutes: number = 30): Promise<T> {
     try {
-      const {data, timestamp} = JSON.parse(stored);
-      const elapsedMinutes = (Date.now() - timestamp) / 60000;
-
-      if (elapsedMinutes < maxAgeMinutes) {
-        console.log(`✅ '${key}' загружен из localStorage (данные свежие, ${elapsedMinutes.toFixed(1)} мин назад)`);
-        return data;
-      } else {
-        console.warn(`⚠ '${key}' устарело (${elapsedMinutes.toFixed(1)} мин назад), удаляем из localStorage...`);
-        localStorage.removeItem(key);  // ❗ Удаляем устаревшие данные
-        return null;
+      const record = await this.indexedDbService.getRecord(key);
+      if (record && record.data) {
+        const fresh = this.isFresh(record.timestamp, maxAgeMinutes);
+        if (fresh) {
+          console.log(`✅ '${key}' загружен из IndexedDB (данные свежие)`);
+          return record.data as T;
+        } else {
+          console.warn(`⚠ '${key}' устарело (более ${maxAgeMinutes} минут), удаляем из IndexedDB...`);
+          await this.indexedDbService.removeRecord(key);
+        }
       }
-    } catch (error) {
-      console.error(`❌ Ошибка при разборе данных из localStorage:`, error);
-      return null;
+      console.warn(`⚠ '${key}' отсутствует в IndexedDB или устарело, загружаем из Firestore...`);
+      const firestoreData = await this.firestoreService.loadCollection<T>(key);
+      if (firestoreData && firestoreData.length > 0) {
+        await this.indexedDbService.putRecord(key, firestoreData);
+        return firestoreData;
+      }
+
+      console.warn(`⚠ '${key}' не найден ни в IndexedDB, ни в Firestore. Возвращаем пустой массив.`);
+      return [] as unknown as T;
+    } catch (err: any) {
+      console.error(`❌ Ошибка в loadDataWithFallback('${key}'):`, err);
+      return [] as unknown as T;
     }
+  }
+
+  async saveDataToIndexedDb<T>(key: string, data: T): Promise<void> {
+    await this.indexedDbService.putRecord(key, data);
   }
 
   chunkArray<T>(array: T[], size: number): T[][] {
     return Array.from({length: Math.ceil(array.length / size)}, (_, i) =>
       array.slice(i * size, i * size + size)
     );
+  }
+
+  private isFresh(timestamp: number, maxAgeMinutes: number): boolean {
+    const elapsedMinutes = (Date.now() - timestamp) / 60000;
+    return elapsedMinutes < maxAgeMinutes;
   }
 }
 

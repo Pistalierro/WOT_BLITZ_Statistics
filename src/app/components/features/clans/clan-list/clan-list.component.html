@@ -2,13 +2,37 @@
   <div class="actions">
     <!--        <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
     <!--    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>-->
+    <!--    <button (click)="clanService.getAllClansData()" color="primary" mat-flat-button type="button">getAllClansData</button>-->
   </div>
 
-  <div *ngIf="!clanService.topClanDetails()">
-    <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
+  <div class="clans">
+    <h2>Кланы</h2>
+    <p>Здесь вам представлена таблица <strong>ТОП-50</strong> кланов по проценту побед. Вы можете просмотреть подробную информацию о клане,
+      просто кликнув на его строку. Так же вы можете найти любой интересующий вас клан и его подробную информацию вас клан в поиске</p>
+  </div>
+
+
+  <div class="search">
+    <form [formGroup]="form" class="form-search-clan">
+      <mat-form-field appearance="outline">
+        <mat-label>Поиск по всем кланам</mat-label>
+        <input (keydown.enter)="onSubmit()" formControlName="name" matInput placeholder="Введите название клана">
+      </mat-form-field>
+    </form>
+
+    <ul *ngIf="suggestedClans.length > 0" class="suggestions">
+      <li (click)="selectClan(clan)" *ngFor="let clan of suggestedClans">
+        {{ clan.name }} [{{ clan.tag }}]
+      </li>
+    </ul>
+  </div>
+
+  <div class="progress-bar">
+    <mat-progress-bar *ngIf="!clanService.topClanDetails()" color="warn" mode="indeterminate"></mat-progress-bar>
   </div>
 
   <div class="clans-table-container">
+    <h3>ТОП-50 кланов</h3>
     <mat-form-field appearance="outline" class="filter">
       <mat-label>Фильтр по кланам</mat-label>
       <input #input (keyup)="applyFilter($event)" matInput placeholder="Введите запрос...">
@@ -76,7 +100,7 @@
       </tr>
 
     </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 50]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" [pageSize]="10" aria-label="Select page of users"></mat-paginator>
   </div>
 </div>
 
