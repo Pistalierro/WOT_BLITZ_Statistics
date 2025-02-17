@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ClanService} from '../../../../services/clan/clan.service';
 import {DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
@@ -27,7 +27,7 @@ import {debounceTime, distinctUntilChanged} from 'rxjs';
   templateUrl: './clan-list.component.html',
   styleUrl: './clan-list.component.scss'
 })
-export class ClanListComponent implements OnInit, AfterViewInit {
+export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   clanService = inject(ClanService);
   displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
@@ -36,7 +36,8 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   suggestedClans: BasicClanData[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatAutocompleteTrigger) autoTrigger!: MatAutocompleteTrigger;
-  router = inject(Router);
+  private router = inject(Router);
+  private openPanelTimeoutId: any;
   private breakpointObserver = inject(BreakpointObserver);
   private fb = inject(FormBuilder);
 
@@ -73,6 +74,12 @@ export class ClanListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    if (this.openPanelTimeoutId) {
+      clearTimeout(this.openPanelTimeoutId);
+    }
   }
 
   async updateAllData(): Promise<void> {
@@ -116,14 +123,9 @@ export class ClanListComponent implements OnInit, AfterViewInit {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm: string | null) => {
         const query = typeof searchTerm === 'string' ? searchTerm : '';
-        console.log(`🔍 Поиск клана: "${query}"`);
-
         this.clanService.suggestClans(query).then(results => {
-          console.log(`✅ Найдено ${results.length} кланов`, results);
           this.suggestedClans = results;
-          console.log('🔥 Итоговое состояние suggestedClans:', this.suggestedClans);
-
-          setTimeout(() => {
+          this.openPanelTimeoutId = setTimeout(() => {
             if (this.autoTrigger) {
               this.autoTrigger.updatePosition();
               this.autoTrigger.openPanel();
@@ -133,12 +135,13 @@ export class ClanListComponent implements OnInit, AfterViewInit {
       });
   }
 
-
   async selectClan(clan: BasicClanData): Promise<void> {
     this.form.patchValue({name: `${clan.name} [${clan.tag}]`});
     this.suggestedClans = [];
-
+    if (this.autoTrigger) this.autoTrigger.closePanel();
     await this.clanService.getClanDetailsById(clan.clan_id);
-    this.navigateToClanDetails(clan.clan_id);
+    setTimeout(() => {
+      this.navigateToClanDetails(clan.clan_id);
+    }, 200);
   }
 }

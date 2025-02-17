@@ -67,6 +67,10 @@ mat-paginator {
 
 :host ::ng-deep {
 
+  .mat-form-field input.mat-input-element {
+    font-size: 16px !important; // Браузер не увеличивает поле при фокусе
+  }
+
   .form-search-clan,
   .filter {
     width: 100%;
@@ -148,7 +152,7 @@ mat-paginator {
     width: 50%;
   }
   @include sm {
-    width: 100%;
+    width: 90%;
   }
 }
 
@@ -167,5 +171,10 @@ mat-paginator {
   position: relative !important;
   z-index: 10;
 }
+
+.search input.mat-input-element {
+  font-size: 18px !important; // Минимальный размер, чтобы браузер не увеличивал
+}
+
 
 

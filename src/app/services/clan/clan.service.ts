@@ -244,7 +244,6 @@ export class ClanService {
   async getTopClanDetails(): Promise<void> {
 
     if (!this.topClanIds.length) {
-      console.warn('⚠ this.topClanIds пуст, загружаю из IndexedDB...');
       this.topClanIds = await this.clanUtilsService.loadDataWithFallback<number[]>('topClanIds');
     }
 
@@ -342,26 +341,50 @@ export class ClanService {
   }
 
   async suggestClans(searchTerm: string): Promise<BasicClanData[]> {
-    console.log(`🔎 Поиск клана: "${searchTerm}"`);
-
     const record = await this.indexedDbService.getRecord('allClansData');
     if (!record || !record.data) {
       console.warn('⚠ Данные о кланах отсутствуют в keyValue!');
       return [];
     }
 
-    console.log('📦 Загружено из keyValue:', record.data.length, 'кланов');
-    console.log('🔍 Первые 10 кланов:', record.data.slice(0, 10).map((c: any) => `${c.name} [${c.tag}]`));
+    const lowerSearch = searchTerm.toLowerCase();
+    const uniqueClans = new Set<number>(); // Для хранения уникальных clan_id
+    const result: BasicClanData[] = [];
+    
+    for (const clan of record.data) {
+      if (result.length >= 20) break;
 
-    // Новый фильтр: ищем внутри строки, игнорируем регистр
-    const filteredClans = record.data.filter((clan: any) =>
-      clan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      clan.tag.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 10); // Показываем только 50 кланов
+      if (clan.tag.toLowerCase() === lowerSearch) { // Полное совпадение с тегом
+        if (!uniqueClans.has(clan.clan_id)) {
+          uniqueClans.add(clan.clan_id);
+          result.push(clan);
+        }
+      }
+    }
 
+    for (const clan of record.data) {
+      if (result.length >= 20) break;
 
-    console.log(`✅ Найдено ${filteredClans.length} кланов`, filteredClans);
-    return filteredClans;
+      if (clan.tag.toLowerCase().startsWith(lowerSearch) && clan.tag.toLowerCase() !== lowerSearch) {
+        if (!uniqueClans.has(clan.clan_id)) {
+          uniqueClans.add(clan.clan_id);
+          result.push(clan);
+        }
+      }
+    }
+
+    for (const clan of record.data) {
+      if (result.length >= 20) break;
+
+      if (clan.name.toLowerCase().startsWith(lowerSearch)) {
+        if (!uniqueClans.has(clan.clan_id)) {
+          uniqueClans.add(clan.clan_id);
+          result.push(clan);
+        }
+      }
+    }
+
+    return result;
   }
 
 
