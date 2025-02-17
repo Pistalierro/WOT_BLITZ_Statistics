@@ -45,10 +45,10 @@ export class ClanUtilsService {
           return false;
         }
 
-        if (!member.statistics.all) {
-          console.warn('⚠ Игрок без поля "statistics.all" — пропускаем');
-          return false;
-        }
+        // if (!member.statistics.all) {
+        //   console.warn('⚠ Игрок без поля "statistics.all" — пропускаем');
+        //   return false;
+        // }
         return true;
       });
 
@@ -83,7 +83,7 @@ export class ClanUtilsService {
     totalPages: number,
     processResponse: (response: ApiResponse<T>) => R[],
     batchSize: number = 10,        // ✅ Значение по умолчанию, можно не передавать
-    requestTimeout: number = 5000  // ✅ Таймаут тоже дефолтный
+    requestTimeout: number = 2000  // ✅ Таймаут тоже дефолтный
   ): Promise<R[]> {
     const allData: R[] = [];
 
@@ -112,9 +112,9 @@ export class ClanUtilsService {
 
         pagesLoaded += batchResponses.length;
         const progressPercent = ((pagesLoaded / totalPages) * 100).toFixed(2);
-        console.clear();
+        // console.clear();
         console.log(`✅ Загружено страниц: ${i}-${Math.min(i + batchSize - 1, totalPages)} | 📊 Прогресс: ${progressPercent}%`);
-        await this.delay(1000);
+        await this.delay(500);
       }
     } catch (err: any) {
       console.error('❌ Ошибка загрузки данных:', err.message);

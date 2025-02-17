@@ -8,8 +8,9 @@ import {MatPaginator} from '@angular/material/paginator';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {DISPLAY_SIZE_LG_MIN, DISPLAY_SIZE_MD_LG, DISPLAY_SIZE_SM, DISPLAY_SIZE_SM_MD,} from '../../../../mock/clan-utils';
 import {Router} from '@angular/router';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {debounceTime} from 'rxjs';
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
+import {debounceTime, distinctUntilChanged} from 'rxjs';
 
 @Component({
   selector: 'app-clan-list',
@@ -20,7 +21,8 @@ import {debounceTime} from 'rxjs';
     DecimalPipe,
     DatePipe,
     ReactiveFormsModule,
-    NgForOf
+    NgForOf,
+    MatAutocompleteTrigger
   ],
   templateUrl: './clan-list.component.html',
   styleUrl: './clan-list.component.scss'
@@ -30,6 +32,7 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
   form!: FormGroup;
+  clanControl = new FormControl('');
   suggestedClans: BasicClanData[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   router = inject(Router);
@@ -63,7 +66,6 @@ export class ClanListComponent implements OnInit, AfterViewInit {
     if (!this.clanService.topClanDetails()) {
       void this.clanService.getTopClanDetails();
     }
-    void this.clanService.getTopClanDetails();
     this.initForm();
     this.setupSearchListener();
   }
@@ -100,7 +102,7 @@ export class ClanListComponent implements OnInit, AfterViewInit {
 
   async onSubmit(): Promise<void> {
     const nameValue = this.form.value.name;
-    const clanId = await this.clanService.getClanDetailsByName(nameValue);
+    const clanId = await this.clanService.getClanDetailsByNameOrTag(nameValue);
     if (clanId) {
       this.navigateToClanDetails(clanId);
     } else {
@@ -109,10 +111,13 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   }
 
   setupSearchListener(): void {
-    this.form.get('name')!.valueChanges
-      .pipe(debounceTime(300))
-      .subscribe(async (searchTerm: string) => {
-        this.suggestedClans = await this.clanService.suggestClans(searchTerm);
+    this.clanControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((searchTerm: string | null) => {
+        const query = typeof searchTerm === 'string' ? searchTerm : '';
+        this.clanService.suggestClans(query).then(results => {
+          this.suggestedClans = results;
+        });
       });
   }
 

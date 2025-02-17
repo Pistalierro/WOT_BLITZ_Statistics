@@ -1,7 +1,8 @@
 <div class="container">
   <div class="actions">
     <!--        <button (click)="updateAllData()" color="warn" mat-flat-button type="button">Получить ID всех кланов</button>-->
-    <!--    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>-->
+    <!--    <button (click)="clanService.getBigClansIds()" color="warn" mat-flat-button type="button">getBigClansIds</button>-->
+    <button (click)="clanService.getTopClansIds()" color="warn" mat-flat-button type="button">getTopClansIds</button>
     <!--    <button (click)="clanService.getAllClansData()" color="primary" mat-flat-button type="button">getAllClansData</button>-->
   </div>
 
@@ -16,15 +17,17 @@
     <form [formGroup]="form" class="form-search-clan">
       <mat-form-field appearance="outline">
         <mat-label>Поиск по всем кланам</mat-label>
-        <input (keydown.enter)="onSubmit()" formControlName="name" matInput placeholder="Введите название клана">
+        <input (keydown.enter)="onSubmit()" [formControl]="clanControl" [matAutocomplete]="auto" formControlName="name" matInput
+               placeholder="Введите название клана">
       </mat-form-field>
+      <button style="display: none;" type="submit"></button>
     </form>
 
-    <ul *ngIf="suggestedClans.length > 0" class="suggestions">
-      <li (click)="selectClan(clan)" *ngFor="let clan of suggestedClans">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectClan($event.option.value)">
+      <mat-option *ngFor="let clan of suggestedClans" [value]="clan">
         {{ clan.name }} [{{ clan.tag }}]
-      </li>
-    </ul>
+      </mat-option>
+    </mat-autocomplete>
   </div>
 
   <div class="progress-bar">

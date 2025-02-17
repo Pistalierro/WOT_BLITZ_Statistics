@@ -53,6 +53,16 @@ export class ClanIndexedDbService {
       .toArray();
   }
 
+  async findClansByNameOrTag(searchTerm: string): Promise<BasicClanData[]> {
+    return this.db.clans
+      .where('tag')
+      .startsWithIgnoreCase(searchTerm)
+      .or('name')
+      .startsWithIgnoreCase(searchTerm)
+      .toArray();
+  }
+
+
   async putRecord(key: string, data: any): Promise<void> {
     const record: KeyValueRecord = {key, data, timestamp: Date.now()};
     await this.db.keyValue.put(record);

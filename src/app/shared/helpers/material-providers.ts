@@ -14,6 +14,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {CdkTableModule} from '@angular/cdk/table';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatTooltip} from '@angular/material/tooltip';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 export const MATERIAL_MODULES = [
   MatToolbarModule,
@@ -31,5 +32,6 @@ export const MATERIAL_MODULES = [
   FormsModule,
   CdkTableModule,
   MatProgressBarModule,
-  MatTooltip
+  MatTooltip,
+  MatAutocompleteModule
 ];

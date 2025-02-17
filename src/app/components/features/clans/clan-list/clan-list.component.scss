@@ -66,6 +66,7 @@ mat-paginator {
 }
 
 :host ::ng-deep {
+
   .form-search-clan,
   .filter {
     width: 100%;
@@ -140,9 +141,15 @@ mat-paginator {
 }
 
 .form-search-clan {
-  width: 30%;
-
-
+  @include md-min {
+    width: 30%;
+  }
+  @include md-sm {
+    width: 50%;
+  }
+  @include sm {
+    width: 100%;
+  }
 }
 
 .clans {
@@ -152,33 +159,8 @@ mat-paginator {
   }
 }
 
-.suggestions {
-  position: absolute;
-  width: 30%;
-  background: $color-deep-dark;
-  border: 1px solid $color-accent;
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 5px 0;
-  z-index: 1000;
-}
-
-.suggestions li {
-  padding: 8px;
-  cursor: pointer;
-  color: $color-gray;
-  font-size: 1rem;
-  transition: background 0.25s;
-}
-
-.suggestions li:hover {
-  background: $color-dark;
-}
-
 .progress-bar {
   min-height: 5px;
 }
+
 

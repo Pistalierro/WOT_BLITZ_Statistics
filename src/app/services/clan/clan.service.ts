@@ -152,7 +152,6 @@ export class ClanService {
 
   async getTopClansIds(): Promise<void> {
     this.topClanIds = [];
-
     if (!this.largeClansIds || !Array.isArray(this.largeClansIds) || !this.largeClansIds.length) {
       console.warn('⚠ Нет сохранённых данных больших кланов!');
       return;
@@ -166,15 +165,10 @@ export class ClanService {
       this.loading.set(true);
       this.error.set(null);
 
-      // 1) Снова тянем инфу через /clans/info/, но теперь только по largeClansIds
       const allClans = await this.clanUtilsService.fetchPaginatedData<ClanDetails, ExtendedClanDetails>(
         (page) => {
-          // Берём chunk из ID
           const chunkStart = (page - 1) * this.limit;
-          const chunkIds = this.largeClansIds
-            .map(clan => clan.clan_id)
-            .slice(chunkStart, chunkStart + this.limit);
-
+          const chunkIds = this.largeClansIds.slice(chunkStart, chunkStart + this.limit);
           return `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${chunkIds.join(',')}`;
         },
         this.totalPages,
@@ -184,12 +178,10 @@ export class ClanService {
           if (response.status === 'ok' && response.data) {
             for (const clanId in response.data) {
               const clanData = response.data[clanId];
-
               if (!clanData) {
                 console.warn(`⚠ Нет данных по клану с ID ${clanId} — пропускаю`);
                 continue;
               }
-              // Пока winRate = 0, потом пересчитаем
               result.push({...clanData, winRate: 0} as ExtendedClanDetails);
             }
           }
@@ -202,7 +194,6 @@ export class ClanService {
         return;
       }
 
-      // 2) Получаем winRate каждого клана, пакетами
       const batchSize = 20;
       for (let i = 0; i < allClans.length; i += batchSize) {
         const batch = allClans.slice(i, i + batchSize);
@@ -212,12 +203,10 @@ export class ClanService {
           })
         );
         if ((i / batchSize) % 5 === 0) {
-          console.clear();
           console.log(`✅ Обработано ${Math.min(i + batchSize, allClans.length)} из ${allClans.length}`);
         }
       }
 
-      // 3) Фильтруем кланы
       const filteredClans = allClans.filter(clan =>
         clan &&
         typeof clan.clan_id === 'number' &&
@@ -233,12 +222,12 @@ export class ClanService {
         return;
       }
 
-      // 4) Сортируем и берем топ-50
       filteredClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
       const top50 = filteredClans.slice(0, 50);
 
       // Сохраняем IDs в topClanIds
       this.topClanIds = top50.map(clan => clan.clan_id);
+      console.log(this.topClanIds);
 
       // Кладём в локальное хранилище и Firestore
       await this.clanUtilsService.saveDataToIndexedDb('topClanIds', this.topClanIds);
@@ -253,16 +242,16 @@ export class ClanService {
   }
 
   async getTopClanDetails(): Promise<void> {
+
     if (!this.topClanIds.length) {
-      console.log('⚠ Список ID ТОП кланов пуст');
-      return;
+      console.warn('⚠ this.topClanIds пуст, загружаю из IndexedDB...');
+      this.topClanIds = await this.clanUtilsService.loadDataWithFallback<number[]>('topClanIds');
     }
 
     try {
       this.loading.set(true);
       this.error.set(null);
 
-      // 1) Пробуем из кэша
       const cachedData = await this.clanUtilsService.loadDataWithFallback<ExtendedClanDetails[]>('topClanDetails',);
       if (cachedData.length > 0) {
         console.log('✅ Загружены топ-кланы из кеша');
@@ -333,12 +322,12 @@ export class ClanService {
     }
   }
 
-  async getClanDetailsByName(name: string): Promise<number | null> {
+  async getClanDetailsByNameOrTag(name: string): Promise<number | null> {
     try {
       const search = name.trim();
       if (!search) return null;
 
-      const results = await this.indexedDbService.findClansByName(search);
+      const results = await this.indexedDbService.findClansByNameOrTag(search);
       if (!results || results.length === 0) {
         console.warn(`Нет кланов с именем "${search}"`);
         return null;
@@ -353,10 +342,14 @@ export class ClanService {
   }
 
   async suggestClans(searchTerm: string): Promise<BasicClanData[]> {
+    if (typeof searchTerm !== 'string') {
+      console.warn('searchTerm не строка, пропускаем:', searchTerm);
+      return [];
+    }
     try {
       const trimmed = searchTerm.trim();
       if (!trimmed) return [];
-      return await this.indexedDbService.findClansByName(trimmed);
+      return await this.indexedDbService.findClansByNameOrTag(trimmed);
     } catch (err: any) {
       console.error('Ошибка при получении подсказок кланов:', err);
       return [];

@@ -73,6 +73,29 @@
   }
 }
 
+//mat-autocomplete
+.cdk-overlay-container {
+  .mat-mdc-autocomplete-panel {
+    background: $color-deep-dark !important; /* Фон выпадающего списка */
+    border-top: none !important;
+    border-right: 2px solid $color-accent !important;
+    border-bottom: 2px solid $color-accent !important;
+    border-left: 2px solid $color-accent !important;
+    max-height: 300px !important; /* Ограничение высоты списка */
+  }
+
+  .mat-mdc-option {
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba($color-gray-dark, 0.5) !important; /* Фон при наведении */
+      color: white !important;
+    }
+  }
+}
+
+
+
 
 
 
