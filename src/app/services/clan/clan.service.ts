@@ -342,18 +342,26 @@ export class ClanService {
   }
 
   async suggestClans(searchTerm: string): Promise<BasicClanData[]> {
-    if (typeof searchTerm !== 'string') {
-      console.warn('searchTerm не строка, пропускаем:', searchTerm);
+    console.log(`🔎 Поиск клана: "${searchTerm}"`);
+
+    const record = await this.indexedDbService.getRecord('allClansData');
+    if (!record || !record.data) {
+      console.warn('⚠ Данные о кланах отсутствуют в keyValue!');
       return [];
     }
-    try {
-      const trimmed = searchTerm.trim();
-      if (!trimmed) return [];
-      return await this.indexedDbService.findClansByNameOrTag(trimmed);
-    } catch (err: any) {
-      console.error('Ошибка при получении подсказок кланов:', err);
-      return [];
-    }
+
+    console.log('📦 Загружено из keyValue:', record.data.length, 'кланов');
+    console.log('🔍 Первые 10 кланов:', record.data.slice(0, 10).map((c: any) => `${c.name} [${c.tag}]`));
+
+    // Новый фильтр: ищем внутри строки, игнорируем регистр
+    const filteredClans = record.data.filter((clan: any) =>
+      clan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      clan.tag.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 10); // Показываем только 50 кланов
+
+
+    console.log(`✅ Найдено ${filteredClans.length} кланов`, filteredClans);
+    return filteredClans;
   }
 
 

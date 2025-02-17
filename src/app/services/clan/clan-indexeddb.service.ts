@@ -39,27 +39,18 @@ export class ClanIndexedDbService {
     await this.db.clans.clear();
   }
 
-  async findClansByName(namePart: string): Promise<BasicClanData[]> {
-    return this.db.clans
-      .where('name')
-      .startsWithIgnoreCase(namePart)
-      .toArray();
-  }
-
-  async findClansByTag(namePart: string): Promise<BasicClanData[]> {
-    return this.db.clans
-      .where('tag')
-      .startsWithIgnoreCase(namePart)
-      .toArray();
-  }
-
   async findClansByNameOrTag(searchTerm: string): Promise<BasicClanData[]> {
-    return this.db.clans
+    console.log(`🔎 Поиск в IndexedDB: "${searchTerm}"`);
+
+    const results = await this.db.clans
       .where('tag')
       .startsWithIgnoreCase(searchTerm)
       .or('name')
       .startsWithIgnoreCase(searchTerm)
       .toArray();
+
+    console.log(`✅ IndexedDB вернул ${results.length} кланов`, results);
+    return results;
   }
 
 

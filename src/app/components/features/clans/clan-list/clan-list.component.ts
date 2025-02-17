@@ -35,6 +35,7 @@ export class ClanListComponent implements OnInit, AfterViewInit {
   clanControl = new FormControl('');
   suggestedClans: BasicClanData[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatAutocompleteTrigger) autoTrigger!: MatAutocompleteTrigger;
   router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
   private fb = inject(FormBuilder);
@@ -115,11 +116,23 @@ export class ClanListComponent implements OnInit, AfterViewInit {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm: string | null) => {
         const query = typeof searchTerm === 'string' ? searchTerm : '';
+        console.log(`🔍 Поиск клана: "${query}"`);
+
         this.clanService.suggestClans(query).then(results => {
+          console.log(`✅ Найдено ${results.length} кланов`, results);
           this.suggestedClans = results;
+          console.log('🔥 Итоговое состояние suggestedClans:', this.suggestedClans);
+
+          setTimeout(() => {
+            if (this.autoTrigger) {
+              this.autoTrigger.updatePosition();
+              this.autoTrigger.openPanel();
+            }
+          }, 200);
         });
       });
   }
+
 
   async selectClan(clan: BasicClanData): Promise<void> {
     this.form.patchValue({name: `${clan.name} [${clan.tag}]`});

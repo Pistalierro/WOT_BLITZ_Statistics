@@ -76,23 +76,29 @@
 //mat-autocomplete
 .cdk-overlay-container {
   .mat-mdc-autocomplete-panel {
-    background: $color-deep-dark !important; /* Фон выпадающего списка */
+    position: relative !important; // Позволяет CDK корректно позиционировать
+    display: block;
+    z-index: 9999;
     border-top: none !important;
     border-right: 2px solid $color-accent !important;
     border-bottom: 2px solid $color-accent !important;
     border-left: 2px solid $color-accent !important;
-    max-height: 300px !important; /* Ограничение высоты списка */
+    overflow-y: auto;
+    width: 100%;
+    background: $color-deep-dark; /* Фон выпадающего списка */
+    max-height: 300px; /* Ограничение высоты списка */
   }
 
   .mat-mdc-option {
     transition: background 0.2s;
 
     &:hover {
-      background: rgba($color-gray-dark, 0.5) !important; /* Фон при наведении */
-      color: white !important;
+      background: rgba($color-gray-dark, 0.5); /* Фон при наведении */
+      color: white;
     }
   }
 }
+
 
 
 
