@@ -31,6 +31,10 @@ export class ClanIndexedDbService {
     await this.db.clans.bulkAdd(clans);
   }
 
+  async putClans(clans: BasicClanData[]): Promise<void> {
+    await this.db.clans.bulkPut(clans);
+  }
+
   async getAllClans(): Promise<BasicClanData[]> {
     return this.db.clans.toArray();
   }

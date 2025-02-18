@@ -84,7 +84,6 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async updateAllData(): Promise<void> {
     await this.clanService.getAllClansData();
-    await this.clanService.getBigClansIds();
     await this.clanService.getTopClansIds();
     await this.clanService.getTopClanDetails();
   }

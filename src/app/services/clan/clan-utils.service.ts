@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../../app.config';
 import {lastValueFrom, timeout} from 'rxjs';
 import {PlayerInfoResponse} from '../../models/player/player-response.model';
-import {ApiResponse} from '../../models/clan/clan-response.model';
+import {ApiResponse, BasicClanData} from '../../models/clan/clan-response.model';
 import {ClanFirestoreService} from './clan-firestore.service';
 import {ClanIndexedDbService} from './clan-indexeddb.service';
 
@@ -72,58 +72,14 @@ export class ClanUtilsService {
     }
   }
 
-
-  // async fetchPaginatedData<T, R>(
-  //   urlGenerator: (page: number) => string,
-  //   totalPages: number,
-  //   processResponse: (response: ApiResponse<T>) => R[],
-  //   batchSize: number = 10,        // ✅ Значение по умолчанию, можно не передавать
-  //   requestTimeout: number = 2000  // ✅ Таймаут тоже дефолтный
-  // ): Promise<R[]> {
-  //   const allData: R[] = [];
-  //
-  //   try {
-  //     let pagesLoaded = 0;
-  //
-  //     for (let i = 1; i <= totalPages; i += batchSize) {
-  //       const batchRequests: Promise<ApiResponse<T>>[] = [];
-  //
-  //       for (let j = 0; j < batchSize && i + j <= totalPages; j++) {
-  //         const url = urlGenerator(i + j);
-  //         batchRequests.push(
-  //           lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)))
-  //         );
-  //       }
-  //
-  //       const batchResponses = await Promise.allSettled(batchRequests);
-  //
-  //       batchResponses.forEach(result => {
-  //         if (result.status === 'fulfilled') {
-  //           allData.push(...processResponse(result.value)); // ✅ Теперь `R[]` может быть `number[]` или `ClanListEntry[]`
-  //         } else {
-  //           console.warn(`⚠️ Ошибка при загрузке страницы:`, result.reason);
-  //         }
-  //       });
-  //
-  //       pagesLoaded += batchResponses.length;
-  //       const progressPercent = ((pagesLoaded / totalPages) * 100).toFixed(2);
-  //       // console.clear();
-  //       console.log(`✅ Загружено страниц: ${i}-${Math.min(i + batchSize - 1, totalPages)} | 📊 Прогресс: ${progressPercent}%`);
-  //       await this.delay(500);
-  //     }
-  //   } catch (err: any) {
-  //     console.error('❌ Ошибка загрузки данных:', err.message);
-  //   }
-  //
-  //   return allData;
-  // }
-
   async fetchPaginatedData<T, R>(
     urlGenerator: (page: number) => string,
     totalPages: number,
     processResponse: (response: ApiResponse<T>) => R[],
     batchSize: number = 10,
-    requestTimeout: number = 2000
+    requestTimeout: number = 2000,
+    maxRetries: number = 5, // ✅ Добавляем ретраи
+    retryDelay: number = 1000 // ✅ Начальная задержка перед ретраем
   ): Promise<R[]> {
     const allData: R[] = [];
     let pagesLoaded = 0;
@@ -132,7 +88,7 @@ export class ClanUtilsService {
       for (let i = 1; i <= totalPages; i += batchSize) {
         const batchRequests = Array.from({length: Math.min(batchSize, totalPages - i + 1)}, (_, j) => {
           const url = urlGenerator(i + j);
-          return lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)));
+          return this.retryRequest<ApiResponse<T>>(url, maxRetries, retryDelay, requestTimeout);
         });
 
         const batchResponses = await Promise.allSettled(batchRequests);
@@ -141,13 +97,13 @@ export class ClanUtilsService {
           if (result.status === 'fulfilled') {
             allData.push(...processResponse(result.value));
           } else {
-            console.warn(`⚠️ Ошибка при загрузке страницы:`, result.reason);
+            console.warn(`⚠️ Ошибка при загрузке страницы (превышено количество попыток):`, result.reason);
           }
         });
 
         pagesLoaded += batchResponses.length;
         console.log(`✅ Прогресс: ${(pagesLoaded / totalPages * 100).toFixed(2)}%`);
-        await this.delay(500);
+        await this.delay(1000);
       }
     } catch (err: any) {
       console.error('❌ Ошибка загрузки данных:', err.message);
@@ -155,7 +111,6 @@ export class ClanUtilsService {
 
     return allData;
   }
-
 
   delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -199,10 +154,45 @@ export class ClanUtilsService {
     );
   }
 
+  async saveClansData(key: string, data: BasicClanData[]): Promise<void> {
+    try {
+      await Promise.all([
+        this.indexedDbService.putClans(data),  // ✅ Сохраняем в IndexedDB
+        this.firestoreService.saveData(key, data)  // ✅ Сохраняем в Firestore
+      ]);
+      console.log(`✅ Данные кланов сохранены в IndexedDB и Firestore (ключ: ${key})`);
+    } catch (error) {
+      console.error(`❌ Ошибка сохранения данных кланов:`, error);
+    }
+  }
+
+  private async retryRequest<T>(url: string, maxRetries: number, retryDelay: number, requestTimeout: number): Promise<T> {
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+      try {
+        // console.log(`🔄 Запрос ${url} (Попытка ${attempt + 1}/${maxRetries})`);
+        return await lastValueFrom(this.http.get<T>(url).pipe(timeout(requestTimeout)));
+      } catch (error: any) {
+        console.warn(`⚠️ Ошибка запроса ${url} (Попытка ${attempt + 1}):`, error.message);
+
+        if (attempt < maxRetries - 1) {
+          const waitTime = retryDelay * Math.pow(2, attempt);
+          console.log(`⏳ Ожидание ${waitTime / 1000}с перед повторной попыткой...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          throw new Error(`❌ Превышено количество попыток запроса: ${url}`);
+        }
+      }
+
+      attempt++;
+    }
+
+    throw new Error(`❌ Ошибка запроса: ${url}`);
+  }
+
   private isFresh(timestamp: number, maxAgeMinutes: number): boolean {
     const elapsedMinutes = (Date.now() - timestamp) / 60000;
     return elapsedMinutes < maxAgeMinutes;
   }
 }
-
-
