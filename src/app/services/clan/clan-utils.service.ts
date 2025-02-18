@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../../app.config';
 import {lastValueFrom, timeout} from 'rxjs';
-import {PlayerData} from '../../models/player/player-response.model';
+import {PlayerInfoResponse} from '../../models/player/player-response.model';
 import {ApiResponse} from '../../models/clan/clan-response.model';
 import {ClanFirestoreService} from './clan-firestore.service';
 import {ClanIndexedDbService} from './clan-indexeddb.service';
@@ -16,65 +16,63 @@ export class ClanUtilsService {
   private firestoreService = inject(ClanFirestoreService);
   private indexedDbService = inject(ClanIndexedDbService);
 
-  async getClanWinRate(membersIds: number[]): Promise<number> {
+  async getClanStats(membersIds: number[]): Promise<{ winRate: number, avgDamage: number }> {
     if (!Array.isArray(membersIds) || membersIds.length === 0) {
       console.warn('⚠ Список участников клана пуст или не является массивом, возвращаю 0');
-      return 0;
+      return {winRate: 0, avgDamage: 0};
     }
 
     try {
       const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=statistics.all.battles,statistics.all.wins`;
-      const res: any = await lastValueFrom(this.http.get(url));
-      if (!res || !res.data) {
+      const res = await lastValueFrom(this.http.get<PlayerInfoResponse>(url));
+      if (!res || res.status !== 'ok' || !res.data) {
         console.warn('⚠ Пустой ответ API для списка игроков, возвращаю 0');
-        return 0;
+        return {winRate: 0, avgDamage: 0};
       }
-      const rawData = Object.values(res.data) as PlayerData[];
+      const rawData = Object.values(res.data);
 
       if (!rawData.length) {
         console.warn('⚠ Не пришли данные ни по одному игроку, возвращаю 0');
-        return 0;
+        return {winRate: 0, avgDamage: 0};
       }
-      const validMembers = rawData.filter((member: PlayerData) => {
-        if (!member) {
-          return false;
-        }
 
-        if (!member.statistics) {
-          console.warn('⚠ Игрок без поля "statistics" — пропускаем');
-          return false;
-        }
-
-        // if (!member.statistics.all) {
-        //   console.warn('⚠ Игрок без поля "statistics.all" — пропускаем');
-        //   return false;
-        // }
-        return true;
+      const validMembers = rawData.filter(player => {
+        player?.statistics?.all?.battles &&
+        player?.statistics?.all?.wins &&
+        player?.statistics?.all?.damage_dealt;
       });
 
       if (!validMembers.length) {
         console.warn('⚠ Все участники оказались с битой статистикой, возвращаю 0');
-        return 0;
+        return {winRate: 0, avgDamage: 0};
       }
 
       let totalWins = 0;
       let totalBattles = 0;
+      let totalDamageDealt = 0;
 
-      for (const member of validMembers) {
-        const battles = member.statistics.all.battles || 0;
-        const wins = member.statistics.all.wins || 0;
+      for (const player of validMembers) {
+        const battles = player.statistics.all.battles || 0;
+        const wins = player.statistics.all.wins || 0;
+        const damageDealt = player.statistics.all.damage_dealt;
+
         totalBattles += battles;
         totalWins += wins;
+        totalDamageDealt += damageDealt;
       }
 
       if (totalBattles <= 0) {
-        console.warn('⚠ Ноль боёв у всех, winRate = 0');
-        return 0;
+        console.warn('⚠ Ноль боёв у всех, winRate = 0, avgDamage = 0');
+        return {winRate: 0, avgDamage: 0};
       }
-      return (totalWins / totalBattles) * 100;
+      const winRate = (totalWins / totalBattles) * 100;
+      const avgDamage = totalDamageDealt / totalBattles;
+
+      return {winRate, avgDamage};
+
     } catch (err: any) {
       console.error('❌ Ошибка при вычислении winRate:', err.message);
-      return 0;
+      return {winRate: 0, avgDamage: 0};
     }
   }
 

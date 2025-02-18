@@ -93,7 +93,6 @@ export class ClanFirestoreService {
       snapshot.forEach(doc => {
         const chunk = doc.data()['data'] as unknown as T;
         combinedData.push(...chunk);
-        console.log(`✅ Загружен батч '${doc.id}' (${chunk.length} элементов)`);
       });
 
       console.log(`🎉 Все части '${key}' загружены (${combinedData.length} элементов)`);

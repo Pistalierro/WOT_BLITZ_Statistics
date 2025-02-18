@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import {HomeComponent} from './components/features/home/home.component';
 import {authGuard} from './guards/auth.guard';
+import {clanResolver} from './resolvers/clan.resolver';
 
 export const routes: Routes = [
   {path: 'home', component: HomeComponent},
@@ -44,6 +45,6 @@ export const routes: Routes = [
     path: 'clans/:id',
     loadComponent: () => import('./components/features/clans/clan-details/clan-details.component')
       .then(m => m.ClanDetailsComponent),
-    // resolve: {clan: clanResolver}
+    resolve: {clan: clanResolver}
   }
 ];

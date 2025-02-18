@@ -55,6 +55,7 @@ export interface ClanDetails {
 
 export interface ExtendedClanDetails extends ClanDetails {
   winRate: number | null;
+  avgDamage?: number | null;
 }
 
 export interface ClanInfoResponse {

@@ -199,7 +199,9 @@ export class ClanService {
         const batch = allClans.slice(i, i + batchSize);
         await Promise.all(
           batch.map(async (clan) => {
-            clan.winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+            const stats = await this.clanUtilsService.getClanStats(clan.members_ids);
+            clan.winRate = stats.winRate;
+            clan.avgDamage = stats.avgDamage;
           })
         );
         if ((i / batchSize) % 5 === 0) {
@@ -242,7 +244,6 @@ export class ClanService {
   }
 
   async getTopClanDetails(): Promise<void> {
-
     if (!this.topClanIds.length) {
       this.topClanIds = await this.clanUtilsService.loadDataWithFallback<number[]>('topClanIds');
     }
@@ -275,12 +276,12 @@ export class ClanService {
         const clanList = Object.values(res.data) as ClanDetails[];
         const batchResults = await Promise.all(
           clanList.map(async (clan) => {
-            const winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
-            return {...clan, winRate};
+            const stats = await this.clanUtilsService.getClanStats(clan.members_ids);
+            return {...clan, winRate: stats.winRate, avgDamage: stats.avgDamage};
           })
         );
-        extendedClans.push(...batchResults);
         extendedClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
+        extendedClans.push(...batchResults);
 
         this.topClanDetails.set([...extendedClans]);
       }
@@ -310,9 +311,9 @@ export class ClanService {
       }
 
       const clan = res.data[clanId];
-      const winRate = await this.clanUtilsService.getClanWinRate(clan.members_ids);
+      const stats = await this.clanUtilsService.getClanStats(clan.members_ids);
 
-      this.clanDetails.set({...clan, winRate});
+      this.clanDetails.set({...clan, winRate: stats.winRate, avgDamage: stats.avgDamage,});
     } catch (error: any) {
       console.error(`❌ Ошибка при получении данных о клане ${clanId}:`, error);
       this.error.set('Ошибка загрузки данных о клане.');
@@ -342,48 +343,41 @@ export class ClanService {
 
   async suggestClans(searchTerm: string): Promise<BasicClanData[]> {
     const record = await this.indexedDbService.getRecord('allClansData');
-    if (!record || !record.data) {
+    if (!record?.data) {
       console.warn('⚠ Данные о кланах отсутствуют в keyValue!');
       return [];
     }
 
-    const lowerSearch = searchTerm.toLowerCase();
-    const uniqueClans = new Set<number>(); // Для хранения уникальных clan_id
+    const lowerSearch = searchTerm.normalize('NFD').toLowerCase();
+    const uniqueClans = new Map<number, BasicClanData>();
     const result: BasicClanData[] = [];
-    
+
     for (const clan of record.data) {
       if (result.length >= 20) break;
-
-      if (clan.tag.toLowerCase() === lowerSearch) { // Полное совпадение с тегом
-        if (!uniqueClans.has(clan.clan_id)) {
-          uniqueClans.add(clan.clan_id);
-          result.push(clan);
-        }
+      const tag = clan.tag.normalize('NFD').toLowerCase();
+      if (tag === lowerSearch) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
       }
     }
 
     for (const clan of record.data) {
       if (result.length >= 20) break;
-
-      if (clan.tag.toLowerCase().startsWith(lowerSearch) && clan.tag.toLowerCase() !== lowerSearch) {
-        if (!uniqueClans.has(clan.clan_id)) {
-          uniqueClans.add(clan.clan_id);
-          result.push(clan);
-        }
+      const tag = clan.tag.normalize('NFD').toLowerCase();
+      if (tag.startsWith(lowerSearch) && !uniqueClans.has(clan.clan_id)) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
       }
     }
 
     for (const clan of record.data) {
       if (result.length >= 20) break;
-
-      if (clan.name.toLowerCase().startsWith(lowerSearch)) {
-        if (!uniqueClans.has(clan.clan_id)) {
-          uniqueClans.add(clan.clan_id);
-          result.push(clan);
-        }
+      const name = clan.name.normalize('NFD').toLowerCase();
+      if (name.startsWith(lowerSearch) && !uniqueClans.has(clan.clan_id)) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
       }
     }
-
     return result;
   }
 

@@ -1,16 +1,16 @@
 <div class="container">
-  <h2>Детальная информация о клане</h2>
   <div class="progress-bar">
     <mat-progress-bar *ngIf="clanService.loading()" color="warn" mode="indeterminate"></mat-progress-bar>
   </div>
 
   <div *ngIf="clanService.clanDetails() as clan">
-    <p>Название: {{ clan.name }} [{{ clan.tag }}]</p>
+    <h2>[{{ clan.tag }}] {{ clan.name }} </h2>
+    <p>{{ clan.clan_id }}</p>
     <p>{{ clan.motto }}</p>
     <p class="clan-description">Описание: {{ clan.description }}</p>
     <p>WinRate: {{ clan.winRate | number: '1.2-2' }}%</p>
     <p *ngIf="clan.created_at">Создан: {{ clan.created_at | date: 'dd.MM.yyyy' }}</p>
-    <p>Состоит игроков: {{ clan.members_count }}</p>
+    <p>Участники: {{ clan.members_count }}/50</p>
     <p>Глава: {{ clan.leader_name }}</p>
   </div>
   <div>
