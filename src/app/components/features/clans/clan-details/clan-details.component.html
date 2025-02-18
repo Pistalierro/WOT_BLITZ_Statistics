@@ -5,7 +5,6 @@
 
   <div *ngIf="clanService.clanDetails() as clan">
     <h2>[{{ clan.tag }}] {{ clan.name }} </h2>
-    <p>{{ clan.clan_id }}</p>
     <p>{{ clan.motto }}</p>
     <p class="clan-description">Описание: {{ clan.description }}</p>
     <p>WinRate: {{ clan.winRate | number: '1.2-2' }}%</p>

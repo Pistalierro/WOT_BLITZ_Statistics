@@ -16,34 +16,25 @@ export class ClanUtilsService {
   private firestoreService = inject(ClanFirestoreService);
   private indexedDbService = inject(ClanIndexedDbService);
 
-  async getClanStats(membersIds: number[]): Promise<{ winRate: number, avgDamage: number }> {
+  async getClanStats(membersIds: number[]): Promise<{ winRate: number; avgDamage: number }> {
     if (!Array.isArray(membersIds) || membersIds.length === 0) {
-      console.warn('⚠ Список участников клана пуст или не является массивом, возвращаю 0');
+      console.warn('⚠ Список участников клана пуст, возвращаю 0');
       return {winRate: 0, avgDamage: 0};
     }
 
     try {
-      const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=statistics.all.battles,statistics.all.wins`;
+      const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=statistics.all.battles,statistics.all.wins,statistics.all.damage_dealt`;
       const res = await lastValueFrom(this.http.get<PlayerInfoResponse>(url));
+
       if (!res || res.status !== 'ok' || !res.data) {
-        console.warn('⚠ Пустой ответ API для списка игроков, возвращаю 0');
+        console.warn('⚠ Пустой ответ API, возвращаю 0');
         return {winRate: 0, avgDamage: 0};
       }
+
       const rawData = Object.values(res.data);
 
       if (!rawData.length) {
-        console.warn('⚠ Не пришли данные ни по одному игроку, возвращаю 0');
-        return {winRate: 0, avgDamage: 0};
-      }
-
-      const validMembers = rawData.filter(player => {
-        player?.statistics?.all?.battles &&
-        player?.statistics?.all?.wins &&
-        player?.statistics?.all?.damage_dealt;
-      });
-
-      if (!validMembers.length) {
-        console.warn('⚠ Все участники оказались с битой статистикой, возвращаю 0');
+        console.warn('⚠ API не вернул статистику ни по одному игроку.');
         return {winRate: 0, avgDamage: 0};
       }
 
@@ -51,67 +42,111 @@ export class ClanUtilsService {
       let totalBattles = 0;
       let totalDamageDealt = 0;
 
-      for (const player of validMembers) {
+      for (const player of rawData) {
+        if (!player.statistics?.all) {
+          console.warn(`⚠ Игрок ${player.nickname} (${player.account_id}) без статистики, пропускаем.`);
+          continue;
+        }
+
         const battles = player.statistics.all.battles || 0;
         const wins = player.statistics.all.wins || 0;
-        const damageDealt = player.statistics.all.damage_dealt;
+        const damageDealt = player.statistics.all.damage_dealt || 0;
 
         totalBattles += battles;
         totalWins += wins;
         totalDamageDealt += damageDealt;
       }
 
-      if (totalBattles <= 0) {
-        console.warn('⚠ Ноль боёв у всех, winRate = 0, avgDamage = 0');
+      if (totalBattles === 0) {
+        console.warn('⚠ У всех игроков 0 боёв, winRate = 0, avgDamage = 0');
         return {winRate: 0, avgDamage: 0};
       }
+
       const winRate = (totalWins / totalBattles) * 100;
       const avgDamage = totalDamageDealt / totalBattles;
 
       return {winRate, avgDamage};
-
     } catch (err: any) {
       console.error('❌ Ошибка при вычислении winRate:', err.message);
       return {winRate: 0, avgDamage: 0};
     }
   }
 
+
+  // async fetchPaginatedData<T, R>(
+  //   urlGenerator: (page: number) => string,
+  //   totalPages: number,
+  //   processResponse: (response: ApiResponse<T>) => R[],
+  //   batchSize: number = 10,        // ✅ Значение по умолчанию, можно не передавать
+  //   requestTimeout: number = 2000  // ✅ Таймаут тоже дефолтный
+  // ): Promise<R[]> {
+  //   const allData: R[] = [];
+  //
+  //   try {
+  //     let pagesLoaded = 0;
+  //
+  //     for (let i = 1; i <= totalPages; i += batchSize) {
+  //       const batchRequests: Promise<ApiResponse<T>>[] = [];
+  //
+  //       for (let j = 0; j < batchSize && i + j <= totalPages; j++) {
+  //         const url = urlGenerator(i + j);
+  //         batchRequests.push(
+  //           lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)))
+  //         );
+  //       }
+  //
+  //       const batchResponses = await Promise.allSettled(batchRequests);
+  //
+  //       batchResponses.forEach(result => {
+  //         if (result.status === 'fulfilled') {
+  //           allData.push(...processResponse(result.value)); // ✅ Теперь `R[]` может быть `number[]` или `ClanListEntry[]`
+  //         } else {
+  //           console.warn(`⚠️ Ошибка при загрузке страницы:`, result.reason);
+  //         }
+  //       });
+  //
+  //       pagesLoaded += batchResponses.length;
+  //       const progressPercent = ((pagesLoaded / totalPages) * 100).toFixed(2);
+  //       // console.clear();
+  //       console.log(`✅ Загружено страниц: ${i}-${Math.min(i + batchSize - 1, totalPages)} | 📊 Прогресс: ${progressPercent}%`);
+  //       await this.delay(500);
+  //     }
+  //   } catch (err: any) {
+  //     console.error('❌ Ошибка загрузки данных:', err.message);
+  //   }
+  //
+  //   return allData;
+  // }
+
   async fetchPaginatedData<T, R>(
     urlGenerator: (page: number) => string,
     totalPages: number,
     processResponse: (response: ApiResponse<T>) => R[],
-    batchSize: number = 10,        // ✅ Значение по умолчанию, можно не передавать
-    requestTimeout: number = 2000  // ✅ Таймаут тоже дефолтный
+    batchSize: number = 10,
+    requestTimeout: number = 2000
   ): Promise<R[]> {
     const allData: R[] = [];
+    let pagesLoaded = 0;
 
     try {
-      let pagesLoaded = 0;
-
       for (let i = 1; i <= totalPages; i += batchSize) {
-        const batchRequests: Promise<ApiResponse<T>>[] = [];
-
-        for (let j = 0; j < batchSize && i + j <= totalPages; j++) {
+        const batchRequests = Array.from({length: Math.min(batchSize, totalPages - i + 1)}, (_, j) => {
           const url = urlGenerator(i + j);
-          batchRequests.push(
-            lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)))
-          );
-        }
+          return lastValueFrom(this.http.get<ApiResponse<T>>(url).pipe(timeout(requestTimeout)));
+        });
 
         const batchResponses = await Promise.allSettled(batchRequests);
 
         batchResponses.forEach(result => {
           if (result.status === 'fulfilled') {
-            allData.push(...processResponse(result.value)); // ✅ Теперь `R[]` может быть `number[]` или `ClanListEntry[]`
+            allData.push(...processResponse(result.value));
           } else {
             console.warn(`⚠️ Ошибка при загрузке страницы:`, result.reason);
           }
         });
 
         pagesLoaded += batchResponses.length;
-        const progressPercent = ((pagesLoaded / totalPages) * 100).toFixed(2);
-        // console.clear();
-        console.log(`✅ Загружено страниц: ${i}-${Math.min(i + batchSize - 1, totalPages)} | 📊 Прогресс: ${progressPercent}%`);
+        console.log(`✅ Прогресс: ${(pagesLoaded / totalPages * 100).toFixed(2)}%`);
         await this.delay(500);
       }
     } catch (err: any) {
@@ -120,6 +155,7 @@ export class ClanUtilsService {
 
     return allData;
   }
+
 
   delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));

@@ -332,7 +332,6 @@ export class ClanService {
         console.warn(`Нет кланов с именем "${search}"`);
         return null;
       }
-      console.log(results[0].tag);
 
       return results[0].clan_id;
     } catch (err: any) {
@@ -381,7 +380,6 @@ export class ClanService {
     return result;
   }
 
-
   async initData(): Promise<void> {
     this.allClansData = await this.clanUtilsService.loadDataWithFallback<BasicClanData[]>('allClansData');
     this.largeClansIds = await this.clanUtilsService.loadDataWithFallback<BasicClanData[]>('largeClansIds');
@@ -401,4 +399,3 @@ export class ClanService {
       });
   }
 }
-
