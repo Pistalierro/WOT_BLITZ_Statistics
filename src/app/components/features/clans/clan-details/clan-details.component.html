@@ -8,12 +8,48 @@
     <p>{{ clan.motto }}</p>
     <p class="clan-description">Описание: {{ clan.description }}</p>
     <p>WinRate: {{ clan.winRate | number: '1.2-2' }}%</p>
+    <p>Средний урон: {{ clan.avgDamage | number: '1.0-0' }}</p>
     <p *ngIf="clan.created_at">Создан: {{ clan.created_at | date: 'dd.MM.yyyy' }}</p>
     <p>Участники: {{ clan.members_count }}/50</p>
     <p>Глава: {{ clan.leader_name }}</p>
   </div>
+
+  <hr>
+
+  <div *ngIf="clanPlayersListArray?.length" class="players-table">
+    <h3>Список игроков клана</h3>
+
+    <table [dataSource]="clanPlayersListArray" class="mat-elevation-z8" mat-table>
+      <ng-container matColumnDef="nickname">
+        <th *matHeaderCellDef mat-header-cell> Никнейм</th>
+        <td *matCellDef="let player" mat-cell> {{ player.nickname }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="battles">
+        <th *matHeaderCellDef mat-header-cell> Бои</th>
+        <td *matCellDef="let player" mat-cell> {{ player.statistics.all.battles }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="wins">
+        <th *matHeaderCellDef mat-header-cell> Победы (%)</th>
+        <td *matCellDef="let player" mat-cell>
+          {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 | number: '1.2-2' }}%
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="damage">
+        <th *matHeaderCellDef mat-header-cell> Средний урон</th>
+        <td *matCellDef="let player" mat-cell>
+          {{ player.statistics.all.damage_dealt / player.statistics.all.battles | number: '1.0-0' }}
+        </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+  </div>
+
   <div>
     <button (click)="goBack()" color="primary" mat-flat-button type="button">Назад</button>
   </div>
-
 </div>

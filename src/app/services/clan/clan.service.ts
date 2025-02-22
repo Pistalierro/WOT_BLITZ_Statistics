@@ -1,10 +1,13 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {BasicClanData, ExtendedClanDetails} from '../../models/clan/clan-response.model';
 import {ClanUtilsService} from './clan-utils.service';
 import {ClanFirestoreService} from './clan-firestore.service';
 import {ClanIndexedDbService} from './clan-indexeddb.service';
 import {ClanDataService} from './clan-data.service';
+import {apiConfig} from '../../app.config';
+import {lastValueFrom} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {PlayerInfoResponse} from '../../models/player/player-response.model';
 
 
 @Injectable({
@@ -18,14 +21,14 @@ export class ClanService {
   topClansIds: number[] = [];
   topClansDetails = signal<ExtendedClanDetails [] | null>(null);
   totalPages = 0;
-  totalClans = 0;
   clanDetails = signal<ExtendedClanDetails | null>(null);
-  private http = inject(HttpClient);
+  clanPlayersList = signal<any[] | null>(null);
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
   private firestoreService = inject(ClanFirestoreService);
   private indexedDbService = inject(ClanIndexedDbService);
   private clanDataService = inject(ClanDataService);
+  private http = inject(HttpClient);
 
   constructor() {
     void this.initData();
@@ -192,12 +195,35 @@ export class ClanService {
 
       const clan = clans[0];
       const stats = await this.clanUtilsService.getClansStats(clan.members_ids);
+      await this.getClanPlayersListAndStats(clan.members_ids);
       this.clanDetails.set({...clan, winRate: stats.winRate, avgDamage: stats.avgDamage,});
     } catch (error: any) {
       console.error(`❌ Ошибка при получении данных о клане ${clanId}:`, error);
       this.error.set('Ошибка загрузки данных о клане.');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async getClanPlayersListAndStats(memberIds: number[]): Promise<void> {
+    if (!memberIds.length) {
+      console.error(`❌ Ошибка получения айди игроков клана`);
+      return;
+    }
+
+    try {
+      this.loading.set(true);
+      this.error.set(null);
+
+      const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${memberIds.join(',')}`;
+      const res = await lastValueFrom(this.http.get<PlayerInfoResponse>(url));
+      if (res.status === 'ok' && res.data) {
+        const playersList = memberIds
+          .map((memberId) => res.data[memberId]);
+        this.clanPlayersList.set(playersList);
+      }
+    } catch (error: any) {
+      console.log(error.message);
     }
   }
 
@@ -235,7 +261,7 @@ export class ClanService {
             return [];
           })
       ]);
-      
+
       this.allClansData = allClansData;
       this.largeClansIds = largeClansIds;
       this.topClansIds = topClansIds;

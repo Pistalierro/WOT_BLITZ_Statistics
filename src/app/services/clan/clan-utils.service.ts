@@ -157,7 +157,6 @@ export class ClanUtilsService {
       }
     }
 
-    // 3. Поиск по тегу (начинается с ...)
     for (const clan of allClans) {
       if (result.length >= 20) break;
       const tag = clan.tag.normalize('NFD').toLowerCase();
@@ -167,7 +166,6 @@ export class ClanUtilsService {
       }
     }
 
-    // 4. Поиск по названию клана
     for (const clan of allClans) {
       if (result.length >= 20) break;
       const name = clan.name.normalize('NFD').toLowerCase();
@@ -176,8 +174,6 @@ export class ClanUtilsService {
         result.push(clan);
       }
     }
-
-    console.log(`✅ Найдено кланов: ${result.length}`, result);
     return result;
   }
 

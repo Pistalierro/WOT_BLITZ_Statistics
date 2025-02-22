@@ -15,8 +15,14 @@ import {Router} from '@angular/router';
 export class ClanDetailsComponent {
   clanService = inject(ClanService);
   router = inject(Router);
+  displayedColumns = ['nickname', 'battles', 'wins', 'damage'];
+
+  get clanPlayersListArray() {
+    return this.clanService.clanPlayersList() ?? [];
+  }
 
   goBack(): void {
     void this.router.navigate(['/clans']);
   }
+
 }

@@ -138,7 +138,6 @@ export class ClanDataService {
   }
 
   async fetchTopClansDetails(clansIds: number[]): Promise<ExtendedClanDetails[]> {
-    console.log(`📌 Начинаем загрузку данных о топ-кланах`);
     if (!clansIds || clansIds.length === 0) {
       throw new Error('❌ Нет ID кланов для загрузки!');
     }

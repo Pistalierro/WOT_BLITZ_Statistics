@@ -144,6 +144,6 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.clanService.getClanDetailsById(clan.clan_id);
     setTimeout(() => {
       this.navigateToClanDetails(clan.clan_id);
-    }, 200);
+    }, 500);
   }
 }

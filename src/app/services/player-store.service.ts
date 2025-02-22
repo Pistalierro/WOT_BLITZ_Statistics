@@ -19,7 +19,6 @@ export class PlayerStoreService {
   accountId = signal<number | null>(null);
   playerData = signal<PlayerData | null>(null);
   searchedPlayerData = signal<PlayerData | null>(null);
-
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 

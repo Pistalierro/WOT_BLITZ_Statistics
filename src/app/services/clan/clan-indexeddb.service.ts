@@ -27,7 +27,6 @@ export class ClanIndexedDbService {
     this.db = new ClanDB();
   }
 
-
   async saveDataToIndexedDB<T>(key: string, data: T[]): Promise<void> {
     try {
       if (data.length === 0) {
@@ -36,11 +35,9 @@ export class ClanIndexedDbService {
       }
 
       if (typeof data[0] === 'object') {
-        // Сохранение массива объектов в таблицу `clans`
         await this.db.clans.bulkPut(data as BasicClanData[]);
         console.log(`✅ Данные сохранены в таблицу "clans", количество записей: ${data.length}`);
       } else if (typeof data[0] === 'number') {
-        // Сохранение массива чисел в keyValue как JSON
         await this.db.keyValue.put({key, data, timestamp: Date.now()});
         console.log(`✅ Числовой массив сохранен в keyValue с ключом "${key}"`);
       } else {
@@ -72,11 +69,6 @@ export class ClanIndexedDbService {
     }
   }
 
-
-  async clearAllClans(): Promise<void> {
-    await this.db.clans.clear();
-  }
-
   async findClansByNameOrTag(searchTerm: string): Promise<BasicClanData[]> {
     console.log(`🔎 Поиск в IndexedDB: "${searchTerm}"`);
 
@@ -91,18 +83,8 @@ export class ClanIndexedDbService {
     return results;
   }
 
-
-  async putRecord(key: string, data: any): Promise<void> {
-    const record: KeyValueRecord = {key, data, timestamp: Date.now()};
-    await this.db.keyValue.put(record);
-  }
-
   async getRecord(key: string): Promise<KeyValueRecord | undefined> {
     return this.db.keyValue.get(key);
-  }
-
-  async removeRecord(key: string): Promise<void> {
-    await this.db.keyValue.delete(key);
   }
 }
 

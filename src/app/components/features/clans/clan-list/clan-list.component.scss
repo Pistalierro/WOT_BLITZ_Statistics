@@ -8,8 +8,8 @@
 
   .actions {
     display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: $gap;
+    margin-bottom: $gap;
   }
 }
 
@@ -172,10 +172,3 @@ mat-paginator {
   position: relative !important;
   z-index: 10;
 }
-
-.search input.mat-input-element {
-  font-size: 18px !important; // Минимальный размер, чтобы браузер не увеличивал
-}
-
-
-
