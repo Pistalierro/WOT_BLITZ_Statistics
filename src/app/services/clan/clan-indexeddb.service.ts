@@ -21,23 +21,57 @@ export class ClanDB extends Dexie {
 })
 
 export class ClanIndexedDbService {
-  private db: ClanDB;
+  db: ClanDB;
 
   constructor() {
     this.db = new ClanDB();
   }
 
-  async addClans(clans: BasicClanData[]): Promise<void> {
-    await this.db.clans.bulkAdd(clans);
+
+  async saveDataToIndexedDB<T>(key: string, data: T[]): Promise<void> {
+    try {
+      if (data.length === 0) {
+        console.warn('📢 Передан пустой массив, сохранение не выполняется.');
+        return;
+      }
+
+      if (typeof data[0] === 'object') {
+        // Сохранение массива объектов в таблицу `clans`
+        await this.db.clans.bulkPut(data as BasicClanData[]);
+        console.log(`✅ Данные сохранены в таблицу "clans", количество записей: ${data.length}`);
+      } else if (typeof data[0] === 'number') {
+        // Сохранение массива чисел в keyValue как JSON
+        await this.db.keyValue.put({key, data, timestamp: Date.now()});
+        console.log(`✅ Числовой массив сохранен в keyValue с ключом "${key}"`);
+      } else {
+        console.error('❌ Неподдерживаемый тип данных, сохранение невозможно.');
+      }
+    } catch (error) {
+      console.error('❌ Ошибка при сохранении данных в IndexedDB:', error);
+    }
   }
 
-  async putClans(clans: BasicClanData[]): Promise<void> {
-    await this.db.clans.bulkPut(clans);
+  async getDataFromIndexedDB<T>(key: string): Promise<T[]> {
+    try {
+      const record = await this.db.keyValue.get(key);
+      if (record) {
+        return Array.isArray(record.data) ? record.data : []; // Гарантируем массив
+      }
+
+      const clans = await this.db.clans.toArray();
+      if (clans.length > 0) {
+        console.log(`📥 Данные получены из таблицы "clans", количество записей: ${clans.length}`);
+        return clans as T[];
+      }
+
+      console.warn(`⚠️ Данные по ключу "${key}" не найдены.`);
+      return [];
+    } catch (error) {
+      console.error('❌ Ошибка при получении данных из IndexedDB:', error);
+      return [];
+    }
   }
 
-  async getAllClans(): Promise<BasicClanData[]> {
-    return this.db.clans.toArray();
-  }
 
   async clearAllClans(): Promise<void> {
     await this.db.clans.clear();

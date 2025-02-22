@@ -3,4 +3,5 @@ export const DISPLAY_SIZE_LG_MIN: string[] = ['index', 'tag', 'name', 'leader_na
 export const DISPLAY_SIZE_MD_LG: string[] = ['index', 'tag', 'name', 'membersCount', 'created_at', 'winRate'];
 export const DISPLAY_SIZE_SM_MD: string[] = ['index', 'tag', 'name', 'membersCount', 'winRate'];
 export const DISPLAY_SIZE_SM: string[] = ['index', 'tag', 'membersCount', 'winRate'];
+export const testMembersIds: number[] = [572351363, 581394312, 576320905, 576919824, 574535674, 572316438, 682487322, 613082031, 591693210, 611571744, 579641386, 681965611, 568845615, 567087928, 576319410, 617842741, 568848695, 567412024, 568135866, 573006013, 576191039, 568165826, 576891126, 618158923, 618025422, 562567888, 681004984, 672544794, 681365720, 682334425, 576493995, 585028880, 673019753, 591458154, 572663532, 569062126, 576890230, 618158711, 587245176, 600650745, 691139037];
 

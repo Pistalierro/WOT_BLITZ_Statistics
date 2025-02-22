@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {debounceTime, distinctUntilChanged} from 'rxjs';
+import {ClanUtilsService} from '../../../../services/clan/clan-utils.service';
 
 @Component({
   selector: 'app-clan-list',
@@ -40,10 +41,11 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   private openPanelTimeoutId: any;
   private breakpointObserver = inject(BreakpointObserver);
   private fb = inject(FormBuilder);
+  private clanUtilsService = inject(ClanUtilsService);
 
   constructor() {
     effect(() => {
-      const clanList = this.clanService.topClanDetails();
+      const clanList = this.clanService.topClansDetails();
       if (clanList) this.dataSource.data = clanList;
     });
 
@@ -65,8 +67,8 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (!this.clanService.topClanDetails()) {
-      void this.clanService.getTopClanDetails();
+    if (!this.clanService.topClansDetails()) {
+      void this.clanService.getTopClansDetails();
     }
     this.initForm();
     this.setupSearchListener();
@@ -85,7 +87,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   async updateAllData(): Promise<void> {
     await this.clanService.getAllClansData();
     await this.clanService.getTopClansIds();
-    await this.clanService.getTopClanDetails();
+    await this.clanService.getTopClansDetails();
   }
 
   applyFilter(event: Event) {
@@ -109,6 +111,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async onSubmit(): Promise<void> {
     const nameValue = this.form.value.name;
+    console.log(`📌 Введённое значение: "${this.form.value.name}"`);
     const clanId = await this.clanService.getClanDetailsByNameOrTag(nameValue);
     if (clanId) {
       this.navigateToClanDetails(clanId);
@@ -122,7 +125,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm: string | null) => {
         const query = typeof searchTerm === 'string' ? searchTerm : '';
-        this.clanService.suggestClans(query).then(results => {
+        this.clanUtilsService.suggestClans(query).then(results => {
           this.suggestedClans = results;
           this.openPanelTimeoutId = setTimeout(() => {
             if (this.autoTrigger) {

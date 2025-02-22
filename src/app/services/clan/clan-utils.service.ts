@@ -1,11 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {apiConfig} from '../../app.config';
 import {lastValueFrom, timeout} from 'rxjs';
-import {PlayerInfoResponse} from '../../models/player/player-response.model';
 import {ApiResponse, BasicClanData} from '../../models/clan/clan-response.model';
 import {ClanFirestoreService} from './clan-firestore.service';
 import {ClanIndexedDbService} from './clan-indexeddb.service';
+import {apiConfig} from '../../app.config';
+import {PlayerData} from '../../models/player/player-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,70 +16,14 @@ export class ClanUtilsService {
   private firestoreService = inject(ClanFirestoreService);
   private indexedDbService = inject(ClanIndexedDbService);
 
-  async getClanStats(membersIds: number[]): Promise<{ winRate: number; avgDamage: number }> {
-    if (!Array.isArray(membersIds) || membersIds.length === 0) {
-      console.warn('⚠ Список участников клана пуст, возвращаю 0');
-      return {winRate: 0, avgDamage: 0};
-    }
-
-    try {
-      const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=statistics.all.battles,statistics.all.wins,statistics.all.damage_dealt`;
-      const res = await lastValueFrom(this.http.get<PlayerInfoResponse>(url));
-
-      if (!res || res.status !== 'ok' || !res.data) {
-        console.warn('⚠ Пустой ответ API, возвращаю 0');
-        return {winRate: 0, avgDamage: 0};
-      }
-
-      const rawData = Object.values(res.data);
-
-      if (!rawData.length) {
-        console.warn('⚠ API не вернул статистику ни по одному игроку.');
-        return {winRate: 0, avgDamage: 0};
-      }
-
-      let totalWins = 0;
-      let totalBattles = 0;
-      let totalDamageDealt = 0;
-
-      for (const player of rawData) {
-        if (!player.statistics?.all) {
-          console.warn(`⚠ Игрок ${player.nickname} (${player.account_id}) без статистики, пропускаем.`);
-          continue;
-        }
-
-        const battles = player.statistics.all.battles || 0;
-        const wins = player.statistics.all.wins || 0;
-        const damageDealt = player.statistics.all.damage_dealt || 0;
-
-        totalBattles += battles;
-        totalWins += wins;
-        totalDamageDealt += damageDealt;
-      }
-
-      if (totalBattles === 0) {
-        console.warn('⚠ У всех игроков 0 боёв, winRate = 0, avgDamage = 0');
-        return {winRate: 0, avgDamage: 0};
-      }
-
-      const winRate = (totalWins / totalBattles) * 100;
-      const avgDamage = totalDamageDealt / totalBattles;
-
-      return {winRate, avgDamage};
-    } catch (err: any) {
-      console.error('❌ Ошибка при вычислении winRate:', err.message);
-      return {winRate: 0, avgDamage: 0};
-    }
-  }
-
   async fetchPaginatedData<T, R>(
     urlGenerator: (page: number) => string,
     totalPages: number,
     processResponse: (response: ApiResponse<T>) => R[],
     batchSize: number = 10,
     requestTimeout: number = 2000,
-    maxRetries: number = 5, // ✅ Добавляем ретраи
-    retryDelay: number = 1000 // ✅ Начальная задержка перед ретраем
+    maxRetries: number = 3,
+    retryDelay: number = 1000
   ): Promise<R[]> {
     const allData: R[] = [];
     let pagesLoaded = 0;
@@ -116,54 +60,125 @@ export class ClanUtilsService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async loadDataWithFallback<T extends any[]>(key: string, maxAgeMinutes: number = 30): Promise<T> {
+  async getClansStats(membersIds: number[], onlyWinRate: boolean = false): Promise<{ winRate: number, avgDamage?: number }> {
+    if (!Array.isArray(membersIds) || membersIds.length === 0) {
+      console.warn('⚠ Список участников клана пуст или не является массивом, возвращаю 0');
+      return {winRate: 0, avgDamage: 0};
+    }
+
+    const batchSize = 50;
+    const batches = [];
+    for (let i = 0; i < membersIds.length; i += batchSize) {
+      batches.push(membersIds.slice(i, i + batchSize));
+    }
+
     try {
-      const record = await this.indexedDbService.getRecord(key);
-      if (record && record.data) {
-        const fresh = this.isFresh(record.timestamp, maxAgeMinutes);
-        if (fresh) {
-          console.log(`✅ '${key}' загружен из IndexedDB (данные свежие)`);
-          return record.data as T;
-        } else {
-          console.warn(`⚠ '${key}' устарело (более ${maxAgeMinutes} минут), удаляем из IndexedDB...`);
-          await this.indexedDbService.removeRecord(key);
+      const fields = onlyWinRate
+        ? 'statistics.all.battles,statistics.all.wins'
+        : 'statistics.all.battles,statistics.all.wins,statistics.all.damage_dealt';
+
+      const url = `${apiConfig.baseUrl}/account/info/?application_id=${apiConfig.applicationId}&account_id=${membersIds.join(',')}&fields=${fields}`;
+      const res: any = await lastValueFrom(this.http.get(url));
+
+      if (!res || res.status !== 'ok' || !res.data) {
+        console.warn('⚠ Пустой ответ API, возвращаю 0');
+        return {winRate: 0, avgDamage: 0};
+      }
+
+      const rawData = Object.values(res.data) as PlayerData[];
+      if (!rawData.length) {
+        console.warn('⚠ API не вернул статистику ни по одному игроку.');
+        return {winRate: 0};
+      }
+
+      const validMembers = rawData.filter((member: PlayerData) => {
+        if (!member || !member.statistics || !member.statistics.all) {
+          console.warn(`⚠ Игрок с ID ${member?.playerId} имеет битую статистику, пропускаем`);
+          return false;
         }
-      }
-      console.warn(`⚠ '${key}' отсутствует в IndexedDB или устарело, загружаем из Firestore...`);
-      const firestoreData = await this.firestoreService.loadCollection<T>(key);
-      if (firestoreData && firestoreData.length > 0) {
-        await this.indexedDbService.putRecord(key, firestoreData);
-        return firestoreData;
+        return true;
+      });
+
+      if (!validMembers.length) {
+        console.warn('⚠ Все участники оказались с битой статистикой, возвращаю 0');
+        return {winRate: 0, avgDamage: 0};
       }
 
-      console.warn(`⚠ '${key}' не найден ни в IndexedDB, ни в Firestore. Возвращаем пустой массив.`);
-      return [] as unknown as T;
-    } catch (err: any) {
-      console.error(`❌ Ошибка в loadDataWithFallback('${key}'):`, err);
-      return [] as unknown as T;
+      let totalWins = 0;
+      let totalBattles = 0;
+      let totalDamageDealt = 0;
+
+      for (const member of validMembers) {
+        const battles = member.statistics.all.battles || 0;
+        const wins = member.statistics.all.wins || 0;
+        const damageDealt = onlyWinRate ? 0 : (member.statistics.all.damage_dealt || 0);
+
+        totalWins += wins;
+        totalBattles += battles;
+        totalDamageDealt += damageDealt;
+      }
+
+      const winRate = totalBattles > 0 ? (totalWins / totalBattles) * 100 : 0;
+      const avgDamage = totalBattles > 0 ? totalDamageDealt / totalBattles : 0;
+
+      return onlyWinRate ? {winRate} : {winRate, avgDamage};
+    } catch (error: any) {
+      console.error('❌ Ошибка при вычислении winRate:', error.message);
+      return {winRate: 0, avgDamage: 0};
     }
   }
 
-  async saveDataToIndexedDb<T>(key: string, data: T): Promise<void> {
-    await this.indexedDbService.putRecord(key, data);
-  }
+  async suggestClans(searchTerm: string): Promise<BasicClanData[]> {
+    console.log(`🔎 Поиск в IndexedDB: "${searchTerm}"`);
 
-  chunkArray<T>(array: T[], size: number): T[][] {
-    return Array.from({length: Math.ceil(array.length / size)}, (_, i) =>
-      array.slice(i * size, i * size + size)
-    );
-  }
+    const lowerSearch = searchTerm.normalize('NFD').toLowerCase();
+    const uniqueClans = new Map<number, BasicClanData>();
+    const result: BasicClanData[] = [];
 
-  async saveClansData(key: string, data: BasicClanData[]): Promise<void> {
-    try {
-      await Promise.all([
-        this.indexedDbService.putClans(data),  // ✅ Сохраняем в IndexedDB
-        this.firestoreService.saveData(key, data)  // ✅ Сохраняем в Firestore
-      ]);
-      console.log(`✅ Данные кланов сохранены в IndexedDB и Firestore (ключ: ${key})`);
-    } catch (error) {
-      console.error(`❌ Ошибка сохранения данных кланов:`, error);
+    let allClans: BasicClanData[] = await this.indexedDbService.db.clans.toArray();
+
+    if (!allClans.length) {
+      console.warn('⚠ Данные не найдены в `clans`, пробуем `keyValue`');
+      const record = await this.indexedDbService.getRecord('allClansData');
+      allClans = record?.data || [];
     }
+
+    if (!allClans.length) {
+      console.error('❌ Кланы не найдены ни в `clans`, ни в `keyValue`');
+      return [];
+    }
+
+    for (const clan of allClans) {
+      if (result.length >= 20) break;
+      const tag = clan.tag.normalize('NFD').toLowerCase();
+      if (tag === lowerSearch) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
+      }
+    }
+
+    // 3. Поиск по тегу (начинается с ...)
+    for (const clan of allClans) {
+      if (result.length >= 20) break;
+      const tag = clan.tag.normalize('NFD').toLowerCase();
+      if (tag.startsWith(lowerSearch) && !uniqueClans.has(clan.clan_id)) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
+      }
+    }
+
+    // 4. Поиск по названию клана
+    for (const clan of allClans) {
+      if (result.length >= 20) break;
+      const name = clan.name.normalize('NFD').toLowerCase();
+      if (name.startsWith(lowerSearch) && !uniqueClans.has(clan.clan_id)) {
+        uniqueClans.set(clan.clan_id, clan);
+        result.push(clan);
+      }
+    }
+
+    console.log(`✅ Найдено кланов: ${result.length}`, result);
+    return result;
   }
 
   private async retryRequest<T>(url: string, maxRetries: number, retryDelay: number, requestTimeout: number): Promise<T> {
@@ -189,10 +204,5 @@ export class ClanUtilsService {
     }
 
     throw new Error(`❌ Ошибка запроса: ${url}`);
-  }
-
-  private isFresh(timestamp: number, maxAgeMinutes: number): boolean {
-    const elapsedMinutes = (Date.now() - timestamp) / 60000;
-    return elapsedMinutes < maxAgeMinutes;
   }
 }

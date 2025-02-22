@@ -164,7 +164,8 @@ mat-paginator {
 }
 
 .progress-bar {
-  min-height: 5px;
+  min-height: $gap-xs;
+  margin-bottom: $gap;
 }
 
 .search {

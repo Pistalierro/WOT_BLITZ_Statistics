@@ -1,11 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {ClanUtilsService} from './clan-utils.service';
+import {ApiResponse, BasicClanData, ClanDetails, ClanListResponse, ExtendedClanDetails} from '../../models/clan/clan-response.model';
+import {apiConfig} from '../../app.config';
+import {firstValueFrom, lastValueFrom} from 'rxjs';
 import {ClanIndexedDbService} from './clan-indexeddb.service';
 import {ClanFirestoreService} from './clan-firestore.service';
-import {ClanUtilsService} from './clan-utils.service';
-import {ApiResponse, BasicClanData, ClanDetails, ClanListResponse} from '../../models/clan/clan-response.model';
-import {apiConfig} from '../../app.config';
-import {firstValueFrom} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +13,9 @@ import {firstValueFrom} from 'rxjs';
 export class ClanDataService {
 
   private http = inject(HttpClient);
+  private utilsService = inject(ClanUtilsService);
   private indexedDbService = inject(ClanIndexedDbService);
   private firestoreService = inject(ClanFirestoreService);
-  private utilsService = inject(ClanUtilsService);
 
   async fetchAllClans(limit: number, maxRetries: number = 3, delayMs: number = 1000): Promise<BasicClanData[]> {
     console.log(`📌 Начинаем загрузку всех кланов (лимит: ${limit})`);
@@ -91,5 +91,121 @@ export class ClanDataService {
       attempt++;
     }
     return [];
+  }
+
+  async fetchTopClans(limit: number, clansIds: number[], totalPages: number): Promise<ExtendedClanDetails[]> {
+    console.log(`📌 Начинаем загрузку данных о топ-кланах`);
+    if (!clansIds || !clansIds.length) {
+      throw new Error('❌ Нет ID больших кланов для загрузки!');
+    }
+    console.log(`✅ Всего страниц: ${totalPages}`);
+
+    try {
+      const allClans = await this.utilsService.fetchPaginatedData<ClanDetails, ExtendedClanDetails>(
+        (page) => {
+          const chunkStart = (page - 1) * limit;
+          const chunkIds = clansIds.slice(chunkStart, chunkStart + limit);
+          return `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${chunkIds.join(',')}`;
+        },
+        totalPages,
+        (response: ApiResponse<ClanDetails>) => {
+          const result: ExtendedClanDetails[] = [];
+
+          if (response.status === 'ok' && response.data) {
+            for (const clanId in response.data) {
+              const clanData = response.data[clanId];
+              if (!clanData) {
+                console.warn(`⚠ Нет данных по клану с ID ${clanId} — пропускаем`);
+                continue;
+              }
+              result.push({...clanData, winRate: 0} as ExtendedClanDetails);
+            }
+          }
+          return result;
+        }
+      );
+
+      if (!allClans.length) {
+        throw new Error('❌ Данные по кланам не получены!');
+      }
+
+      console.log(`✅ Получено данных по ${allClans.length} кланам`);
+      return allClans;
+    } catch (error: any) {
+      console.error('❌ Ошибка при загрузке топ-кланов:', error.message);
+      return [];
+    }
+  }
+
+  async fetchTopClansDetails(clansIds: number[]): Promise<ExtendedClanDetails[]> {
+    console.log(`📌 Начинаем загрузку данных о топ-кланах`);
+    if (!clansIds || clansIds.length === 0) {
+      throw new Error('❌ Нет ID кланов для загрузки!');
+    }
+
+    try {
+      const validClanIds = clansIds.filter(id => typeof id === 'number');
+      const url = `${apiConfig.baseUrl}/clans/info/?application_id=${apiConfig.applicationId}&clan_id=${validClanIds.join(',')}`;
+      const response = await lastValueFrom(
+        this.http.get<ApiResponse<Record<number, ClanDetails>>>(url)
+      );
+
+      if (response.status !== 'ok' || !response.data) {
+        console.warn('⚠ API не вернул данные по кланам');
+        return [];
+      }
+
+      const clanDetails: ExtendedClanDetails[] = Object.values(response.data).map(clan => ({
+        ...clan, winRate: null, avgDamage: null
+      } as ExtendedClanDetails));
+
+      console.log(`✅ Получено ${clanDetails.length} кланов`);
+      return clanDetails;
+    } catch (error: any) {
+      console.error('❌ Ошибка при загрузке списка топ-кланов:', error.message);
+      return [];
+    }
+  }
+
+  async saveDataToAllStorages<T>(key: string, data: T[]): Promise<void> {
+    if (!data || data.length === 0) {
+      console.warn(`⚠ Нет данных для сохранения: ${key}`);
+      return;
+    }
+
+    try {
+      await Promise.all([
+        this.indexedDbService.saveDataToIndexedDB(key, data),
+        this.firestoreService.saveData(key, data)
+      ]);
+      console.log(`✅ Данные успешно сохранены для ключа "${key}" во всех хранилищах`);
+    } catch (error: any) {
+      console.error(`❌ Ошибка при сохранении данных для ключа "${key}":`, error.message);
+    }
+  }
+
+  async getDataFromAllStorages<T extends any[]>(key: string, maxAgeMinutes: number = 180): Promise<T> {
+    const indexedData = await this.indexedDbService.getDataFromIndexedDB<T>(key);
+    if (indexedData && indexedData.length > 0) {
+      console.log(`📥 Данные для ключа "${key}" получены из IndexedDB.`);
+      return indexedData as T;
+    }
+
+    console.log(`⚠️ Данные для ключа "${key}" не найдены в IndexedDB. Запрашиваем из Firestore...`);
+
+    const firestoreData = await this.firestoreService.loadData<T>(key);
+    if (firestoreData && firestoreData.length > 0) {
+      console.log(`📥 Данные для ключа "${key}" получены из Firestore. Кэшируем в IndexedDB...`);
+      await this.indexedDbService.saveDataToIndexedDB(key, firestoreData);
+      return firestoreData;
+    }
+
+    console.warn(`⚠️ Данные для ключа "${key}" не найдены ни в IndexedDB, ни в Firestore.`);
+    return [] as unknown as T;
+  }
+
+  private isFresh(timestamp: number, maxAgeMinutes: number): boolean {
+    const elapsedMinutes = (Date.now() - timestamp) / 60000;
+    return elapsedMinutes < maxAgeMinutes;
   }
 }
