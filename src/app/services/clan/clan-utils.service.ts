@@ -120,7 +120,7 @@ export class ClanUtilsService {
 
       const winRate = totalBattles > 0 ? (totalWins / totalBattles) * 100 : 0;
       const avgDamage = totalBattles > 0 ? totalDamageDealt / totalBattles : 0;
-
+      
       return onlyWinRate ? {winRate} : {winRate, avgDamage};
     } catch (error: any) {
       console.error('❌ Ошибка при вычислении winRate:', error.message);

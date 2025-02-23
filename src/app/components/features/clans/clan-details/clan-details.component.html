@@ -19,34 +19,43 @@
   <div *ngIf="clanPlayersListArray?.length" class="players-table">
     <h3>Список игроков клана</h3>
 
-    <table [dataSource]="clanPlayersListArray" class="mat-elevation-z8" mat-table>
-      <ng-container matColumnDef="nickname">
-        <th *matHeaderCellDef mat-header-cell> Никнейм</th>
-        <td *matCellDef="let player" mat-cell> {{ player.nickname }}</td>
-      </ng-container>
+    <div class="mat-elevation-z8">
+      <table [dataSource]="dataSource" mat-table matSort>
 
-      <ng-container matColumnDef="battles">
-        <th *matHeaderCellDef mat-header-cell> Бои</th>
-        <td *matCellDef="let player" mat-cell> {{ player.statistics.all.battles }}</td>
-      </ng-container>
+        <!-- nickname Column -->
+        <ng-container matColumnDef="nickname">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Nickname</th>
+          <td *matCellDef="let player" mat-cell> {{ player.nickname }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="wins">
-        <th *matHeaderCellDef mat-header-cell> Победы (%)</th>
-        <td *matCellDef="let player" mat-cell>
-          {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 | number: '1.2-2' }}%
-        </td>
-      </ng-container>
+        <!-- Battles Column -->
+        <ng-container matColumnDef="battles">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Боев</th>
+          <td *matCellDef="let player" mat-cell> {{ player.statistics.all.battles }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="damage">
-        <th *matHeaderCellDef mat-header-cell> Средний урон</th>
-        <td *matCellDef="let player" mat-cell>
-          {{ player.statistics.all.damage_dealt / player.statistics.all.battles | number: '1.0-0' }}
-        </td>
-      </ng-container>
+        <!-- WinRate Column -->
+        <ng-container matColumnDef="winRate">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> WinRate</th>
+          <td *matCellDef="let player" mat-cell>
+            {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 | number: '1.2-2' }}%
+          </td>
+        </ng-container>
 
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-    </table>
+        <!-- AvgDamage Column -->
+        <ng-container matColumnDef="avgDamage">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Средний урон</th>
+          <td *matCellDef="let player" mat-cell>
+            {{ player.statistics.all.damage_dealt / player.statistics.all.battles | number: '1.0-0' }}
+          </td>
+        </ng-container>
+
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+    </div>
+
   </div>
 
   <div>

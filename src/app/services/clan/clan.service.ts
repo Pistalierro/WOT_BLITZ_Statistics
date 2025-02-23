@@ -80,7 +80,7 @@ export class ClanService {
     console.log(`Всего обрабатываем ${this.largeClansIds.length} кланов`);
 
     if (!this.totalPages) {
-      this.totalPages = this.largeClansIds.length / this.limit;
+      this.totalPages = Math.ceil(this.largeClansIds.length / this.limit); // Округляем вверх
     }
 
     try {
@@ -98,35 +98,47 @@ export class ClanService {
       for (let i = 0; i < allClans.length; i += batchSize) {
         const batch = allClans.slice(i, i + batchSize);
         await Promise.all(
-          batch.map(async (clan) => {
-            const stats = await this.clanUtilsService.getClansStats(clan.members_ids, true);
-            clan.winRate = stats.winRate;
-          })
+          batch
+            .filter(clan => clan?.members_ids?.length) // Проверяем, есть ли члены клана
+            .map(async (clan) => {
+              const stats = await this.clanUtilsService.getClansStats(clan.members_ids);
+              clan.winRate = stats?.winRate ?? 0;
+              clan.avgDamage = stats?.avgDamage ?? 0;
+            })
         );
         console.log(`✅ Обработано ${Math.min(i + batchSize, allClans.length)} из ${allClans.length}`);
       }
 
-      const filteredClans = allClans.filter(clan =>
+      // Оставляем только кланы с валидным avgDamage и winRate
+      const validClans = allClans.filter(clan =>
         clan &&
-        typeof clan.clan_id === 'number' &&
-        clan.clan_id > 0 &&
-        typeof clan.winRate === 'number' &&
-        clan.winRate > 0 &&
-        clan.winRate < 80
+        typeof clan.clan_id === 'number' && clan.clan_id > 0 &&
+        typeof clan.avgDamage === 'number' && clan.avgDamage > 0 &&
+        typeof clan.winRate === 'number' && clan.winRate > 0
       );
 
-      if (!filteredClans.length) {
-        console.warn('⚠ После фильтрации по winRate > 0 нет кланов');
+      if (!validClans.length) {
+        console.warn('⚠ Нет кланов с валидными avgDamage и winRate');
         this.topClansIds = [];
         return;
       }
 
-      filteredClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
-      const top50 = filteredClans.slice(0, 50);
+      const top100ByDamage = validClans
+        .sort((a, b) => (b.avgDamage ?? 0) - (a.avgDamage ?? 0))
+        .slice(0, 100);
 
-      this.topClansIds = top50.map(clan => clan.clan_id);
+      if (!top100ByDamage.length) {
+        console.warn('⚠ После фильтрации по avgDamage > 0 нет кланов');
+        this.topClansIds = [];
+        return;
+      }
+
+      const top50ByWinRate = top100ByDamage
+        .sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0))
+        .slice(0, 50);
+
+      this.topClansIds = top50ByWinRate.map(clan => clan.clan_id);
       console.log('📌 Топ-50 кланов:', this.topClansIds);
-
       await this.clanDataService.saveDataToAllStorages('topClansIds', this.topClansIds);
     } catch (err: any) {
       console.error('❌ Ошибка в getTopClansIds:', err.message);
