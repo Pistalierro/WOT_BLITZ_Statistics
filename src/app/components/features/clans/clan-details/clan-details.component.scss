@@ -7,7 +7,7 @@
   @extend %container;
 
   .content-container {
-    padding: 20px;
+    padding: $gap;
     display: flex;
     gap: $gap;
     @include md-min {
@@ -34,7 +34,12 @@
 
   .clan {
     &-info {
-      margin-bottom: 20px;
+      margin-bottom: $gap;
+      font-weight: bold;
+
+      h2 {
+        color: $color-gray !important;
+      }
     }
 
     &-description {
@@ -45,6 +50,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      p {
+        color: $color-accent !important;
+
+      }
     }
   }
 }
@@ -54,7 +64,7 @@
     max-width: 200px;
   }
   @include sm {
-    max-width: 130px !important;
+    max-width: 140px !important;
   }
 }
 
@@ -65,6 +75,7 @@
   justify-content: center;
   flex-direction: column;
   max-width: 400px;
+  color: $color-gray-light;
 
   @include md-min {
     width: 30%;
@@ -72,7 +83,12 @@
   @include md {
     width: 100%;
   }
+}
+
+.mat-mdc-card-title {
   color: $color-gray;
+  text-transform: uppercase;
+  font-family: $font-header !important;
 }
 
 .player-winRate {

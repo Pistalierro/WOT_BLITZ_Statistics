@@ -1,8 +1,61 @@
 @use "../../../../../styles/presets/variables" as *;
 @use "../../../../../styles/presets/skin" as *;
+@use "../../../../../styles/mixins/mixins-media" as *;
 
 p {
   font-weight: 100;
   margin: $gap 0;
 }
+
+.content-container {
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  margin-bottom: $gap;
+}
+
+.mat-mdc-card {
+  background-color: $color-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100px;
+  max-width: 200px;
+  color: $color-gray-light;
+
+  @include sm-min {
+    width: 30%;
+  }
+  @include md {
+    width: 100%;
+  }
+}
+
+.card {
+  font-size: 1.5rem;
+
+  &-title {
+    font-family: $font-header !important;
+  }
+
+  &-content {
+    font-weight: bold;
+  }
+}
+
+.stats {
+  margin-bottom: 20px;
+  color: $color-gray;
+  font-size: 1.5rem;
+
+  &-key {
+    font-weight: 100;
+  }
+
+  &-value {
+    font-weight: bold;
+  }
+}
+
 

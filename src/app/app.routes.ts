@@ -10,7 +10,6 @@ export const routes: Routes = [
     path: 'players',
     loadComponent: () => import('./components/features/player/player-host/player-host.component')
       .then(m => m.PlayerHostComponent),
-    canActivate: [authGuard],
     children: [
       {path: '', redirectTo: 'stat', pathMatch: 'full'},
       {

@@ -3,7 +3,7 @@ import {AuthService} from '../../../../services/auth.service';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {PlayerStoreService} from '../../../../services/player-store.service';
+import {PlayerStoreService} from '../../../../services/player/player-store.service';
 
 @Component({
   selector: 'app-player-host',
@@ -25,7 +25,7 @@ export class PlayerHostComponent implements OnInit {
   onSubmit() {
     const nickname: string = this.searchPlayerForm.value.name;
     if (nickname && nickname.trim().length) {
-      this.playerStoreService.loadSearchedPlayerData(nickname).then();
+      this.playerStoreService.getPlayerData(nickname).then();
     }
     this.searchPlayerForm.reset();
   }

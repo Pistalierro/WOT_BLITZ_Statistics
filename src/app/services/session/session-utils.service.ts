@@ -3,8 +3,8 @@ import {SessionStateService} from './session-state.service';
 import {doc, updateDoc} from '@angular/fire/firestore';
 import {SessionDataInterface, SessionDeltaInterface} from '../../models/session/battle-session.model';
 import {TanksService} from '../tanks.service';
-import {PlayerStoreService} from '../player-store.service';
 import {Tank, TankDeltaInterface} from '../../models/tank/tanks-response.model';
+import {PlayerStoreService} from '../player/player-store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,15 +24,15 @@ export class SessionUtilsService {
       const user = this.sessionState.auth.currentUser;
       if (!user) throw new Error('Пользователь не авторизован');
 
-      const nickname = this.sessionState.playerStore.nickname();
+      const nickname = this.playerStore.nicknameSignal();
       if (!nickname) throw new Error('Нет никнейма');
-      await this.sessionState.playerStore.loadPlayerData(nickname);
+      await this.playerStore.getPlayerData(nickname);
 
-      const accountId = this.playerStore.accountId();
+      const accountId = this.playerStore.accountIdSignal();
       if (!accountId) throw new Error('Account ID отсутствует');
       await this.tanksService.fetchTankData(accountId);
 
-      const playerData = this.sessionState.playerStore.playerData();
+      const playerData = this.playerStore.playerDataSignal();
       if (!playerData) throw new Error('Нет данных об игроке.');
 
       const updatedStatsValue = playerData.statistics.all;

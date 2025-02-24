@@ -1,8 +1,8 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, User} from '@angular/fire/auth';
 import {doc, Firestore, getDoc, setDoc} from '@angular/fire/firestore';
-import {PlayerStoreService} from './player-store.service';
 import {Router} from '@angular/router';
+import {PlayerStoreService} from './player/player-store.service';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -20,7 +20,6 @@ export class AuthService {
     onAuthStateChanged(this.auth, async (user) => {
       this.userSignal.set(user);
       this.isAuthLoaded.set(true);
-      // console.log('🔥 Firebase прислал нового пользователя:', user);
       if (user) {
         const userDocRef = doc(this.firestore, `users/${user.uid}`);
         const userDocSnap = await getDoc(userDocRef);
@@ -28,17 +27,17 @@ export class AuthService {
           const data = userDocSnap.data();
           const nickname = data['nickname'] || null;
           this.nicknameSignal.set(nickname);
-          this.playerStore.nickname.set(nickname);
+          this.playerStore.nicknameSignal.set(nickname);
 
           if (nickname) {
-            await this.playerStore.loadPlayerData(nickname);
+            await this.playerStore.getPlayerData(nickname);
           }
         }
       } else {
         this.nicknameSignal.set(null);
-        this.playerStore.nickname.set(null);
-        this.playerStore.accountId.set(null);
-        this.playerStore.playerData.set(null);
+        this.playerStore.nicknameSignal.set(null);
+        this.playerStore.accountIdSignal.set(null);
+        this.playerStore.playerDataSignal.set(null);
       }
     });
   }

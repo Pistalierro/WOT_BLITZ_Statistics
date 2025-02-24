@@ -7,71 +7,78 @@ export interface PlayerSearchResponse {
 }
 
 export interface PlayerInfoResponse {
-  status: 'ok' | 'error';
+  status: 'ok' | 'error'; // Статус API-ответа
   data: {
-    [accountId: string]: {
-      rating: {
-        battles: number;
-        capture_points?: number | undefined;
+    [accountId: number]: { // 🔹 Меняем string → number
+      account_id: number; // ID игрока
+      created_at: number; // Дата создания аккаунта (timestamp)
+      last_battle_time?: number; // Время последнего боя (timestamp, опционально)
+      nickname: string; // Никнейм игрока
+      rating: { // Рейтинг игрока
+        battles: number; // Количество боёв
+        capture_points?: number; // Очки захвата базы (опционально)
       };
-      account_id: number;
-      created_at: number;
-      nickname: string;
-      statistics: {
+      statistics: { // Общая статистика
         all: {
-          battles: number;
-          wins: number;
-          damage_dealt: number;
-          hits: number;
-          shots: number;
-          max_damage?: number;
-          max_frags: number;
+          battles: number; // Всего боёв
+          wins: number; // Побед
+          damage_dealt: number; // Нанесённый урон
+          hits: number; // Попадания
+          shots: number; // Всего выстрелов
+          max_damage?: number; // Максимальный урон за бой (опционально)
+          max_frags: number; // Максимум уничтоженных за бой
         };
       };
     };
   };
 }
 
+
 export interface ClanAccountInfoResponse {
-  status: 'ok' | 'error';
+  status: 'ok' | 'error'; // Статус API-ответа
   data: {
-    [accountId: string]: {
-      clan_id?: number;
+    [accountId: number]: { // 🔹 Было string → стало number
+      clan_id?: number; // ID клана (может отсутствовать)
     };
   };
 }
+
 
 export interface ClanInfoResponse {
-  status: 'ok' | 'error';
+  status: 'ok' | 'error'; // Статус API-ответа
   data: {
-    [clanId: string]: {
-      name: string;
-      tag: string;
-      members_count?: number;
-      motto?: string;
-      description?: string;
+    [clanId: number]: { // 🔹 Было string → стало number
+      name: string; // Название клана
+      tag: string; // Тэг клана (например, [WG])
+      members_count?: number; // Количество участников (опционально)
+      motto?: string; // Девиз клана (опционально)
+      description?: string; // Описание клана (опционально)
     };
   };
 }
 
+
 export interface PlayerData {
-  playerId: number;
-  created_at: number;
-  nickname: string;
-  last_battle_time: number;
-  statistics: {
+  account_id: number; // ID игрока
+  created_at: number; // Дата создания аккаунта
+  last_battle_time?: number; // Последний бой (может отсутствовать)
+  nickname: string; // Ник игрока
+  statistics: { // Статистика
     all: {
       battles: number;
       wins: number;
+      losses?: number;
       damage_dealt: number;
       hits: number;
       shots: number;
       max_damage?: number;
       max_frags: number;
+      max_xp?: number;
     };
   };
-  clan?: {
+  clan?: { // Клан (если есть)
     name: string;
     tag: string;
   };
 }
+

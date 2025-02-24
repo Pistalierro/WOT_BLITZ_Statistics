@@ -1,24 +1,62 @@
-<div *ngIf="playerStore.searchedPlayerData() || playerStore.playerData() as data; else checkAuth">
-  <h2>Общая статистика игрока</h2>
-  <p>{{ data.nickname }} / {{ data.playerId }}</p>
-  <p>Дата создания аккаунта: {{ data.created_at * 1000 | date: 'dd.MM.yy' }}</p>
-  <p>Всего боев: {{ data.statistics.all.battles }}</p>
-  <p>Процент побед: {{ (data.statistics.all.wins / data.statistics.all.battles) * 100 | number: '1.2-2' }}%</p>
-  <p>Точность стрельбы: {{ (data.statistics.all.hits / data.statistics.all.shots) * 100 | number: '1.2-2' }}%</p>
-  <p>Средний урон за бой: {{ (data.statistics.all.damage_dealt / data.statistics.all.battles) | number: '1.0-0' }}</p>
-  <p *ngIf="data.statistics.all.max_damage">Максимальный урон за бой: {{ data.statistics.all.max_damage }}</p>
-  <p>Максимально уничтожено за бой: {{ data.statistics.all.max_frags }}</p>
-  <p *ngIf="data.clan">Клан: [{{ data.clan.name }}]</p>
+<div *ngIf="playerStore.playerDataSignal() as player; else checkAuth">
+  <h2 [@fadeScale]>{{ player.nickname }} / {{ player.account_id }}</h2>
+  <div *ngIf="player.clan" [@fadeScale] class="stats">
+    <span class="stats-key">Клан:</span>
+    <span> {{ player.clan.name }} [{{ player.clan.tag }}]</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Дата создания аккаунта:</span>
+    <span> {{ player.created_at * 1000 | date: 'dd.MM.yyyy' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Последний бой:</span>
+    <span *ngIf="player.last_battle_time"> {{ player.last_battle_time * 1000 | date: 'dd.MM.yyyy' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Боёв:</span>
+    <span> {{ player.statistics.all.battles | number: '1.0-0' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Процент побед:</span>
+    <span [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)"
+          class="stats-value">
+     {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 | number: '1.2-2' }}%
+   </span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Средний урон за бой:</span>
+    <span> {{ (player.statistics.all.damage_dealt / player.statistics.all.battles) | number: '1.0-0' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Максимальный опыт за бой:</span>
+    <span> {{ player.statistics.all.max_xp | number: '1.0-0' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Точность стрельбы:</span>
+    <span> {{ (player.statistics.all.hits / player.statistics.all.shots) * 100 | number: '1.2-2' }}%</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Побед:</span>
+    <span> {{ player.statistics.all.wins | number: '1.0-0' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Поражений:</span>
+    <span> {{ player.statistics.all.losses | number: '1.0-0' }}</span>
+  </div>
+  <div [@fadeScale] class="stats">
+    <span class="stats-key">Максимум фрагов за бой:</span>
+    <span> {{ player.statistics.all.max_frags }}</span>
+  </div>
 </div>
 
 <ng-template #checkAuth>
   <div *ngIf="authService.nicknameSignal() === null">
-    <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику игрока.</p>
+    <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику.</p>
   </div>
-  <div *ngIf="playerStore.loading()">
+  <div *ngIf="playerStore.loadingSignal()">
     <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
   </div>
-  <div *ngIf="playerStore.error()">
-    <p class="error">{{ playerStore.error() }}</p>
+  <div *ngIf="playerStore.errorSignal()">
+    <p class="error">{{ playerStore.errorSignal() }}</p>
   </div>
 </ng-template>

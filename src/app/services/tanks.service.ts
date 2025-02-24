@@ -3,7 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
 import {Tank, TankStatsResponse} from '../models/tank/tanks-response.model';
-import {PlayerStoreService} from './player-store.service';
+import {PlayerStoreService} from './player/player-store.service';
+
 
 @Injectable({providedIn: 'root'})
 
@@ -17,7 +18,7 @@ export class TanksService {
 
   constructor() {
     effect(() => {
-      const accountId = this.playerStore.accountId();
+      const accountId = this.playerStore.accountIdSignal();
       if (accountId) {
         queueMicrotask(() => {
           this.fetchTankData(accountId).then();

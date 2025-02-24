@@ -1,8 +1,8 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {PlayerStoreService} from './player-store.service';
 import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
+import {PlayerStoreService} from './player/player-store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class AchievementsService {
 
   constructor() {
     effect(() => {
-      const accountId = this.playerStore.accountId();
+      const accountId = this.playerStore.accountIdSignal();
       if (accountId) {
         queueMicrotask(() => {
           this.fetchAchievements(accountId).then();
