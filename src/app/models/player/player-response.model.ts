@@ -58,6 +58,7 @@ export interface PlayerData {
   playerId: number;
   created_at: number;
   nickname: string;
+  last_battle_time: number;
   statistics: {
     all: {
       battles: number;

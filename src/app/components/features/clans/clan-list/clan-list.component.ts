@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ClanService} from '../../../../services/clan/clan.service';
-import {DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {BasicClanData, ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
@@ -12,6 +12,7 @@ import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} fr
 import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {debounceTime, distinctUntilChanged} from 'rxjs';
 import {ClanUtilsService} from '../../../../services/clan/clan-utils.service';
+import {UtilsService} from '../../../../shared/utils.service';
 
 @Component({
   selector: 'app-clan-list',
@@ -23,13 +24,15 @@ import {ClanUtilsService} from '../../../../services/clan/clan-utils.service';
     DatePipe,
     ReactiveFormsModule,
     NgForOf,
-    MatAutocompleteTrigger
+    MatAutocompleteTrigger,
+    NgClass
   ],
   templateUrl: './clan-list.component.html',
   styleUrl: './clan-list.component.scss'
 })
 export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   clanService = inject(ClanService);
+  public utilsService = inject(UtilsService);
   displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
   form!: FormGroup;
@@ -43,6 +46,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   private fb = inject(FormBuilder);
   private clanUtilsService = inject(ClanUtilsService);
 
+
   constructor() {
     effect(() => {
       const clanList = this.clanService.topClansDetails();
@@ -50,7 +54,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.breakpointObserver.observe([
-      '(max-width: 992px)',
+      '(max-width: 1200px)',
       '(max-width: 768px)',
       '(max-width: 576px)',
     ]).subscribe(result => {
@@ -58,11 +62,9 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.displayedColumns = DISPLAY_SIZE_SM;
       } else if (result.breakpoints['(max-width: 768px)']) {
         this.displayedColumns = DISPLAY_SIZE_SM_MD;
-      } else if (result.breakpoints['(max-width: 992px)']) {
+      } else if (result.breakpoints['(max-width: 1200px)']) {
         this.displayedColumns = DISPLAY_SIZE_MD_LG;
-      } else {
-        this.displayedColumns = DISPLAY_SIZE_LG_MIN;
-      }
+      } else this.displayedColumns = DISPLAY_SIZE_LG_MIN;
     });
   }
 

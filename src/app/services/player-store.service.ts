@@ -111,6 +111,7 @@ export class PlayerStoreService {
       created_at: playerFullInfo.created_at,
       nickname: playerFullInfo.nickname,
       statistics: playerFullInfo.statistics,
+      last_battle_time: playerFullInfo.created_at,
       clan: clanData || undefined
     };
   }

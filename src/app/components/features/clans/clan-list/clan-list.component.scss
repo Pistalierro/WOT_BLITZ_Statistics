@@ -13,136 +13,6 @@
   }
 }
 
-.hide-mobile,
-.hide-desktop {
-  @include lg-min {
-    display: table-cell;
-  }
-  @include lg {
-    display: none;
-  }
-}
-
-.clickable-row {
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-
-.clickable-row:hover {
-  background-color: $color-dark;
-  color: $color-light;
-}
-
-
-table {
-  width: 100%;
-}
-
-.mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
-}
-
-th {
-  color: $color-accent !important;
-  font-size: 1rem;
-}
-
-td {
-  border-bottom: 2px solid $color-dark !important;
-  color: $color-gray;
-  @include md-min {
-    font-size: 1.2rem;
-  }
-  @include md-min {
-    font-size: 1rem;
-  }
-}
-
-mat-paginator {
-  background-color: $color-deep-dark !important;
-  color: $color-accent !important;
-  border-radius: 0 0 4px 4px !important;
-}
-
-:host ::ng-deep {
-
-  .mat-form-field input.mat-input-element {
-    font-size: 16px !important; // Браузер не увеличивает поле при фокусе
-  }
-
-  .form-search-clan,
-  .filter {
-    width: 100%;
-
-    .mat-mdc-text-field-wrapper {
-      background-color: $color-deep-dark !important; // замените на нужный цвет
-    }
-
-    .mdc-floating-label {
-      color: $color-accent !important; // Замените на нужный цвет
-    }
-
-    input {
-      color: $color-gray !important;
-    }
-
-    input::placeholder {
-      color: $color-gray !important; // Замените на нужный цвет
-    }
-
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-      border-color: $color-accent !important; // Замените на нужный цвет
-    }
-  }
-
-  .mat-mdc-paginator-page-size {
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-      border-color: $color-accent !important; // Замените на нужный цвет рамки
-    }
-  }
-
-
-  .mat-mdc-paginator-page-size-label {
-    font-weight: bold;
-  }
-
-  .mat-mdc-paginator-page-size {
-    border-radius: 5px;
-    color: $color-accent !important;
-
-    .mat-mdc-select-value {
-      color: $color-accent !important;
-      font-weight: bold;
-    }
-
-    .mat-mdc-select-arrow {
-      color: $color-accent !important;
-    }
-  }
-
-  .mat-mdc-paginator-icon {
-    fill: $color-accent !important;
-  }
-
-  .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
-    fill: $color-gray-dark !important;
-  }
-}
-
-::ng-deep .cdk-overlay-container {
-  .mat-mdc-select-panel {
-    background-color: $color-deep-dark !important; // Фон выпадающего списка
-  }
-
-  .mat-mdc-option {
-    color: $color-gray !important; // Цвет текста внутри списка
-  }
-}
 
 .form-search-clan {
   @include md-min {
@@ -171,4 +41,8 @@ mat-paginator {
 .search {
   position: relative !important;
   z-index: 10;
+}
+
+.clan-winRate {
+  font-weight: bold;
 }

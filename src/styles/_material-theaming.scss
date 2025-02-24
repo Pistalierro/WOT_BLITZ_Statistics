@@ -7,10 +7,6 @@
   color: $color-light !important;
 }
 
-.mat-mdc-cell {
-  border-bottom-color: $color-accent !important;
-}
-
 .mat-mdc-header-row {
   //border-radius: 4px 4px 0 0 !important;
   background-color: $color-deep-dark !important;
@@ -73,7 +69,6 @@
   }
 }
 
-//mat-autocomplete
 .cdk-overlay-container {
   .mat-mdc-autocomplete-panel {
     position: relative !important; // Позволяет CDK корректно позиционировать

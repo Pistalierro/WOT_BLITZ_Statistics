@@ -49,6 +49,7 @@
         </td>
       </ng-container>
 
+      <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell> Название</th>
         <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
@@ -64,6 +65,12 @@
       <ng-container matColumnDef="leader_name">
         <th *matHeaderCellDef mat-header-cell> Глава клана</th>
         <td *matCellDef="let clan" mat-cell> {{ clan.leader_name }}</td>
+      </ng-container>
+
+      <!-- AvgDamage Column  -->
+      <ng-container matColumnDef="avgDamage">
+        <th *matHeaderCellDef mat-header-cell> С/У</th>
+        <td *matCellDef="let clan" mat-cell> {{ clan.avgDamage | number: '1.0-0' }}</td>
       </ng-container>
 
       <!-- Members Column -->
@@ -87,7 +94,9 @@
         <th *matHeaderCellDef mat-header-cell>
           <mat-icon>flag</mat-icon>
         </th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.winRate | number: '1.0-2' }}%</td>
+        <td *matCellDef="let clan" [ngClass]="utilsService.getWinRateColor(clan.winRate)" class="clan-winRate" mat-cell>
+          {{ clan.winRate | number: '1.0-2' }}%
+        </td>
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
@@ -95,7 +104,7 @@
 
       <!-- Row shown when there is no matching data. -->
       <tr *matNoDataRow class="mat-row">
-        <td class="mat-cell" colspan="7">No data matching the filter "{{ input.value }}"</td>
+        <td class="mat-cell" colspan="7">Нет совпадений данных в фильтре "{{ input.value }}"</td>
       </tr>
 
     </table>

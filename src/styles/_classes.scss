@@ -56,3 +56,24 @@
   background: rgba(0, 0, 0, 0.5);
   pointer-events: all;
 }
+
+.winRate {
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+
+  &-purple {
+    color: blueviolet !important;
+  }
+
+  &-blue {
+    color: royalblue !important;
+  }
+
+  &-green {
+    color: limegreen !important;
+  }
+
+  &-white {
+    color: white !important;
+  }
+}
