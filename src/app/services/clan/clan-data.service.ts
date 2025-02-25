@@ -183,7 +183,7 @@ export class ClanDataService {
     }
   }
 
-  async getDataFromAllStorages<T extends any[]>(key: string, maxAgeMinutes: number = 180): Promise<T> {
+  async getDataFromAllStorages<T extends any[]>(key: string): Promise<T> {
     const indexedData = await this.indexedDbService.getDataFromIndexedDB<T>(key);
     if (indexedData && indexedData.length > 0) {
       console.log(`📥 Данные для ключа "${key}" получены из IndexedDB.`);
@@ -201,10 +201,5 @@ export class ClanDataService {
 
     console.warn(`⚠️ Данные для ключа "${key}" не найдены ни в IndexedDB, ни в Firestore.`);
     return [] as unknown as T;
-  }
-
-  private isFresh(timestamp: number, maxAgeMinutes: number): boolean {
-    const elapsedMinutes = (Date.now() - timestamp) / 60000;
-    return elapsedMinutes < maxAgeMinutes;
   }
 }

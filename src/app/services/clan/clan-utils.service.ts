@@ -135,16 +135,11 @@ export class ClanUtilsService {
     const uniqueClans = new Map<number, BasicClanData>();
     const result: BasicClanData[] = [];
 
-    let allClans: BasicClanData[] = await this.indexedDbService.db.clans.toArray();
+    const record = await this.indexedDbService.getRecord('allClansData');
+    const allClans: BasicClanData[] = record?.data || [];
 
     if (!allClans.length) {
-      console.warn('⚠ Данные не найдены в `clans`, пробуем `keyValue`');
-      const record = await this.indexedDbService.getRecord('allClansData');
-      allClans = record?.data || [];
-    }
-
-    if (!allClans.length) {
-      console.error('❌ Кланы не найдены ни в `clans`, ни в `keyValue`');
+      console.error('❌ Кланы не найдены в `keyValue`');
       return [];
     }
 
@@ -165,7 +160,7 @@ export class ClanUtilsService {
         result.push(clan);
       }
     }
-
+    
     for (const clan of allClans) {
       if (result.length >= 20) break;
       const name = clan.name.normalize('NFD').toLowerCase();
@@ -174,6 +169,7 @@ export class ClanUtilsService {
         result.push(clan);
       }
     }
+
     return result;
   }
 

@@ -149,16 +149,17 @@ export class ClanService {
   }
 
   async getTopClansDetails(): Promise<void> {
-    console.log('📌 Загружаем детали топ-50 кланов');
+
     if (!this.topClansIds.length) {
       const ids = await this.clanDataService.getDataFromAllStorages('topClansIds');
       this.topClansIds = Array.isArray(ids) ? ids : [];
+      return;
     }
-
 
     try {
       this.loading.set(true);
       this.error.set(null);
+      this.topClansDetails.set(null);
 
       const topClans = await this.clanDataService.fetchTopClansDetails(this.topClansIds);
       if (!topClans.length) {
@@ -182,9 +183,11 @@ export class ClanService {
         await new Promise(resolve => setTimeout(resolve, 100)); // Короткая задержка для API
       }
       await Promise.all(batches);
-
       topClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
       this.topClansDetails.set(topClans);
+
+      await this.clanDataService.saveDataToAllStorages('topClansDetails', topClans);
+      console.log('topClansDetails сохранен во все БД');
     } catch (err: any) {
       console.error('❌ Ошибка в getTopClansDetails:', err.message);
       this.error.set(err.message);
@@ -266,29 +269,26 @@ export class ClanService {
           .then(data => Array.isArray(data) ? data : []),
         this.clanDataService.getDataFromAllStorages<number[]>('topClansIds')
           .then(data => Array.isArray(data) ? data : []),
-        this.firestoreService.loadCollection<ExtendedClanDetails[]>('topClanDetails')
-          .catch(error => {
-            console.error('❌ Ошибка при загрузке `topClanDetails` из Firestore:', error.message);
-            this.error.set(error.message);
-            return [];
-          })
+        this.clanDataService.getDataFromAllStorages<ExtendedClanDetails[]>('topClansDetails')
+          .then(data => Array.isArray(data) ? data : []),
       ]);
 
       this.allClansData = allClansData;
       this.largeClansIds = largeClansIds;
       this.topClansIds = topClansIds;
+      this.topClansDetails.set(topClansDetails); // Устанавливаем данные в сигнал
 
       if (topClansDetails.length > 0) {
-        this.topClansDetails.set(topClansDetails);
+        console.log('✅ Данные topClansDetails загружены из хранилища');
       } else {
-        console.warn('⚠ В Firestore нет `topClanDetails`');
+        console.warn('⚠ В хранилищах нет `topClansDetails`');
       }
 
-      console.log('✅ Данные успешно загружены:', {
-        allClansData: allClansData.length,
-        largeClansIds: largeClansIds.length,
-        topClansIds: topClansIds.length,
-      });
+      // console.log('✅ Данные успешно загружены:', {
+      //   allClansData: allClansData.length,
+      //   largeClansIds: largeClansIds.length,
+      //   topClansIds: topClansIds.length,
+      // });
 
     } catch (error: any) {
       console.error('❌ Ошибка при инициализации данных:', error.message);

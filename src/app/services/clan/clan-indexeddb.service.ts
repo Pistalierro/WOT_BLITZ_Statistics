@@ -34,9 +34,9 @@ export class ClanIndexedDbService {
         return;
       }
 
-      if (typeof data[0] === 'object') {
-        await this.db.clans.bulkPut(data as BasicClanData[]);
-        console.log(`✅ Данные сохранены в таблицу "clans", количество записей: ${data.length}`);
+      if (Array.isArray(data) && typeof data[0] === 'object') {
+        await this.db.keyValue.put({key, data, timestamp: Date.now()});
+        console.log(`✅ Массив объектов сохранен в keyValue с ключом "${key}"`);
       } else if (typeof data[0] === 'number') {
         await this.db.keyValue.put({key, data, timestamp: Date.now()});
         console.log(`✅ Числовой массив сохранен в keyValue с ключом "${key}"`);

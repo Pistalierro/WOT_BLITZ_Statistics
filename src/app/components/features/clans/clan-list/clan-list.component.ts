@@ -50,7 +50,9 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor() {
     effect(() => {
       const clanList = this.clanService.topClansDetails();
-      if (clanList) this.dataSource.data = clanList;
+      if (clanList) {
+        this.dataSource.data = clanList;
+      }
     });
 
     this.breakpointObserver.observe([
@@ -68,6 +70,7 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+
   ngOnInit() {
     if (!this.clanService.topClansDetails()) {
       void this.clanService.getTopClansDetails();
@@ -84,12 +87,6 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.openPanelTimeoutId) {
       clearTimeout(this.openPanelTimeoutId);
     }
-  }
-
-  async updateAllData(): Promise<void> {
-    await this.clanService.getAllClansData();
-    await this.clanService.getTopClansIds();
-    await this.clanService.getTopClansDetails();
   }
 
   applyFilter(event: Event) {
