@@ -101,18 +101,19 @@ export class ClanService {
           batch
             .filter(clan => clan?.members_ids?.length) // Проверяем, есть ли члены клана
             .map(async (clan) => {
-              const stats = await this.clanUtilsService.getClansStats(clan.members_ids);
+              const stats = await this.clanUtilsService.getClansStats(clan.members_ids, true);
               clan.winRate = stats?.winRate ?? 0;
               clan.avgDamage = stats?.avgDamage ?? 0;
+              clan.zeroBattlesCount = stats?.zeroBattlesCount ?? 0;
             })
         );
         console.log(`✅ Обработано ${Math.min(i + batchSize, allClans.length)} из ${allClans.length}`);
       }
 
-      // Оставляем только кланы с валидным avgDamage и winRate
       const validClans = allClans.filter(clan =>
         clan &&
         typeof clan.clan_id === 'number' && clan.clan_id > 0 &&
+        (clan.zeroBattlesCount ?? 0) <= 5 &&
         typeof clan.avgDamage === 'number' && clan.avgDamage > 0 &&
         typeof clan.winRate === 'number' && clan.winRate > 0
       );
@@ -152,7 +153,6 @@ export class ClanService {
     try {
       this.loading.set(true);
       this.error.set(null);
-      this.topClansDetails.set(null);
 
       const storedData = await this.clanDataService.getDataFromAllStorages<ExtendedClanDetails[]>('topClansDetails');
       if (storedData && storedData.length > 0) {

@@ -156,7 +156,7 @@ export class ClanDataService {
       }
 
       const clanDetails: ExtendedClanDetails[] = Object.values(response.data).map(clan => ({
-        ...clan, winRate: null, avgDamage: null
+        ...clan, winRate: null, avgDamage: null, zeroBattlesCount: null
       } as ExtendedClanDetails));
 
       console.log(`✅ Получено ${clanDetails.length} кланов`);
