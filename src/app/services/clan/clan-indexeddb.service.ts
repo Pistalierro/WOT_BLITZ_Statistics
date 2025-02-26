@@ -27,45 +27,42 @@ export class ClanIndexedDbService {
     this.db = new ClanDB();
   }
 
-  async saveDataToIndexedDB<T>(key: string, data: T[]): Promise<void> {
+  async saveDataToIndexedDB<T>(key: string, data: T[], timestamp?: number): Promise<void> {
     try {
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         console.warn('📢 Передан пустой массив, сохранение не выполняется.');
         return;
       }
 
-      if (Array.isArray(data) && typeof data[0] === 'object') {
-        await this.db.keyValue.put({key, data, timestamp: Date.now()});
-        console.log(`✅ Массив объектов сохранен в keyValue с ключом "${key}"`);
-      } else if (typeof data[0] === 'number') {
-        await this.db.keyValue.put({key, data, timestamp: Date.now()});
-        console.log(`✅ Числовой массив сохранен в keyValue с ключом "${key}"`);
-      } else {
-        console.error('❌ Неподдерживаемый тип данных, сохранение невозможно.');
-      }
+      const payload = {data, timestamp: timestamp || Date.now()}; // Используем переданную метку или текущее время
+      await this.db.keyValue.put({key, ...payload});
+      console.log(`✅ Данные сохранены в keyValue с ключом "${key}"`);
     } catch (error) {
       console.error('❌ Ошибка при сохранении данных в IndexedDB:', error);
     }
   }
 
-  async getDataFromIndexedDB<T>(key: string): Promise<T[]> {
+  async getDataFromIndexedDB<T>(key: string): Promise<{ data: T[]; timestamp: number } | null> {
     try {
       const record = await this.db.keyValue.get(key);
       if (record) {
-        return Array.isArray(record.data) ? record.data : []; // Гарантируем массив
+        return {
+          data: Array.isArray(record.data) ? record.data : [],
+          timestamp: record.timestamp || Date.now(),
+        };
       }
 
       const clans = await this.db.clans.toArray();
       if (clans.length > 0) {
         console.log(`📥 Данные получены из таблицы "clans", количество записей: ${clans.length}`);
-        return clans as T[];
+        return {data: clans as T[], timestamp: Date.now()};
       }
 
       console.warn(`⚠️ Данные по ключу "${key}" не найдены.`);
-      return [];
+      return null;
     } catch (error) {
       console.error('❌ Ошибка при получении данных из IndexedDB:', error);
-      return [];
+      return null;
     }
   }
 
