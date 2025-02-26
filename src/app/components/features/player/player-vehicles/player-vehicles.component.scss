@@ -2,7 +2,9 @@
 @use "../../../../../styles/presets/skin" as *;
 @use "../../../../../styles/mixins/mixins-media" as *;
 
-progress-bar {
+.progress-bar {
+  margin-top: -$gap;
+  margin-bottom: $gap;
   min-height: $gap-xs;
   transition: opacity 0.3s ease;
   opacity: 1;
@@ -10,6 +12,7 @@ progress-bar {
   &.ng-animate {
     opacity: 0;
   }
+
 }
 
 
