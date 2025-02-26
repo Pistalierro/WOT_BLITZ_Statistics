@@ -1,6 +1,7 @@
 @use "../../../../../styles/presets/variables" as *;
 @use "../../../../../styles/presets/skin" as *;
 @use "../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../styles/mixins/extends" as *;
 
 p {
   font-weight: 100;
@@ -47,15 +48,99 @@ p {
 .stats {
   margin-bottom: 20px;
   color: $color-gray;
-  font-size: 1.5rem;
+  @include lg-min {
+    font-size: 1.875rem;
+  }
+  @include lg-md {
+    font-size: 1.75rem;
+  }
+  @include md-sm {
+    font-size: 1.5rem;
+  }
+  @include sm {
+    font-size: 1.25rem;
+  }
+
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  @include lg-min {
+    max-width: 550px;
+  }
+  @include lg-md {
+    max-width: 500px;
+  }
+  @include md-sm {
+    max-width: 450px;
+  }
+  @include sm {
+    max-width: 350px;
+  }
+  transition: background-color 0.2s ease, transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background-color: rgba($color-light, 0.1);
+    transform: translatex($gap-sm);
+    @extend %box-shadow-light;
+
+    .stats {
+      &-key,
+      &-value {
+        font-weight: 400;
+
+        &--winrate {
+          font-weight: bold;
+        }
+      }
+    }
+  }
 
   &-key {
-    font-weight: 100;
+    font-weight: 400;
+    color: $color-gray;
   }
 
   &-value {
     font-weight: bold;
   }
+
+  &-container {
+    margin-top: -$gap-x2;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.9) 80%, rgba(0, 0, 0, 1) 100%);
+      z-index: -1;
+    }
+  }
+
+  &-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+    z-index: -1;
+  }
+
+  &-content {
+    padding: $gap-x2 0;
+  }
 }
+
+
+
+
+
 
 

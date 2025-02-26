@@ -148,16 +148,13 @@
   height: 260px;
   perspective: 1000px;
   -webkit-perspective: 1000px;
-
   cursor: pointer;
   background-color: transparent;
-  @extend %box-shadow;
-
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
 
   &:hover {
     transform: scale(1.05);
-    @extend %box-shadow;
+    @extend %box-shadow-gray;
   }
 
   &.flipped {

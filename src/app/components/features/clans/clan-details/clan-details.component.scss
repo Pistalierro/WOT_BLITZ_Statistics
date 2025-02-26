@@ -10,12 +10,6 @@
     padding: $gap;
     display: flex;
     gap: $gap;
-    @include md-min {
-      flex-direction: row;
-    }
-    @include md {
-      flex-direction: column;
-    }
     align-items: center;
     justify-content: space-around;
     font-size: 1.5rem;
@@ -85,10 +79,16 @@
   }
 }
 
-.mat-mdc-card-title {
-  color: $color-gray;
-  text-transform: uppercase;
-  font-family: $font-header !important;
+.mat-mdc-card {
+  &-title {
+    color: $color-accent;
+    text-transform: uppercase;
+    font-family: $font-header !important;
+  }
+
+  &-content {
+    color: $color-gray;
+  }
 }
 
 .player-winRate {

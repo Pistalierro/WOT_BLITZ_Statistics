@@ -14,7 +14,12 @@
     <div [@fadeScale] class="content-container">
       <mat-card appearance="outlined" class="clan-winRate">
         <mat-card-header>
-          <mat-card-title>WinRate:</mat-card-title>
+          <mat-card-title>
+            <ng-container *ngIf="!isMobile; else winRateIcon">WinRate:</ng-container>
+            <ng-template #winRateIcon>
+              <mat-icon>flag</mat-icon>
+            </ng-template>
+          </mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span *ngIf="clan.winRate" [ngClass]="utilsService.getWinRateColor(clan.winRate)">
@@ -24,7 +29,7 @@
       </mat-card>
       <mat-card appearance="outlined" class="clan-avgDamage">
         <mat-card-header>
-          <mat-card-title>C/У:</mat-card-title>
+          <mat-card-title>С/У</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span>{{ clan.avgDamage | number: '1.0-0' }}</span>
@@ -32,7 +37,12 @@
       </mat-card>
       <mat-card appearance="outlined" class="clan-members">
         <mat-card-header>
-          <mat-card-title>Участники:</mat-card-title>
+          <mat-card-title>
+            <ng-container *ngIf="!isMobile; else membersIcon">Участники:</ng-container>
+            <ng-template #membersIcon>
+              <mat-icon>group</mat-icon>
+            </ng-template>
+          </mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span>{{ clan.members_count }}/50</span>
@@ -82,7 +92,7 @@
 
         <!-- AvgDamage Column -->
         <ng-container matColumnDef="avgDamage">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header> С/У</th>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
           <td *matCellDef="let player" mat-cell>
             {{ player.avgDamage | number: '1.0-0' }}
           </td>

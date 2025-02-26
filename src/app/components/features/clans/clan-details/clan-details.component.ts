@@ -26,6 +26,7 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
   router = inject(Router);
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
   displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+  isMobile: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
   private breakpointObserver = inject(BreakpointObserver);
   private cdRef = inject(ChangeDetectorRef);
@@ -61,10 +62,13 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
     ]).subscribe(result => {
       if (result.breakpoints['(max-width: 576px)']) {
         this.displayedColumns = ['nickname', 'battles', 'avgDamage', 'winRate'];
+        this.isMobile = true;
       } else if (result.breakpoints['(max-width: 768px)']) {
         this.displayedColumns = ['nickname', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+        this.isMobile = false;
       } else if (result.breakpoints['(max-width: 1200px)']) {
         this.displayedColumns = ['nickname', 'created_at', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+        this.isMobile = false;
       } else {
         this.displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
       }

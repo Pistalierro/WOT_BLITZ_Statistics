@@ -2,14 +2,22 @@
 @use "../presets/variables" as *;
 
 %container {
-	width: min(100% - $gap-x2, $container-size);
-	margin-inline: auto;
+  width: min(100% - $gap-x2, $container-size);
+  margin-inline: auto;
 }
 
 %text-shadow {
-	text-shadow: 0 0 10px $color-black, 0 0 20px $color-black, 0 0 40px $color-black;
+  text-shadow: 0 0 10px $color-black, 0 0 20px $color-black, 0 0 40px $color-black;
 }
 
-%box-shadow {
-	box-shadow: 0 0 $gap $color-black;
+%box-shadow-black {
+  box-shadow: 0 0 $gap $color-black;
+}
+
+%box-shadow-light {
+  box-shadow: 0 0 $gap-sm $color-light;
+}
+
+%box-shadow-gray {
+  box-shadow: 0 0 $gap $color-gray-dark;
 }
