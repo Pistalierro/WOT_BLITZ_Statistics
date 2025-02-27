@@ -6,6 +6,7 @@ import {UtilsService} from '../../../../../shared/utils.service';
 import {TanksService} from '../../../../../services/tanks.service';
 import {AuthService} from '../../../../../services/auth.service';
 import {PlayerStoreService} from '../../../../../services/player/player-store.service';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 
 
 @Component({
@@ -17,7 +18,10 @@ import {PlayerStoreService} from '../../../../../services/player/player-store.se
     DecimalPipe,
     NgIf,
     ...MATERIAL_MODULES,
-    NgClass
+    NgClass,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet
   ],
   styleUrls: ['./player-stat.component.scss'],
   animations: [ANIMATIONS.fadeIn, ANIMATIONS.slideIn]

@@ -2,7 +2,14 @@ import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
-import {BattlesByTier, BattlesByType, Tank, TankStatsResponse} from '../models/tank/tanks-response.model';
+import {
+  BattlesByTier,
+  BattlesByType,
+  BattlesByWinAvgDamage,
+  BattlesByWinRate,
+  Tank,
+  TankStatsResponse
+} from '../models/tank/tanks-response.model';
 import {PlayerStoreService} from './player/player-store.service';
 
 
@@ -14,6 +21,8 @@ export class TanksService {
   error = signal<string | null>(null);
   battlesByTier = signal<BattlesByTier>({});
   battlesByType = signal<BattlesByType>({});
+  winRateByTier = signal<BattlesByWinRate>({});
+  avgDamageByTier = signal<BattlesByWinAvgDamage>({});
   totalBattles = signal<number>(0);
 
   private http = inject(HttpClient);
@@ -25,6 +34,15 @@ export class TanksService {
       if (accountId) {
         queueMicrotask(() => {
           this.fetchTankData(accountId).then();
+        });
+      }
+    });
+
+    effect(() => {
+      if (this.tanksList().length > 0) {
+        console.log('📊 Танки загружены! Пересчитываем статистику по винрейту...');
+        queueMicrotask(() => {
+          this.calculateStatistics();
         });
       }
     });
@@ -102,23 +120,42 @@ export class TanksService {
     }
   }
 
-  private calculateBattlesByTierAndType(): void {
+  calculateStatistics(): void {
     const battlesByTier: BattlesByTier = {};
     const battlesByType: BattlesByType = {};
+    const winRateByTier: Record<number, number> = {};
+    const avgDamageByTier: Record<number, number> = {};
+    const winsByTier: Record<number, number> = {};
+    const damageByTier: Record<number, number> = {};
 
-    const tanks = this.tanksList(); // ✅ Получаем данные из сигнала перед перебором
+    const tanks: Tank[] = this.tanksList();
 
     tanks.forEach(tank => {
       const tier = tank.tier;
       const battles = tank.all.battles;
+      const wins = tank.all.wins;
+      const damage = tank.all.damage_dealt;
       const type = tank.type;
-
+      
       battlesByTier[tier] = (battlesByTier[tier] || 0) + battles;
       battlesByType[type] = (battlesByType[type] || 0) + battles;
+      winsByTier[tier] = (winsByTier[tier] || 0) + wins;
+      damageByTier[tier] = (damageByTier[tier] || 0) + damage;
+    });
+
+    Object.keys(battlesByTier).forEach(tier => {
+      const tierNum = Number(tier);
+      const totalBattles = battlesByTier[tierNum];
+
+      winRateByTier[tierNum] = totalBattles > 0 ? (winsByTier[tierNum] / totalBattles) * 100 : 0;
+      avgDamageByTier[tierNum] = totalBattles > 0 ? damageByTier[tierNum] / totalBattles : 0;
     });
 
     this.battlesByTier.set(battlesByTier);
     this.battlesByType.set(battlesByType);
     this.totalBattles.set(Object.values(battlesByTier).reduce((acc, count) => acc + count, 0));
+    this.winRateByTier.set(winRateByTier);
+    this.avgDamageByTier.set(avgDamageByTier);
   }
+
 }

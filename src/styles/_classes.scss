@@ -1,4 +1,8 @@
-// Обычное модальное окно (на десктопе)
+@use "../styles/presets/variables" as *;
+@use "../styles/presets/skin" as *;
+@use "../styles/mixins/mixins-media" as *;
+@use "../styles/mixins/extends" as *;
+
 .auth-dialog {
   padding: 20px;
   width: 100%;
@@ -75,5 +79,49 @@
 
   &-white {
     color: white !important;
+  }
+}
+
+.progress {
+  &-container {
+    padding: $gap;
+    border-radius: 4px;
+    background-color: rgba($color-light, 0.1);
+    width: 100%;
+  }
+
+  &-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: $gap;
+    color: $color-gray;
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+    margin-bottom: $gap-sm * 3;
+
+    .tier-label {
+      flex: 0 0 30px; // Фиксированная ширина для уровня
+      font-weight: bold;
+      text-align: right;
+      color: $color-gray;
+      font-size: 1.5rem;
+    }
+
+    .progress-bar {
+      flex: 1; // Занимает оставшееся пространство
+      height: 8px;
+      border-radius: 9999px;
+    }
+
+    .battles-count {
+      flex: 0 0 $gap-x3; // Фиксированная ширина для количества боёв
+      text-align: left;
+      font-size: 1.5rem;
+      color: $color-gray;
+    }
   }
 }

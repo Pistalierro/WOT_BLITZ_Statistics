@@ -88,6 +88,7 @@ p {
 
   &-secondary {
     margin-top: $gap-x2;
+    padding-right: 20px;
 
     h3 {
       text-align: center;
@@ -111,9 +112,27 @@ p {
   }
 }
 
+.mat-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: $gap;
+  margin-bottom: $gap;
+  background-color: $color-deep-dark;
+  height: $gap-x3;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  border-radius: 4px;
 
+  button {
+    font-size: 1.2rem;
+    transition: color 0.2s;
+    color: $color-gray-dark;
 
-
-
-
-
+    &.active,
+    &:hover {
+      color: $color-accent;
+    }
+  }
+}

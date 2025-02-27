@@ -53,5 +53,7 @@ export interface TankDeltaInterface {
 
 export type BattlesByTier = Record<number, number>;
 export type BattlesByType = Record<string, number>;
+export type BattlesByWinRate = Record<number, number>;
+export type BattlesByWinAvgDamage = Record<number, number>;
 
 

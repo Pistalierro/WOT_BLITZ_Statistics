@@ -8,7 +8,6 @@
 }
 
 .mat-mdc-header-row {
-  //border-radius: 4px 4px 0 0 !important;
   background-color: $color-deep-dark !important;
 }
 
@@ -95,10 +94,6 @@
 }
 
 
-
-
-
-
-
-
-
+.mat-mdc-progress-bar.mdc-linear-progress .mdc-linear-progress__primary-bar {
+  transition: transform 1s ease-in-out;
+}

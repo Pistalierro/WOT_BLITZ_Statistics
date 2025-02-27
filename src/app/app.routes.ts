@@ -18,22 +18,27 @@ export const routes: Routes = [
           .then(m => m.PlayerStatComponent),
         children: [
           {
-            path: 'stat-tier',
+            path: '',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-tier/player-stats-by-tier.component')
               .then(m => m.PlayerStatsByTierComponent)
           },
           {
-            path: 'stat-type',
+            path: 'stats-tier',
+            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-tier/player-stats-by-tier.component')
+              .then(m => m.PlayerStatsByTierComponent)
+          },
+          {
+            path: 'stats-type',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-type/player-stats-by-type.component')
               .then(m => m.PlayerStatsByTypeComponent)
           },
           {
-            path: 'stat-winRate',
+            path: 'stats-winRate',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-win-rate/player-stats-by-win-rate.component')
               .then(m => m.PlayerStatsByWinRateComponent)
           },
           {
-            path: 'stat-damage',
+            path: 'stats-damage',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-damage/player-stats-by-damage.component')
               .then(m => m.PlayerStatsByDamageComponent)
           },
