@@ -5,8 +5,7 @@ import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {BasicClanData, ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
 import {MatPaginator} from '@angular/material/paginator';
-import {BreakpointObserver} from '@angular/cdk/layout';
-import {DISPLAY_SIZE_LG_MIN, DISPLAY_SIZE_MD_LG, DISPLAY_SIZE_SM, DISPLAY_SIZE_SM_MD,} from '../../../../mock/clan-utils';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
@@ -33,7 +32,7 @@ import {UtilsService} from '../../../../shared/utils.service';
 export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
   clanService = inject(ClanService);
   public utilsService = inject(UtilsService);
-  displayedColumns: string[] = DISPLAY_SIZE_LG_MIN;
+  displayedColumns: string[] = ['index', 'tag', 'name', 'leader_name', 'avgDamage', 'membersCount', 'created_at', 'winRate'];
   dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
   form!: FormGroup;
   clanControl = new FormControl('');
@@ -55,18 +54,14 @@ export class ClanListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.breakpointObserver.observe([
-      '(max-width: 1200px)',
-      '(max-width: 768px)',
-      '(max-width: 576px)',
-    ]).subscribe(result => {
-      if (result.breakpoints['(max-width: 576px)']) {
-        this.displayedColumns = DISPLAY_SIZE_SM;
-      } else if (result.breakpoints['(max-width: 768px)']) {
-        this.displayedColumns = DISPLAY_SIZE_SM_MD;
-      } else if (result.breakpoints['(max-width: 1200px)']) {
-        this.displayedColumns = DISPLAY_SIZE_MD_LG;
-      } else this.displayedColumns = DISPLAY_SIZE_LG_MIN;
+    this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium,]).subscribe(result => {
+      if (result.breakpoints[Breakpoints.XSmall]) {
+        this.displayedColumns = ['index', 'tag', 'membersCount', 'winRate'];
+      } else if (result.breakpoints[Breakpoints.Small]) {
+        this.displayedColumns = ['index', 'tag', 'name', 'membersCount', 'winRate'];
+      } else if (result.breakpoints[Breakpoints.Medium]) {
+        this.displayedColumns = ['index', 'tag', 'name', 'membersCount', 'avgDamage', 'created_at', 'winRate'];
+      } else this.displayedColumns = ['index', 'tag', 'name', 'leader_name', 'avgDamage', 'membersCount', 'created_at', 'winRate'];
     });
   }
 

@@ -1,0 +1,72 @@
+<div *ngIf="playerStore.playerDataSignal() as player; else checkAuth">
+  <div class="stats-container">
+    <div class="stats-main">
+      <img alt="WOT Blitz background" class="stats-background" src="/images/wot_blitz_bg.jpg">
+      <div class="stats-content">
+        <h2 [@fadeScale]>{{ player.nickname }} / {{ player.account_id }}</h2>
+        <div *ngIf="player.clan" [@fadeScale] class="stats">
+          <span class="stats-key">Клан:</span>
+          <span> {{ player.clan.name }} [{{ player.clan.tag }}]</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Дата создания аккаунта:</span>
+          <span> {{ player.created_at * 1000 | date: 'dd.MM.yyyy' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Последний бой:</span>
+          <span *ngIf="player.last_battle_time"> {{ player.last_battle_time * 1000 | date: 'dd.MM.yyyy' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Боёв:</span>
+          <span> {{ player.statistics.all.battles | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Процент побед:</span>
+          <span [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)"
+                class="stats-value stats-value--winrate">
+          {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 | number: '1.2-2' }}%
+        </span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Средний урон за бой:</span>
+          <span> {{ (player.statistics.all.damage_dealt / player.statistics.all.battles) | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Максимальный опыт за бой:</span>
+          <span> {{ player.statistics.all.max_xp | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Точность стрельбы:</span>
+          <span> {{ (player.statistics.all.hits / player.statistics.all.shots) * 100 | number: '1.2-2' }}%</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Побед:</span>
+          <span> {{ player.statistics.all.wins | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Поражений:</span>
+          <span> {{ player.statistics.all.losses | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">Максимум фрагов за бой:</span>
+          <span> {{ player.statistics.all.max_frags }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="stats-secondary">
+      <h3>Статистика по ...</h3>
+    </div>
+  </div>
+</div>
+
+<ng-template #checkAuth>
+  <div *ngIf="authService.nicknameSignal() === null">
+    <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику.</p>
+  </div>
+  <div *ngIf="playerStore.loadingSignal()">
+    <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div *ngIf="playerStore.errorSignal()">
+    <p class="error">{{ playerStore.errorSignal() }}</p>
+  </div>
+</ng-template>

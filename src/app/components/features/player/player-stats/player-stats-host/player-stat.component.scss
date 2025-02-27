@@ -1,48 +1,10 @@
-@use "../../../../../styles/presets/variables" as *;
-@use "../../../../../styles/presets/skin" as *;
-@use "../../../../../styles/mixins/mixins-media" as *;
-@use "../../../../../styles/mixins/extends" as *;
+@use "../../../../../../styles/presets/variables" as *;
+@use "../../../../../../styles/presets/skin" as *;
+@use "../../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../../styles/mixins/extends" as *;
 
 p {
-  font-weight: 100;
   margin: $gap 0;
-}
-
-.content-container {
-  display: grid;
-  gap: $gap;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  margin-bottom: $gap;
-}
-
-.mat-mdc-card {
-  background-color: $color-dark;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100px;
-  max-width: 200px;
-  color: $color-gray-light;
-
-  @include sm-min {
-    width: 30%;
-  }
-  @include md {
-    width: 100%;
-  }
-}
-
-.card {
-  font-size: 1.5rem;
-
-  &-title {
-    font-family: $font-header !important;
-  }
-
-  &-content {
-    font-weight: bold;
-  }
 }
 
 .stats {
@@ -52,16 +14,16 @@ p {
     font-size: 1.875rem;
   }
   @include lg-md {
-    font-size: 1.75rem;
-  }
-  @include md-sm {
     font-size: 1.5rem;
   }
-  @include sm {
+  @include md-sm {
     font-size: 1.25rem;
   }
+  @include sm {
+    font-size: 1.2rem;
+  }
 
-  padding: 10px;
+  padding: $gap-sm;
   border-radius: 8px;
   width: 100%;
   @include lg-min {
@@ -108,6 +70,9 @@ p {
     margin-top: -$gap-x2;
     position: relative;
     overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $gap-x2;
 
     &::after {
       content: "";
@@ -118,6 +83,14 @@ p {
       height: 100%;
       background: radial-gradient(circle, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.9) 80%, rgba(0, 0, 0, 1) 100%);
       z-index: -1;
+    }
+  }
+
+  &-secondary {
+    margin-top: $gap-x2;
+
+    h3 {
+      text-align: center;
     }
   }
 

@@ -14,8 +14,30 @@ export const routes: Routes = [
       {path: '', redirectTo: 'stat', pathMatch: 'full'},
       {
         path: 'stat',
-        loadComponent: () => import('./components/features/player/player-stat/player-stat.component')
-          .then(m => m.PlayerStatComponent)
+        loadComponent: () => import('./components/features/player/player-stats/player-stats-host/player-stat.component')
+          .then(m => m.PlayerStatComponent),
+        children: [
+          {
+            path: 'stat-tier',
+            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-tier/player-stats-by-tier.component')
+              .then(m => m.PlayerStatsByTierComponent)
+          },
+          {
+            path: 'stat-type',
+            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-type/player-stats-by-type.component')
+              .then(m => m.PlayerStatsByTypeComponent)
+          },
+          {
+            path: 'stat-winRate',
+            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-win-rate/player-stats-by-win-rate.component')
+              .then(m => m.PlayerStatsByWinRateComponent)
+          },
+          {
+            path: 'stat-damage',
+            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-damage/player-stats-by-damage.component')
+              .then(m => m.PlayerStatsByDamageComponent)
+          },
+        ]
       },
       {
         path: 'vehicles',

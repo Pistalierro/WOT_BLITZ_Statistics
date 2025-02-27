@@ -33,13 +33,6 @@ export interface Tank {
   };
 }
 
-export interface TankSessionInterface {
-  tank: Tank;
-  battles: number;
-  winRate: number;
-  avgDamage: number;
-}
-
 export interface TankDeltaInterface {
   tank_id: number;
   tier: number;
@@ -57,3 +50,8 @@ export interface TankDeltaInterface {
   totalWinRate?: number;
   totalAvgDamage?: number;
 }
+
+export type BattlesByTier = Record<number, number>;
+export type BattlesByType = Record<string, number>;
+
+

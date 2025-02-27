@@ -2,7 +2,7 @@ import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
-import {Tank, TankStatsResponse} from '../models/tank/tanks-response.model';
+import {BattlesByTier, BattlesByType, Tank, TankStatsResponse} from '../models/tank/tanks-response.model';
 import {PlayerStoreService} from './player/player-store.service';
 
 
@@ -12,6 +12,9 @@ export class TanksService {
   tanksList = signal<Tank[]>([]);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
+  battlesByTier = signal<BattlesByTier>({});
+  battlesByType = signal<BattlesByType>({});
+  totalBattles = signal<number>(0);
 
   private http = inject(HttpClient);
   private playerStore = inject(PlayerStoreService);
@@ -97,5 +100,25 @@ export class TanksService {
       this.error.set(err.message);
       return {};
     }
+  }
+
+  private calculateBattlesByTierAndType(): void {
+    const battlesByTier: BattlesByTier = {};
+    const battlesByType: BattlesByType = {};
+
+    const tanks = this.tanksList(); // ✅ Получаем данные из сигнала перед перебором
+
+    tanks.forEach(tank => {
+      const tier = tank.tier;
+      const battles = tank.all.battles;
+      const type = tank.type;
+
+      battlesByTier[tier] = (battlesByTier[tier] || 0) + battles;
+      battlesByType[type] = (battlesByType[type] || 0) + battles;
+    });
+
+    this.battlesByTier.set(battlesByTier);
+    this.battlesByType.set(battlesByType);
+    this.totalBattles.set(Object.values(battlesByTier).reduce((acc, count) => acc + count, 0));
   }
 }

@@ -31,12 +31,15 @@ table {
 
 td {
   border-bottom: 2px solid $color-dark !important;
-  color: $color-gray;
-  @include md-min {
+  color: $color-gray-dark !important;
+  @include lg-min {
+    font-size: 1.25rem !important;
+  }
+  @include lg-md {
     font-size: 1.2rem !important;
   }
   @include md {
-    font-size: 0.875rem !important;
+    font-size: 1rem !important;
   }
 }
 

@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {MatTableDataSource} from '@angular/material/table';
 import {ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
 import {UtilsService} from '../../../../shared/utils.service';
-import {BreakpointObserver} from '@angular/cdk/layout';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {ANIMATIONS} from '../../../../shared/helpers/animations';
 import {MatSort} from '@angular/material/sort';
 import {PlayerStoreService} from '../../../../services/player/player-store.service';
@@ -55,23 +55,37 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.breakpointObserver.observe([
-      '(max-width: 1200px)',
-      '(max-width: 768px)',
-      '(max-width: 576px)',
-    ]).subscribe(result => {
-      if (result.breakpoints['(max-width: 576px)']) {
+    // this.breakpointObserver.observe([
+    //   '(max-width: 1200px)',
+    //   '(max-width: 768px)',
+    //   '(max-width: 576px)',
+    // ]).subscribe(result => {
+    //   if (result.breakpoints['(max-width: 576px)']) {
+    //     this.displayedColumns = ['nickname', 'battles', 'avgDamage', 'winRate'];
+    //     this.isMobile = true;
+    //   } else if (result.breakpoints['(max-width: 768px)']) {
+    //     this.displayedColumns = ['nickname', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+    //     this.isMobile = false;
+    //   } else if (result.breakpoints['(max-width: 1200px)']) {
+    //     this.displayedColumns = ['nickname', 'created_at', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+    //     this.isMobile = false;
+    //   } else {
+    //     this.displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
+    //   }
+    //   this.cdRef.detectChanges();
+    // });
+
+    this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium]).subscribe(result => {
+      if (result.breakpoints[Breakpoints.XSmall]) {
         this.displayedColumns = ['nickname', 'battles', 'avgDamage', 'winRate'];
         this.isMobile = true;
-      } else if (result.breakpoints['(max-width: 768px)']) {
+      } else if (result.breakpoints[Breakpoints.Small]) {
         this.displayedColumns = ['nickname', 'battles', 'accuracy', 'avgDamage', 'winRate'];
         this.isMobile = false;
-      } else if (result.breakpoints['(max-width: 1200px)']) {
+      } else if (result.breakpoints[Breakpoints.Medium]) {
         this.displayedColumns = ['nickname', 'created_at', 'battles', 'accuracy', 'avgDamage', 'winRate'];
         this.isMobile = false;
-      } else {
-        this.displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
-      }
+      } else this.displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
       this.cdRef.detectChanges();
     });
   }
