@@ -71,7 +71,9 @@ p {
     position: relative;
     overflow: hidden;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    @include lg-min {
+      grid-template-columns: repeat(2, 1fr);
+    }
     gap: $gap-x2;
 
     &::after {

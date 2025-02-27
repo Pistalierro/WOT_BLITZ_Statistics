@@ -3,7 +3,11 @@
     <div class="stats-main">
       <img alt="WOT Blitz background" class="stats-background" src="/images/wot_blitz_bg.jpg">
       <div class="stats-content">
-        <h2 [@fadeScale]>{{ player.nickname }} / {{ player.account_id }}</h2>
+        <h2 [@fadeScale]>{{ player.nickname }}</h2>
+        <div [@fadeScale] class="stats">
+          <span class="stats-key">ID:</span>
+          <span> {{ player.account_id }}</span>
+        </div>
         <div *ngIf="player.clan" [@fadeScale] class="stats">
           <span class="stats-key">Клан:</span>
           <span> {{ player.clan.name }} [{{ player.clan.tag }}]</span>
