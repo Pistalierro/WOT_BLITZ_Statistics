@@ -4,7 +4,7 @@
 @use "../styles/mixins/extends" as *;
 
 .auth-dialog {
-  padding: 20px;
+  padding: $gap;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -26,7 +26,7 @@
   height: 100vh;
   width: auto;
   max-width: none;
-  padding: 20px;
+  padding: $gap;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -51,9 +51,6 @@
   }
 }
 
-.custom-backdrop ~ app-root {
-  aria-hidden: false !important;
-}
 
 // Затемнение заднего фона
 .custom-backdrop {

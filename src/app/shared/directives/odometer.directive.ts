@@ -31,7 +31,6 @@ export class OdometerDirective implements OnChanges {
       const progress = Math.min(elapsedTime / duration, 1);
       const currentValue = start + (end - start) * progress;
 
-      // Форматируем текущее значение через DecimalPipe
       this.el.nativeElement.textContent = this.decimalPipe.transform(currentValue, this.format);
 
       if (progress < 1) {

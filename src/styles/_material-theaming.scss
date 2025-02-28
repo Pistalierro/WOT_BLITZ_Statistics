@@ -151,11 +151,12 @@
     -webkit-box-shadow: 0 0 0 30px $color-deep-dark inset !important;
     box-shadow: 0 0 0 30px $color-deep-dark inset !important;
     -webkit-text-fill-color: $color-gray !important;
-
-    // Иногда ещё советуют:
-    // transition: background-color 99999s ease-in-out 0s;
-    // но это выглядит как костыль, если вышеуказанных строк хватает — можно без этого.
   }
+}
+
+// скорость анимации прогресс бара
+.mat-mdc-progress-bar .mdc-linear-progress__primary-bar {
+  transition: transform 1s ease-in-out;
 }
 
 
