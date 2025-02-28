@@ -93,7 +93,69 @@
   }
 }
 
+.custom-dialog {
+  .mdc-dialog__surface {
+    background-color: $color-deep-dark !important;
+  }
 
-.mat-mdc-progress-bar.mdc-linear-progress .mdc-linear-progress__primary-bar {
-  transition: transform 1s ease-in-out;
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-color: $color-gray-darken !important;
+  }
+
+  // Внешняя обёртка поля ввода
+  .mat-mdc-form-field {
+    // Для outline-стиля (если у тебя заполненный вариант - поменяй класс)
+    &.mat-mdc-form-field-appearance-outline {
+      // Обычно отвечает за саму рамку
+      .mat-mdc-form-field-outline {
+        border-color: $color-light !important; // Обычный цвет рамки
+      }
+
+      // Рамка при фокусе
+      &.mat-focused .mat-mdc-form-field-outline {
+        border-color: $color-light !important; // Цвет рамки при фокусе
+      }
+    }
+
+    // Цвет лейбла
+    .mat-mdc-floating-label {
+      color: $color-gray-dark !important; // Например, светлее или ярче
+
+      // Цвет лейбла при фокусе
+      .mat-focused & {
+        color: $color-gray-dark !important; // Противоположный или акцентный
+      }
+    }
+  }
+
+  // Сама строка ввода
+  .mat-mdc-input-element {
+    color: $color-dark !important; // Цвет текста
+
+    &::placeholder {
+      color: $color-gray-dark !important; // Плейсхолдер по умолчанию
+    }
+
+    // Плейсхолдер при фокусе (опционально, если тебе надо менять)
+    &:focus::placeholder {
+      color: $color-gray-dark !important;
+    }
+  }
+
+  .mat-mdc-input-element:-webkit-autofill,
+  .mat-mdc-input-element:-webkit-autofill:hover,
+  .mat-mdc-input-element:-webkit-autofill:focus,
+  .mat-mdc-input-element:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px $color-deep-dark inset !important;
+    box-shadow: 0 0 0 30px $color-deep-dark inset !important;
+    -webkit-text-fill-color: $color-gray !important;
+
+    // Иногда ещё советуют:
+    // transition: background-color 99999s ease-in-out 0s;
+    // но это выглядит как костыль, если вышеуказанных строк хватает — можно без этого.
+  }
 }
+
+

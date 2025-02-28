@@ -23,12 +23,12 @@ export class HeaderComponent {
   nickname$ = this.authService.nicknameSignal;
 
   toggleSidenav(): void {
-    this.sidenav.toggle();
+    void this.sidenav.toggle();
     this.isSidenavOpen = !this.isSidenavOpen;
   }
 
   closeSidenav(): void {
-    this.sidenav.close();
+    void this.sidenav.close();
     this.isSidenavOpen = false;
   }
 
@@ -49,7 +49,7 @@ export class HeaderComponent {
       width: isMobile ? `${containerWidth}px` : '40%',
       height: 'auto',
       maxWidth: isMobile ? 'none' : '500px',
-      panelClass: isMobile ? 'full-screen-dialog' : '',
+      panelClass: isMobile ? ['full-screen-dialog', 'custom-dialog'] : 'custom-dialog',
       disableClose: false,
       backdropClass: 'custom-backdrop',
     });

@@ -4,7 +4,7 @@
     <form (ngSubmit)="onSubmit()" [formGroup]="authForm" class="login-form">
       <mat-form-field appearance="outline">
         <mat-label>Email:</mat-label>
-        <input (keydown.enter)="onSubmit()" formControlName="email" matInput placeholder="Введите Email..." type="email"/>
+        <input formControlName="email" matInput placeholder="Введите Email..." type="email"/>
         <mat-error *ngIf="authForm.get('email')?.hasError('required')">Email обязателен</mat-error>
         <mat-error *ngIf="authForm.get('email')?.hasError('email')">Некорректный Email</mat-error>
       </mat-form-field>
@@ -38,10 +38,11 @@
       </mat-form-field>
 
       <mat-dialog-actions class="action-buttons">
-        <button (click)="toggleMode()" color="primary" mat-raised-button>
+        <button (click)="toggleMode($event)" class="btn" mat-raised-button type="button">
           {{ isLoginMode ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти' }}
         </button>
-        <button [@buttonState]="buttonState" color="primary" mat-raised-button type="submit">
+
+        <button [@buttonState]="buttonState" class="btn" mat-raised-button type="submit">
           {{ isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
         </button>
       </mat-dialog-actions>

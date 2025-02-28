@@ -9,10 +9,10 @@ mat-form-field {
 }
 
 .auth-dialog {
-  padding: 20px 0;
+  padding: $gap 0;
 
   &__title {
-    color: $color-gray-dark !important;
+    color: $color-gray !important;
   }
 }
 
@@ -20,12 +20,10 @@ mat-form-field {
   gap: $gap;
 
   @include sm-min {
-    flex-direction: row;
     padding: 16px 0;
   }
 
   @include sm {
-    flex-direction: column;
     padding: 8px 0;
   }
   display: flex;
@@ -34,6 +32,8 @@ mat-form-field {
 
   button {
     flex: 0 1 auto;
+    background-color: $color-gray-darken;
+    color: $color-light;
   }
 }
 

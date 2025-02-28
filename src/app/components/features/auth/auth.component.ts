@@ -29,8 +29,13 @@ export class AuthComponent implements OnInit {
     this.initializeForm();
   }
 
-  toggleMode(): void {
+  toggleMode(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     this.isLoginMode = !this.isLoginMode;
+
     if (this.isLoginMode) {
       this.authForm.removeControl('confirmPassword');
       this.authForm.removeControl('nickname');
@@ -45,6 +50,7 @@ export class AuthComponent implements OnInit {
       );
     }
   }
+
 
   onSubmit() {
     if (this.authForm.valid) {

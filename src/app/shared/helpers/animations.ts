@@ -6,7 +6,7 @@ export const ANIMATIONS = {
       state(
         'default',
         style({
-          backgroundColor: '#3f51b5',
+          backgroundColor: '#6f6f6f',
           transform: 'scale(1)',
         })
       ),
