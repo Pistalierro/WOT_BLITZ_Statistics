@@ -132,7 +132,7 @@
 
   // Сама строка ввода
   .mat-mdc-input-element {
-    color: $color-dark !important; // Цвет текста
+    color: $color-gray !important; // Цвет текста
 
     &::placeholder {
       color: $color-gray-dark !important; // Плейсхолдер по умолчанию
