@@ -15,14 +15,14 @@ export class OdometerDirective implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['value']) {
-      this.animateValue(
-        changes['value'].previousValue || 0,
-        changes['value'].currentValue
-      );
+      const newValue = changes['value'].currentValue;
+      const dynamicFormat = Number.isInteger(newValue) ? '1.0-0' : '1.2-2';
+
+      this.animateValue(changes['value'].previousValue || 0, newValue, dynamicFormat);
     }
   }
 
-  private animateValue(start: number, end: number): void {
+  private animateValue(start: number, end: number, format: string): void {
     const duration = 1000;
     const startTime = performance.now();
 
@@ -31,7 +31,7 @@ export class OdometerDirective implements OnChanges {
       const progress = Math.min(elapsedTime / duration, 1);
       const currentValue = start + (end - start) * progress;
 
-      this.el.nativeElement.textContent = this.decimalPipe.transform(currentValue, this.format);
+      this.el.nativeElement.textContent = this.decimalPipe.transform(currentValue, format);
 
       if (progress < 1) {
         requestAnimationFrame(animate);

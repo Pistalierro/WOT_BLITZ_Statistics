@@ -3,11 +3,15 @@
   <div *ngFor="let tier of [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]" class="progress-row">
     <span class="tier-label">{{ toRoman(tier) }}</span>
     <mat-progress-bar [value]="statsWinRatePercent[tier]" class="progress-bar" color="warn" mode="determinate"></mat-progress-bar>
-    <span
-      [appOdometer]="statsWinRate[tier] !== undefined ? statsWinRate[tier] : 0"
-      [format]="statsWinRate[tier]  ? '1.2-2' : '1.0-0'"
-      [ngClass]="utilsService.getWinRateColor(statsWinRate[tier])"
-      class="battles-count"
-    ></span>%
+    <div>
+      <span [appOdometer]="statsWinRate[tier] !== undefined ? statsWinRate[tier] : 0"
+            [format]="statsWinRate[tier]  ? '1.2-2' : '1.0-0'"
+            [ngClass]="utilsService.getWinRateColor(statsWinRate[tier])"
+            class="battles-count"
+      ></span>
+      <span
+        [ngClass]="utilsService.getWinRateColor(statsWinRate[tier])"
+        class="battles-count-percent">%</span>
+    </div>
   </div>
 </div>

@@ -31,7 +31,8 @@
                 [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)"
                 class="stats-value stats-value--winrate">
           {{ (player.statistics.all.wins / player.statistics.all.battles) * 100 }}
-        </span>%
+          </span>
+          <span [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)">%</span>
         </div>
         <div [@fadeScale] class="stats">
           <span class="stats-key">Средний урон за бой:&nbsp;</span>
