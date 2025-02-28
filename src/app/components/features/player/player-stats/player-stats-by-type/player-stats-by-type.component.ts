@@ -4,6 +4,7 @@ import {UtilsService} from '../../../../../shared/utils.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {tankTypes} from '../../../../../shared/helpers/tank-utils';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
+import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
 
 @Component({
   selector: 'app-player-stats-by-type',
@@ -11,7 +12,8 @@ import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers
   imports: [
     NgIf,
     NgForOf,
-    ...MATERIAL_MODULES
+    ...MATERIAL_MODULES,
+    OdometerDirective
   ],
   templateUrl: './player-stats-by-type.component.html',
   styleUrl: './player-stats-by-type.component.scss'
@@ -30,7 +32,7 @@ export class PlayerStatsByTypeComponent implements OnInit {
         this.statsTypePercent = this.utilsService.initTierPercentMap(['lightTank', 'mediumTank', 'heavyTank', 'AT-SPG']);
 
         setTimeout(() => {
-          this.statsTypePercent = this.utilsService.calculateScaledPercentages(battlesMap, 95);
+          this.statsTypePercent = this.utilsService.calculateScaledPercentages(battlesMap, 100);
         }, 100);
       }
     });

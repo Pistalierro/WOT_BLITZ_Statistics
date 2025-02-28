@@ -4,24 +4,20 @@ import {authGuard} from './guards/auth.guard';
 import {clanResolver} from './resolvers/clan.resolver';
 
 export const routes: Routes = [
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
-  {path: '', component: HomeComponent},
   {
     path: 'players',
     loadComponent: () => import('./components/features/player/player-host/player-host.component')
       .then(m => m.PlayerHostComponent),
     children: [
-      {path: '', redirectTo: 'stat', pathMatch: 'full'},
+      {path: '', redirectTo: 'stat/stats-tier', pathMatch: 'full'},
       {
         path: 'stat',
-        loadComponent: () => import('./components/features/player/player-stats/player-stats-host/player-stat.component')
-          .then(m => m.PlayerStatComponent),
+        loadComponent: () => import('./components/features/player/player-stats/player-stats-host/player-stats-host.component')
+          .then(m => m.PlayerStatsHostComponent),
         children: [
-          {
-            path: '',
-            loadComponent: () => import('./components/features/player/player-stats/player-stats-by-tier/player-stats-by-tier.component')
-              .then(m => m.PlayerStatsByTierComponent)
-          },
+          {path: '', redirectTo: 'stats-tier', pathMatch: 'full'},
           {
             path: 'stats-tier',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-tier/player-stats-by-tier.component')
@@ -41,7 +37,7 @@ export const routes: Routes = [
             path: 'stats-damage',
             loadComponent: () => import('./components/features/player/player-stats/player-stats-by-damage/player-stats-by-damage.component')
               .then(m => m.PlayerStatsByDamageComponent)
-          },
+          }
         ]
       },
       {

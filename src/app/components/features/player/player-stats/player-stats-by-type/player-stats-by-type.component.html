@@ -2,9 +2,7 @@
   <h3 class="progress-title">Бои по типу техники</h3>
   <div *ngFor="let type of ['lightTank', 'mediumTank', 'heavyTank', 'AT-SPG']" class="progress-row">
     <img [src]="tankTypes(type)" alt="{{ type }}" class="tank-type-icon">
-    <mat-progress-bar *ngIf="statsType[type]" [value]="statsTypePercent[type]"
-                      class="progress-bar" color="warn" mode="determinate">
-    </mat-progress-bar>
-    <span class="battles-count">{{ statsType[type] || 0 }}</span>
+    <mat-progress-bar [value]="statsTypePercent[type]" class="progress-bar" color="warn" mode="determinate"></mat-progress-bar>
+    <span [appOdometer]="statsType[type]" class="battles-count">{{ statsType[type] || 0 }}</span>
   </div>
 </div>

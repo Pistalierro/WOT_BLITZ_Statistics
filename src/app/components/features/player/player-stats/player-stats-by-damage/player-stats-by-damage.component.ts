@@ -2,8 +2,9 @@ import {Component, effect, inject, OnInit} from '@angular/core';
 import {TanksService} from '../../../../../services/tanks.service';
 import {UtilsService} from '../../../../../shared/utils.service';
 import {toRoman} from '../../../../../shared/helpers/tank-utils';
-import {DecimalPipe, NgForOf, NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
+import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
 
 @Component({
   selector: 'app-player-stats-by-damage',
@@ -11,8 +12,8 @@ import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers
   imports: [
     NgIf,
     NgForOf,
-    DecimalPipe,
-    ...MATERIAL_MODULES
+    ...MATERIAL_MODULES,
+    OdometerDirective
   ],
   templateUrl: './player-stats-by-damage.component.html',
   styleUrl: './player-stats-by-damage.component.scss'
@@ -31,7 +32,7 @@ export class PlayerStatsByDamageComponent implements OnInit {
         this.statsDamagePercent = this.utilsService.initTierPercentMap([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
 
         setTimeout(() => {
-          this.statsDamagePercent = this.utilsService.calculateScaledPercentages(avgDamageMap);
+          this.statsDamagePercent = this.utilsService.calculateScaledPercentages(avgDamageMap, 100);
         }, 100);
       }
     });

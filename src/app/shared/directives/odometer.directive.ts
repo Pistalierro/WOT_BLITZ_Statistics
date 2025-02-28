@@ -1,12 +1,17 @@
 import {Directive, ElementRef, inject, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {DecimalPipe} from '@angular/common';
 
 @Directive({
   selector: '[appOdometer]',
-  standalone: true
+  standalone: true,
+  providers: [DecimalPipe]
 })
 export class OdometerDirective implements OnChanges {
   @Input('appOdometer') value: number = 0;
+  @Input() format: string = '1.0-0';
+
   private el = inject(ElementRef);
+  private decimalPipe = inject(DecimalPipe);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['value']) {
@@ -18,7 +23,7 @@ export class OdometerDirective implements OnChanges {
   }
 
   private animateValue(start: number, end: number): void {
-    const duration = 750;
+    const duration = 1000;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
@@ -26,9 +31,8 @@ export class OdometerDirective implements OnChanges {
       const progress = Math.min(elapsedTime / duration, 1);
       const currentValue = start + (end - start) * progress;
 
-      // Форматирование для целых и дробных чисел
-      this.el.nativeElement.textContent =
-        Number.isInteger(end) ? Math.floor(currentValue) : currentValue.toFixed(0);
+      // Форматируем текущее значение через DecimalPipe
+      this.el.nativeElement.textContent = this.decimalPipe.transform(currentValue, this.format);
 
       if (progress < 1) {
         requestAnimationFrame(animate);

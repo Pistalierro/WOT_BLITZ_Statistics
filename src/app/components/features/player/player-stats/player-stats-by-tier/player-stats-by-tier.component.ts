@@ -4,6 +4,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {toRoman} from '../../../../../shared/helpers/tank-utils';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {UtilsService} from '../../../../../shared/utils.service';
+import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
 
 @Component({
   selector: 'app-player-stats-by-tier',
@@ -11,7 +12,8 @@ import {UtilsService} from '../../../../../shared/utils.service';
   imports: [
     NgIf,
     NgForOf,
-    ...MATERIAL_MODULES
+    ...MATERIAL_MODULES,
+    OdometerDirective
   ],
   templateUrl: './player-stats-by-tier.component.html',
   styleUrls: ['./player-stats-by-tier.component.scss']
@@ -29,7 +31,7 @@ export class PlayerStatsByTierComponent implements OnInit {
       if (Object.keys(battlesMap).length > 0) {
         this.statsTierPercent = this.utilsService.initTierPercentMap([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
         setTimeout(() => {
-          this.statsTierPercent = this.utilsService.calculateScaledPercentages(battlesMap, 95);
+          this.statsTierPercent = this.utilsService.calculateScaledPercentages(battlesMap, 100);
         }, 100);
       }
     });

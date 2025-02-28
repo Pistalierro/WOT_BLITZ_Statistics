@@ -2,13 +2,7 @@
   <h3 class="progress-title">Бои по уровню</h3>
   <div *ngFor="let tier of [10,9,8,7,6,5,4,3,2,1]" class="progress-row">
     <span class="tier-label">{{ toRoman(tier) }}</span>
-    <mat-progress-bar
-      *ngIf="statsTier[tier]"
-      [value]="statsTierPercent[tier]"
-      class="progress-bar"
-      color="warn"
-      mode="determinate"
-    ></mat-progress-bar>
-    <span class="battles-count">{{ statsTier[tier] || 0 }}</span>
+    <mat-progress-bar [value]="statsTierPercent[tier]" class="progress-bar" color="warn" mode="determinate"></mat-progress-bar>
+    <span [appOdometer]="statsTier[tier]" class="battles-count">{{ statsTier[tier] || 0 }}</span>
   </div>
 </div>

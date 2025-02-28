@@ -71,10 +71,10 @@ p {
     position: relative;
     overflow: hidden;
     display: grid;
-    @include md-min {
+    @include lg-min {
       grid-template-columns: repeat(2, 1fr);
     }
-    @include md {
+    @include lg {
       grid-template-columns: 1fr;
     }
     gap: $gap-x2;
@@ -122,13 +122,12 @@ p {
   align-items: center;
   justify-content: space-around;
   gap: $gap;
-  margin-bottom: $gap;
   background-color: $color-deep-dark;
   height: $gap-x3;
   top: 0;
   z-index: 1000;
   width: 100%;
-  border-radius: 4px;
+  border-radius: 4px 4px 0 0;
 
   button {
     font-size: 1.2rem;

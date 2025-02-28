@@ -7,12 +7,13 @@ import {TanksService} from '../../../../../services/tanks.service';
 import {AuthService} from '../../../../../services/auth.service';
 import {PlayerStoreService} from '../../../../../services/player/player-store.service';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
 
 
 @Component({
   selector: 'app-player-stats-host',
   standalone: true,
-  templateUrl: './player-stat.component.html',
+  templateUrl: './player-stats-host.component.html',
   imports: [
     DatePipe,
     DecimalPipe,
@@ -21,12 +22,13 @@ import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
     NgClass,
     RouterLink,
     RouterLinkActive,
-    RouterOutlet
+    RouterOutlet,
+    OdometerDirective
   ],
-  styleUrls: ['./player-stat.component.scss'],
+  styleUrls: ['./player-stats-host.component.scss'],
   animations: [ANIMATIONS.fadeIn, ANIMATIONS.slideIn]
 })
-export class PlayerStatComponent {
+export class PlayerStatsHostComponent {
   utilsService = inject(UtilsService);
   tanksService = inject(TanksService);
   // Теперь все данные приходят напрямую из сервиса, без ручного вызова методов

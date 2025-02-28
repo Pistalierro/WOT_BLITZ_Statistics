@@ -127,7 +127,6 @@ export class TanksService {
     const avgDamageByTier: Record<number, number> = {};
     const winsByTier: Record<number, number> = {};
     const damageByTier: Record<number, number> = {};
-
     const tanks: Tank[] = this.tanksList();
 
     tanks.forEach(tank => {
@@ -136,12 +135,19 @@ export class TanksService {
       const wins = tank.all.wins;
       const damage = tank.all.damage_dealt;
       const type = tank.type;
-      
+
       battlesByTier[tier] = (battlesByTier[tier] || 0) + battles;
       battlesByType[type] = (battlesByType[type] || 0) + battles;
       winsByTier[tier] = (winsByTier[tier] || 0) + wins;
       damageByTier[tier] = (damageByTier[tier] || 0) + damage;
     });
+
+    // Гарантируем, что все уровни (1-10) есть в объекте
+    for (let tier = 1; tier <= 10; tier++) {
+      if (!(tier in battlesByTier)) {
+        battlesByTier[tier] = 0;
+      }
+    }
 
     Object.keys(battlesByTier).forEach(tier => {
       const tierNum = Number(tier);

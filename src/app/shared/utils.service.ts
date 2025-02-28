@@ -24,21 +24,34 @@ export class UtilsService {
 
   calculateScaledPercentages(
     battlesByTier: Record<number, number>,
-    maxPercent = 90
+    maxPercent = 90,
+    minPercent = 0.01
   ): Record<number, number> {
-
     const result: Record<number, number> = {};
     const maxBattles = Math.max(...Object.values(battlesByTier));
 
     if (maxBattles === 0) {
       for (const tier in battlesByTier) {
-        result[tier] = 0;
+        result[tier] = minPercent; // Минимальный видимый прогресс-бар
       }
     } else {
       for (const tier in battlesByTier) {
         const battles = battlesByTier[tier];
-        result[tier] = (battles / maxBattles) * maxPercent;
+        result[tier] = Math.max((battles / maxBattles) * maxPercent, minPercent);
       }
+    }
+    return result;
+  }
+
+  calculatePercentageDirectly(
+    winRateByTier: Record<number, number>,
+    minPercent = 0.01
+  ): Record<number, number> {
+    const result: Record<number, number> = {};
+
+    for (const tier in winRateByTier) {
+      const winRate = winRateByTier[tier] || 0;
+      result[tier] = Math.max(Math.min(winRate, 100), minPercent);
     }
 
     return result;
