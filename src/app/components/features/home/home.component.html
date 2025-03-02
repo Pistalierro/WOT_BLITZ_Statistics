@@ -1,57 +1,65 @@
 <div class="container">
-  <div class="welcome-section">
+  <section class="welcome-section">
     <h1>{{ 'HOME.WELCOME' | translate }}</h1>
     <p>{{ 'HOME.DESCRIPTION' | translate }}</p>
-  </div>
+  </section>
 
-  <div class="stats-section">
-    <mat-card @slideUp class="stat-card">
-      <mat-card-header>
-        <mat-card-title>{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</mat-card-title>
-        <mat-icon>stars</mat-icon>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ 'HOME.SEARCH_PLAYERS.DESCRIPTION' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
+  <section class="stats-section">
+    <article @slideUp>
+      <mat-card class="stat-card">
+        <mat-card-header>
+          <h2 class="mat-card-title">{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</h2>
+          <mat-icon>stars</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <strong>{{ 'HOME.SEARCH_PLAYERS.DESCRIPTION' | translate }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </article>
 
-    <mat-card @slideUp class="stat-card">
-      <mat-card-header>
-        <mat-card-title>{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</mat-card-title>
-        <mat-icon>groups</mat-icon>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ 'HOME.SEARCH_CLANS.DESCRIPTION' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
+    <article @slideUp>
+      <mat-card class="stat-card">
+        <mat-card-header>
+          <h2 class="mat-card-title">{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</h2>
+          <mat-icon>groups</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <strong>{{ 'HOME.SEARCH_CLANS.DESCRIPTION' | translate }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </article>
 
-    <mat-card @slideUp class="stat-card">
-      <mat-card-header>
-        <mat-card-title>{{ 'HOME.SESSION.TITLE' | translate }}</mat-card-title>
-        <mat-icon>insights</mat-icon>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ 'HOME.SESSION.DESCRIPTION' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
+    <article @slideUp>
+      <mat-card class="stat-card">
+        <mat-card-header>
+          <h2 class="mat-card-title">{{ 'HOME.SESSION.TITLE' | translate }}</h2>
+          <mat-icon>insights</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <strong>{{ 'HOME.SESSION.DESCRIPTION' | translate }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </article>
 
-    <mat-card @slideUp class="stat-card">
-      <mat-card-header>
-        <mat-card-title>{{ 'HOME.TOURNAMENTS.TITLE' | translate }}</mat-card-title>
-        <mat-icon>emoji_events</mat-icon>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ 'HOME.TOURNAMENTS.DESCRIPTION' | translate }}</p>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <article @slideUp>
+      <mat-card class="stat-card">
+        <mat-card-header>
+          <h2 class="mat-card-title">{{ 'HOME.TOURNAMENTS.TITLE' | translate }}</h2>
+          <mat-icon>emoji_events</mat-icon>
+        </mat-card-header>
+        <mat-card-content>
+          <strong>{{ 'HOME.TOURNAMENTS.DESCRIPTION' | translate }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </article>
+  </section>
 
-  <div class="advantages">
+  <section class="advantages">
     <h2 class="advantages-title">{{ 'HOME.WHY_US.TITLE' | translate }}</h2>
     <ul class="advantages-list">
       <li class="advantages-item">{{ 'HOME.WHY_US.STATS' | translate }}</li>
-      <li>{{ 'HOME.WHY_US.ANALYSIS' | translate }}</li>
-      <li>{{ 'HOME.WHY_US.INTERFACE' | translate }}</li>
+      <li class="advantages-item">{{ 'HOME.WHY_US.ANALYSIS' | translate }}</li>
+      <li class="advantages-item">{{ 'HOME.WHY_US.INTERFACE' | translate }}</li>
     </ul>
-  </div>
+  </section>
 </div>

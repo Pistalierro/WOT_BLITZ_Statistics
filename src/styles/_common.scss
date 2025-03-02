@@ -63,7 +63,8 @@ h3 {
   }
 }
 
-p {
+p,
+strong {
   color: $color-gray-dark !important;
   @include md-min {
     font-size: 1.5rem !important;

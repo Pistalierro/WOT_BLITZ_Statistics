@@ -24,6 +24,7 @@
     gap: $gap;
 
     .stat-card {
+      height: 100%;
       background-color: $color-dark;
       opacity: 0.75;
       min-height: $gap-x5 * 2;
@@ -40,31 +41,21 @@
         }
       }
 
-      mat-card-title {
-        font-family: $font-header;
-        @include lg-min {
-          font-size: 2rem;
-        }
-        @include lg-md {
-          font-size: 1.5rem;
-        }
-        @include md {
-          font-size: 1.25rem;
-        }
+      .mat-card-title {
+        color: $color-light !important;
       }
-
     }
 
     mat-card-content {
+      height: 100%;
       display: flex;
       align-items: center;
-      height: 100%;
       justify-content: center;
-      font-size: 1rem;
       text-align: center;
 
-      p {
+      strong {
         line-height: 1.2em;
+        font-weight: 400;
       }
     }
   }
