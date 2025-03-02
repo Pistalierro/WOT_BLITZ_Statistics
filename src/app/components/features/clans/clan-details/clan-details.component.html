@@ -15,18 +15,24 @@
       <mat-card appearance="outlined" class="clan-winRate">
         <mat-card-header>
           <mat-card-title>
-            <ng-container *ngIf="!isMobile; else winRateIcon">WinRate:</ng-container>
+            <ng-container *ngIf="!isMobile; else winRateIcon">
+              WinRate:
+            </ng-container>
             <ng-template #winRateIcon>
               <mat-icon>flag</mat-icon>
             </ng-template>
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <span *ngIf="clan.winRate" [ngClass]="utilsService.getWinRateColor(clan.winRate)">
-          {{ clan.winRate | number: '1.2-2' }}%
-        </span>
+          <span
+            *ngIf="clan.winRate"
+            [ngClass]="utilsService.getWinRateColor(clan.winRate)"
+          >
+            {{ clan.winRate | number: '1.2-2' }}%
+          </span>
         </mat-card-content>
       </mat-card>
+
       <mat-card appearance="outlined" class="clan-avgDamage">
         <mat-card-header>
           <mat-card-title>С/У</mat-card-title>
@@ -35,10 +41,13 @@
           <span>{{ clan.avgDamage | number: '1.0-0' }}</span>
         </mat-card-content>
       </mat-card>
+
       <mat-card appearance="outlined" class="clan-members">
         <mat-card-header>
           <mat-card-title>
-            <ng-container *ngIf="!isMobile; else membersIcon">Участники:</ng-container>
+            <ng-container *ngIf="!isMobile; else membersIcon">
+              Участники:
+            </ng-container>
             <ng-template #membersIcon>
               <mat-icon>group</mat-icon>
             </ng-template>
@@ -55,77 +64,101 @@
     <h3>Список игроков клана</h3>
 
     <div class="mat-elevation-z8">
-      <table [dataSource]="dataSource" mat-table matSort>
+      <!-- Обёртка, в которой происходит скролл -->
+      <div class="table-scroll">
+        <table [dataSource]="dataSource" mat-table matSort>
 
-        <!-- nickname Column -->
-        <ng-container matColumnDef="nickname">
-          <th *matHeaderCellDef class="nickname-column" mat-header-cell mat-sort-header>
-            <mat-icon>person</mat-icon>
-          </th>
-          <td *matCellDef="let player" class="nickname-column" mat-cell> {{ player.nickname }}</td>
-        </ng-container>
+          <!-- nickname Column -->
+          <ng-container matColumnDef="nickname">
+            <th *matHeaderCellDef class="nickname-column" mat-header-cell mat-sort-header>
+              <mat-icon>person</mat-icon>
+            </th>
+            <td *matCellDef="let player" class="nickname-column" mat-cell>
+              {{ player.nickname }}
+            </td>
+          </ng-container>
 
-        <!-- Created Column -->
-        <ng-container matColumnDef="created_at">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>event</mat-icon>
-          </th>
-          <td *matCellDef="let player" mat-cell> {{ player.created_at * 1000 | date: 'dd.MM.yyyy' }}</td>
-        </ng-container>
+          <!-- Created Column -->
+          <ng-container matColumnDef="created_at">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+              <mat-icon>event</mat-icon>
+            </th>
+            <td *matCellDef="let player" mat-cell>
+              {{ player.created_at * 1000 | date: 'dd.MM.yyyy' }}
+            </td>
+          </ng-container>
 
-        <!-- Last battle Column -->
-        <ng-container matColumnDef="last_battle_time">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>history</mat-icon>
-          </th>
-          <td *matCellDef="let player" mat-cell> {{ player.last_battle_time * 1000 | date: 'dd.MM.yyyy' }}</td>
-        </ng-container>
+          <!-- Last battle Column -->
+          <ng-container matColumnDef="last_battle_time">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+              <mat-icon>history</mat-icon>
+            </th>
+            <td *matCellDef="let player" mat-cell>
+              {{ player.last_battle_time * 1000 | date: 'dd.MM.yyyy' }}
+            </td>
+          </ng-container>
 
+          <!-- Battles Column -->
+          <ng-container matColumnDef="battles">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+              <span class="material-symbols-outlined">swords</span>
+            </th>
+            <td *matCellDef="let player" mat-cell>
+              {{ player.battles }}
+            </td>
+          </ng-container>
 
-        <!-- Battles Column -->
-        <ng-container matColumnDef="battles">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <span class="material-symbols-outlined">swords</span>
-          </th>
-          <td *matCellDef="let player" mat-cell> {{ player.battles }}</td>
-        </ng-container>
+          <!-- AvgDamage Column -->
+          <ng-container matColumnDef="avgDamage">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
+            <td *matCellDef="let player" mat-cell>
+              {{ player.avgDamage | number: '1.0-0' }}
+            </td>
+          </ng-container>
 
-        <!-- AvgDamage Column -->
-        <ng-container matColumnDef="avgDamage">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
-          <td *matCellDef="let player" mat-cell>
-            {{ player.avgDamage | number: '1.0-0' }}
-          </td>
-        </ng-container>
+          <!-- Accuracy Column -->
+          <ng-container matColumnDef="accuracy">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+              <mat-icon>my_location</mat-icon>
+            </th>
+            <td *matCellDef="let player" mat-cell>
+              {{ player.accuracy | number: '1.2-2' }}%
+            </td>
+          </ng-container>
 
-        <!-- Accuracy Column -->
-        <ng-container matColumnDef="accuracy">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>my_location</mat-icon>
-          </th>
-          <td *matCellDef="let player" mat-cell>
-            {{ player.accuracy | number: '1.2-2' }}%
-          </td>
-        </ng-container>
+          <!-- WinRate Column -->
+          <ng-container matColumnDef="winRate">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+              <mat-icon>flag</mat-icon>
+            </th>
+            <td
+              *matCellDef="let player"
+              [ngClass]="utilsService.getWinRateColor(player.winRate)"
+              class="player-winRate"
+              mat-cell
+            >
+              {{ player.winRate | number: '1.2-2' }}%
+            </td>
+          </ng-container>
 
-        <!-- WinRate Column -->
-        <ng-container matColumnDef="winRate">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>flag</mat-icon>
-          </th>
-          <td *matCellDef="let player" [ngClass]="utilsService.getWinRateColor(player.winRate)" class="player-winRate" mat-cell>
-            {{ player.winRate | number: '1.2-2' }}%
-          </td>
-        </ng-container>
+          <!-- Важно: добавляем класс .sticky-header -->
+          <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
 
-        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr (click)="onSelectPlayer(player.account_id)"
-            *matRowDef="let player; columns: displayedColumns;" class="clickable-row" mat-row></tr>
-      </table>
+          <tr
+            (click)="onSelectPlayer(player.account_id)"
+            *matRowDef="let player; columns: displayedColumns;"
+            class="clickable-row"
+            mat-row
+          ></tr>
+
+        </table>
+      </div>
     </div>
   </div>
 
   <div class="actions">
-    <button (click)="goBack()" color="primary" mat-flat-button type="button">Назад</button>
+    <button (click)="goBack()" color="primary" mat-flat-button type="button">
+      Назад
+    </button>
   </div>
 </div>

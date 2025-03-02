@@ -47,7 +47,41 @@
 
       p {
         color: $color-accent !important;
+      }
+    }
+  }
 
+  .actions {
+    margin: $gap 0;
+  }
+
+  .players-table {
+    margin-top: $gap;
+
+    h3 {
+      margin-bottom: $gap-sm;
+    }
+
+    .mat-elevation-z8 {
+      // Наш контейнер для скролла (обёртка .table-scroll внутри)
+      .table-scroll {
+        max-height: 80vh; // или сколько нужно
+        overflow: auto; // позволит скроллить и вертикаль, и горизонталь
+      }
+
+      // Чтобы таблица занимала всю доступную ширину
+      table {
+        width: 100%;
+      }
+
+      // Фиксируем шапку
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        // Нужна однотонная заливка, иначе текст будет перекрываться при скролле
+        background-color: $color-dark;
+        color: $color-gray-light;
       }
     }
   }
@@ -58,7 +92,7 @@
     max-width: 200px;
   }
   @include sm {
-    max-width: 140px !important;
+    max-width: 120px !important;
   }
 }
 
@@ -77,9 +111,7 @@
   @include md {
     width: 100%;
   }
-}
 
-.mat-mdc-card {
   &-title {
     color: $color-accent;
     text-transform: uppercase;
@@ -94,8 +126,3 @@
 .player-winRate {
   font-weight: bold;
 }
-
-.actions {
-  margin: $gap 0;
-}
-
