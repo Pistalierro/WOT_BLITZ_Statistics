@@ -11,7 +11,7 @@ export function initTranslate(translate: TranslateService) {
   return () => {
     const availableLangs: string[] = ['en', 'ru', 'ua'];
     translate.addLangs(availableLangs);
-    translate.setDefaultLang('ru');
+    translate.setDefaultLang('en');
     const browserLang = localStorage.getItem('lang') || translate.getBrowserLang() || 'en';
 
     if (!availableLangs.includes(browserLang)) {

@@ -170,7 +170,8 @@
     "HOME": "Главная",
     "PLAYERS": "Игроки",
     "SESSION": "Сессия",
-    "CLANS": "Кланы"
+    "CLANS": "Кланы",
+    "LANGUAGE": "Язык"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Элементов на странице:",

@@ -168,7 +168,8 @@
     "HOME": "Головна",
     "PLAYERS": "Гравці",
     "SESSION": "Сесія",
-    "CLANS": "Клани"
+    "CLANS": "Клани",
+    "LANGUAGE": "Мова"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Елементів на сторінці:",

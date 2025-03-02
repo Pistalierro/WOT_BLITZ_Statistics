@@ -1,0 +1,161 @@
+{
+  "HOME": {
+    "WELCOME": "Bienvenido a WOT Blitz Statistics",
+    "DESCRIPTION": "Explora las estadísticas de jugadores, clanes y torneos para mejorar en World of Tanks Blitz!",
+    "SEARCH_PLAYERS": {
+      "TITLE": "Búsqueda de jugadores",
+      "DESCRIPTION": "En nuestra plataforma, puedes encontrar a cualquier jugador con acceso a sus datos estadísticos"
+    },
+    "SEARCH_CLANS": {
+      "TITLE": "Búsqueda de clanes",
+      "DESCRIPTION": "Puedes encontrar cualquier clan que te interese con sus estadísticas"
+    },
+    "TOURNAMENTS": {
+      "TITLE": "Últimos torneos",
+      "DESCRIPTION": "Tenemos noticias sobre los próximos torneos, así como el historial de los que ya han finalizado"
+    },
+    "SESSION": {
+      "TITLE": "Sesión de juego",
+      "DESCRIPTION": "En nuestro recurso, puedes hacer un seguimiento de tu sesión de juego"
+    },
+    "WHY_US": {
+      "TITLE": "¿Por qué elegirnos?",
+      "STATS": "Datos precisos sobre tus estadísticas.",
+      "ANALYSIS": "Análisis de clanes y torneos.",
+      "INTERFACE": "Interfaz simple e intuitiva."
+    }
+  },
+  "PLAYER_PAGE": {
+    "WELCOME": "¡Encantado de verte, {{nickname}}!",
+    "DESCRIPTION": "Aquí puedes analizar las estadísticas de tu cuenta, vehículos y ver tus logros.",
+    "SEARCH_LABEL": "Ver estadísticas de otros jugadores...",
+    "SEARCH_PLACEHOLDER": "Introduce el apodo del jugador",
+    "TABS": {
+      "STATISTICS": "Estadísticas",
+      "VEHICLES": "Vehículos",
+      "ACHIEVEMENTS": "Logros"
+    }
+  },
+  "PLAYER_STATS": {
+    "WELCOME": "Bienvenido, {{nickname}}!",
+    "NO_AUTH": "Por favor, inicia sesión para ver las estadísticas.",
+    "STATS": {
+      "ID": "ID",
+      "CLAN": "Clan",
+      "CREATED_AT": "Fecha de creación de la cuenta",
+      "LAST_BATTLE": "Última batalla",
+      "BATTLES": "Batallas",
+      "WIN_RATE": "Porcentaje de victorias",
+      "AVG_DAMAGE": "Daño medio por batalla",
+      "MAX_XP": "Experiencia máxima por batalla",
+      "ACCURACY": "Precisión",
+      "WINS": "Victorias",
+      "LOSSES": "Derrotas",
+      "MAX_FRAGS": "Máximo de frags por batalla"
+    },
+    "TABS": {
+      "TIER": "I-X",
+      "WIN_RATE": "%",
+      "DAMAGE": "Dmg",
+      "TYPE": "Tipo"
+    }
+  },
+  "TANKS_STATS": {
+    "AVG_DAMAGE_BY_TIER": "Daño medio por nivel",
+    "BATTLES_BY_TIER": "Batallas por nivel",
+    "BATTLES_BY_TYPE": "Batallas por tipo de tanque",
+    "WIN_RATE_BY_TIER": "Porcentaje de victorias por nivel",
+    "LOADING": "Cargando...",
+    "AUTH_REQUIRED": "Por favor, inicia sesión para ver los datos.",
+    "FILTER_LABEL": "Filtro",
+    "FILTER_PLACEHOLDER": "Empieza a escribir...",
+    "NO_DATA": "Especifica el tanque {{value}}",
+    "SORT": {
+      "NATION": "Nación",
+      "TIER": "Nivel",
+      "TYPE": "Tipo"
+    },
+    "TABLE": {
+      "WIN_RATE": "Porcentaje de victorias",
+      "BATTLES": "Batallas",
+      "DAMAGE": "Daño",
+      "NO_IMAGE": "Sin imagen"
+    }
+  },
+  "SESSION": {
+    "TITLE": "Gestión de sesión de juego",
+    "ACTIVE": "🟢 Sesión activa",
+    "INACTIVE": "🔴 Sesión inactiva",
+    "LOADING": "Cargando...",
+    "ERROR": "Error",
+    "START": "Iniciar sesión",
+    "UPDATE": "Actualizar sesión",
+    "END": "Finalizar sesión",
+    "STATS": {
+      "START": "Estadísticas iniciales",
+      "INTERMEDIATE": "Resultados intermedios",
+      "FINAL": "Resultados finales",
+      "BATTLES": "Batallas jugadas",
+      "WINS": "Victorias",
+      "WIN_RATE": "Porcentaje de victorias",
+      "AVG_DAMAGE": "Daño medio"
+    },
+    "TANKS_STATS": {
+      "INTERMEDIATE": "Estadísticas intermedias de tanques",
+      "FINAL": "Estadísticas finales de tanques",
+      "GENERAL": "Estadísticas generales",
+      "NATION": "Nación",
+      "TYPE": "Tipo",
+      "TIER": "Nivel",
+      "TOTAL_BATTLES": "Batallas totales",
+      "TOTAL_WINS": "Victorias totales",
+      "TOTAL_WIN_RATE": "Porcentaje total de victorias",
+      "TOTAL_AVG_DAMAGE": "Daño medio"
+    }
+  },
+  "AUTH": {
+    "LOGIN": "Iniciar sesión",
+    "REGISTER": "Registrarse",
+    "EMAIL": "Email:",
+    "EMAIL_PLACEHOLDER": "Introduce tu email...",
+    "EMAIL_REQUIRED": "El email es obligatorio",
+    "EMAIL_INVALID": "Email inválido",
+    "PASSWORD": "Contraseña:",
+    "PASSWORD_PLACEHOLDER": "No necesariamente de la cuenta WG...",
+    "PASSWORD_REQUIRED": "La contraseña es obligatoria",
+    "CONFIRM_PASSWORD": "Confirmar contraseña:",
+    "CONFIRM_PASSWORD_PLACEHOLDER": "Repite la contraseña...",
+    "PASSWORDS_MISMATCH": "Las contraseñas no coinciden",
+    "NICKNAME": "Apodo:",
+    "NICKNAME_PLACEHOLDER": "Introduce tu apodo exactamente como en el juego...",
+    "NICKNAME_REQUIRED": "El apodo es obligatorio",
+    "TOOLTIP_PASSWORD": "La contraseña puede ser diferente a la de tu cuenta de juego. Se recomienda usar una contraseña única.",
+    "TOOLTIP_NICKNAME": "Introduce tu apodo exactamente como lo usas en el juego",
+    "CREATE_ACCOUNT": "Crear una cuenta",
+    "ALREADY_HAVE_ACCOUNT": "¿Ya tienes una cuenta? Iniciar sesión",
+    "LOGIN_ACTION": "Iniciar sesión",
+    "REGISTER_ACTION": "Registrarse"
+  },
+  "COMMON": {
+    "BACK": "Volver"
+  },
+  "APP": {
+    "TITLE": "WOT Blitz Statistics"
+  },
+  "NAV": {
+    "HOME": "Inicio",
+    "PLAYERS": "Jugadores",
+    "SESSION": "Sesión",
+    "CLANS": "Clanes",
+    "LANGUAGE": "Idioma"
+  },
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "Elementos por página:",
+    "NEXT_PAGE": "Página siguiente",
+    "PREVIOUS_PAGE": "Página anterior",
+    "FIRST_PAGE": "Primera página",
+    "LAST_PAGE": "Última página",
+    "RANGE_LABEL": "{{ start }} – {{ end }} de {{ length }}",
+    "RANGE_LABEL_EMPTY": "0 de {{ length }}"
+  }
+}

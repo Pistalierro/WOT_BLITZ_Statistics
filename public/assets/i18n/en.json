@@ -170,7 +170,8 @@
     "HOME": "Home",
     "PLAYERS": "Players",
     "SESSION": "Session",
-    "CLANS": "Clans"
+    "CLANS": "Clans",
+    "LANGUAGE": "Language"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",

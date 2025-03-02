@@ -22,11 +22,16 @@
           <mat-icon>login</mat-icon>
         </button>
       </ng-template>
-      <div class="language-container">
-        <button (click)="switchLanguage('en')" mat-button>🇬🇧 EN</button>
-        <button (click)="switchLanguage('ua')" mat-button>🇺🇦 UA</button>
-        <button (click)="switchLanguage('ru')" mat-button>🇷🇺 RU</button>
+      <div class="language-select">
+        <mat-form-field color="warn">
+          <mat-select (selectionChange)="switchLanguage($event.value)" [value]="currentLanguage">
+            <mat-option *ngFor="let lang of languages" [value]="lang.code">
+              <span class="flag-icon">{{ lang.flag }}</span> {{ lang.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
+
     </nav>
 
     <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
@@ -61,9 +66,13 @@
         </button>
       </ng-template>
       <div class="language-container language-container--mobile">
-        <button (click)="switchLanguage('en'); closeSidenav()" mat-button>🇬🇧 EN</button>
-        <button (click)="switchLanguage('ua'); closeSidenav()" mat-button>🇺🇦 UA</button>
-        <button (click)="switchLanguage('ru'); closeSidenav()" mat-button>🇷🇺 RU</button>
+        <mat-form-field color="warn">
+          <mat-select (selectionChange)="switchLanguage($event.value)" [value]="currentLanguage">
+            <mat-option *ngFor="let lang of languages" [value]="lang.code">
+              <span class="flag-icon">{{ lang.flag }}</span> {{ lang.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </nav>
 

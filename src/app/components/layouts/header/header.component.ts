@@ -2,16 +2,17 @@ import {Component, inject, ViewChild} from '@angular/core';
 import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatSidenav} from '@angular/material/sidenav';
-import {NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthComponent} from '../../features/auth/auth.component';
 import {AuthService} from '../../../services/auth.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {LANGUAGES} from '../../../mock/languages';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive, TranslatePipe],
+  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive, TranslatePipe, NgForOf],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -22,7 +23,9 @@ export class HeaderComponent {
   isSidenavOpen: boolean = false;
   user$ = this.authService.userSignal;
   nickname$ = this.authService.nicknameSignal;
+  languages = LANGUAGES;
   private translate = inject(TranslateService);
+  currentLanguage = this.translate.currentLang || 'en';
 
   toggleSidenav(): void {
     void this.sidenav.toggle();
@@ -67,8 +70,9 @@ export class HeaderComponent {
     this.authService.logout().then();
   }
 
-  switchLanguage(lang: string) {
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
+    this.currentLanguage = lang;
     localStorage.setItem('lang', lang); // Сохраняем язык в localStorage
   }
 }
