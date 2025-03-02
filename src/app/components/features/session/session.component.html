@@ -71,8 +71,8 @@
         <h3>{{ sessionState.sessionActive() ? 'Промежуточные результаты:' : 'Итоговый результат:' }}</h3>
         <p>Сыграно боёв: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span></p>
         <p>Побед: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
-        <p>Винрейт: <span [appOdometer]="intermediateStats.winRate" [format]="'1.2-2'">{{ intermediateStats.winRate }}</span>%</p>
-        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage | number: '1.0-0' }}</span></p>
+        <p>Винрейт: <span [appOdometer]="intermediateStats.winRate" [format]="'1.0-2'">{{ intermediateStats.winRate }}</span>%</p>
+        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage }}</span></p>
       </div>
     </div>
 
@@ -106,7 +106,7 @@
               </div>
               <div class="tank-stats__item">
                 <span>С/У</span>
-                <span [appOdometer]="tank.avgDamage">{{ tank.avgDamage | number: '1.0-0' }}</span>
+                <span [appOdometer]="tank.avgDamage" [format]="'1.0-0'">{{ tank.avgDamage }}</span>
               </div>
             </mat-card-actions>
           </div>

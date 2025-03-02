@@ -7,14 +7,19 @@
     <h3>Поиск по всем кланам</h3>
   </div>
 
-
   <div class="search">
     <form [formGroup]="form" class="form-search-clan">
       <mat-form-field appearance="outline">
         <mat-label>Поиск по всем кланам</mat-label>
-        <input (keydown.enter)="onSubmit()" [formControl]="clanControl" [matAutocomplete]="auto" autocomplete="off" formControlName="name"
-               matInput
-               placeholder="Введите название клана">
+        <input
+          (keydown.enter)="onSubmit()"
+          [formControl]="clanControl"
+          [matAutocomplete]="auto"
+          autocomplete="off"
+          formControlName="name"
+          matInput
+          placeholder="Введите название клана"
+        >
       </mat-form-field>
       <button style="display: none;" type="submit"></button>
     </form>
@@ -27,7 +32,11 @@
   </div>
 
   <div class="progress-bar">
-    <mat-progress-bar *ngIf="!clanService.topClansDetails()" color="warn" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar
+      *ngIf="!clanService.topClansDetails()"
+      color="warn"
+      mode="indeterminate"
+    ></mat-progress-bar>
   </div>
 
   <div class="clans-table-container">
@@ -37,79 +46,93 @@
       <input #input (keyup)="applyFilter($event)" matInput placeholder="Введите запрос...">
     </mat-form-field>
 
-    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+    <!-- Обёртка, которая будет рулить скроллом -->
+    <div class="table-scroll">
+      <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
 
-      <!-- № Column -->
-      <ng-container matColumnDef="index">
-        <th *matHeaderCellDef mat-header-cell>
-          <mat-icon>emoji_events</mat-icon>
-        </th>
-        <td *matCellDef="let clan; let i = index" mat-cell>
-          {{ getRowIndex(i) }}
-        </td>
-      </ng-container>
+        <!-- № Column -->
+        <ng-container matColumnDef="index">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-icon>emoji_events</mat-icon>
+          </th>
+          <td *matCellDef="let clan; let i = index" mat-cell>
+            {{ getRowIndex(i) }}
+          </td>
+        </ng-container>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell> Название</th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
-      </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell> Название</th>
+          <td *matCellDef="let clan" mat-cell> {{ clan.name }}</td>
+        </ng-container>
 
-      <!-- Tag Column -->
-      <ng-container matColumnDef="tag">
-        <th *matHeaderCellDef mat-header-cell> Клан тег</th>
-        <td *matCellDef="let clan" mat-cell> [{{ clan.tag }}]</td>
-      </ng-container>
+        <!-- Tag Column -->
+        <ng-container matColumnDef="tag">
+          <th *matHeaderCellDef mat-header-cell> Клан тег</th>
+          <td *matCellDef="let clan" mat-cell> [{{ clan.tag }}]</td>
+        </ng-container>
 
-      <!-- Leader Name Column (скрыто по умолчанию, показываем > 768px) -->
-      <ng-container matColumnDef="leader_name">
-        <th *matHeaderCellDef mat-header-cell> Глава клана</th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.leader_name }}</td>
-      </ng-container>
+        <!-- Leader Name Column (скрыто по умолчанию, показываем > 768px) -->
+        <ng-container matColumnDef="leader_name">
+          <th *matHeaderCellDef mat-header-cell> Глава клана</th>
+          <td *matCellDef="let clan" mat-cell> {{ clan.leader_name }}</td>
+        </ng-container>
 
-      <!-- AvgDamage Column  -->
-      <ng-container matColumnDef="avgDamage">
-        <th *matHeaderCellDef mat-header-cell> С/У</th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.avgDamage | number: '1.0-0' }}</td>
-      </ng-container>
+        <!-- AvgDamage Column  -->
+        <ng-container matColumnDef="avgDamage">
+          <th *matHeaderCellDef mat-header-cell> С/У</th>
+          <td *matCellDef="let clan" mat-cell> {{ clan.avgDamage | number: '1.0-0' }}</td>
+        </ng-container>
 
-      <!-- Members Column -->
-      <ng-container matColumnDef="membersCount">
-        <th *matHeaderCellDef mat-header-cell>
-          <mat-icon>group</mat-icon>
-        </th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.members_count }}</td>
-      </ng-container>
+        <!-- Members Column -->
+        <ng-container matColumnDef="membersCount">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-icon>group</mat-icon>
+          </th>
+          <td *matCellDef="let clan" mat-cell> {{ clan.members_count }}</td>
+        </ng-container>
 
-      <!-- Date Column -->
-      <ng-container matColumnDef="created_at">
-        <th *matHeaderCellDef mat-header-cell>
-          <mat-icon>event</mat-icon>
-        </th>
-        <td *matCellDef="let clan" mat-cell> {{ clan.created_at * 1000 | date: 'dd.MM.yyyy' }}</td>
-      </ng-container>
+        <!-- Date Column -->
+        <ng-container matColumnDef="created_at">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-icon>event</mat-icon>
+          </th>
+          <td *matCellDef="let clan" mat-cell>
+            {{ clan.created_at * 1000 | date: 'dd.MM.yyyy' }}
+          </td>
+        </ng-container>
 
-      <!-- winRate Column -->
-      <ng-container matColumnDef="winRate">
-        <th *matHeaderCellDef mat-header-cell>
-          <mat-icon>flag</mat-icon>
-        </th>
-        <td *matCellDef="let clan" [ngClass]="utilsService.getWinRateColor(clan.winRate)" class="clan-winRate" mat-cell>
-          {{ clan.winRate | number: '1.0-2' }}%
-        </td>
-      </ng-container>
+        <!-- winRate Column -->
+        <ng-container matColumnDef="winRate">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-icon>flag</mat-icon>
+          </th>
+          <td
+            *matCellDef="let clan"
+            [ngClass]="utilsService.getWinRateColor(clan.winRate)"
+            class="clan-winRate"
+            mat-cell
+          >
+            {{ clan.winRate | number: '1.2-2' }}%
+          </td>
+        </ng-container>
 
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr (click)="navigateToClanDetails(row.clan_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
+        <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
+        <tr
+          (click)="navigateToClanDetails(row.clan_id)"
+          *matRowDef="let row; columns: displayedColumns;"
+          class="clickable-row"
+          mat-row
+        ></tr>
 
-      <!-- Row shown when there is no matching data. -->
-      <tr *matNoDataRow class="mat-row">
-        <td class="mat-cell" colspan="7">Нет совпадений данных в фильтре "{{ input.value }}"</td>
-      </tr>
+        <tr *matNoDataRow class="mat-row">
+          <td class="mat-cell" colspan="7">
+            Нет совпадений данных в фильтре "{{ input.value }}"
+          </td>
+        </tr>
+      </table>
+    </div> <!-- table-scroll -->
 
-    </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" [pageSize]="25" aria-label="Select page of users"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
   </div>
 </div>
-
-

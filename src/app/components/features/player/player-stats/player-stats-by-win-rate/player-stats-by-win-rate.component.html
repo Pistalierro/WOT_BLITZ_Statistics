@@ -4,8 +4,8 @@
     <span class="tier-label">{{ toRoman(tier) }}</span>
     <mat-progress-bar [value]="statsWinRatePercent[tier]" class="progress-bar" color="warn" mode="determinate"></mat-progress-bar>
     <div>
-      <span [appOdometer]="statsWinRate[tier] !== undefined ? statsWinRate[tier] : 0"
-            [format]="statsWinRate[tier]  ? '1.2-2' : '1.0-0'"
+      <span [appOdometer]="statsWinRate[tier]"
+            [format]="statsWinRate[tier]  ? '1.0-2' : '1.0-0'"
             [ngClass]="utilsService.getWinRateColor(statsWinRate[tier])"
             class="battles-count"
       ></span>

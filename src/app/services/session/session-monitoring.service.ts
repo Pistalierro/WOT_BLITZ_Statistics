@@ -31,8 +31,6 @@ export class SessionMonitoringService {
           this.sessionState.startStats.set(sessionData.startStats || null);
           this.sessionState.intermediateStats.set(sessionData.updatedDelta || null);
           this.sessionState.startsTanksStats.set(sessionData.startTanksList || null);
-
-          // console.log('Обновлена информация о сессии:', sessionData);
         } else {
           console.log('Сессия завершена.');
           this.stopMonitoringSession();

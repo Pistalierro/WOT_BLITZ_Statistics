@@ -13,7 +13,6 @@
   }
 }
 
-
 .form-search-clan {
   @include md-min {
     width: 30%;
@@ -45,4 +44,33 @@
 
 .clan-winRate {
   font-weight: bold;
+}
+
+.clans-table-container {
+  h3 {
+    margin-bottom: $gap-sm;
+  }
+
+  .filter {
+    margin-bottom: $gap;
+  }
+
+  .table-scroll {
+    // Тут задаём высоту и скролл.
+    max-height: 50vh;
+    overflow: auto; // Чтобы можно было и по вертикали, и по горизонтали скроллить, если колонок много.
+
+    table {
+      width: 100%; // Если хочешь, можешь снять ширину - как нравится.
+    }
+  }
+
+  // Фиксируем шапку.
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    // Фон - чтобы текст не накладывался на соседний контент при скролле
+    background-color: $color-light;
+  }
 }

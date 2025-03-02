@@ -65,15 +65,14 @@
         <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
       </ng-container>
 
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
       <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
 
-      <!-- Row shown when there is no matching data. -->
       <tr *matNoDataRow class="mat-row">
         <td class="mat-cell" colspan="4">Укажите технику {{ input.value }}</td>
       </tr>
     </table>
   </div>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="5" aria-label="Select page of users"></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[25, 50, 100]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
 </div>
 

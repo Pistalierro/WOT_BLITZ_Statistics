@@ -12,15 +12,14 @@
   &.ng-animate {
     opacity: 0;
   }
-
 }
 
-
 .table-container {
-  max-height: 60vh;
+  max-height: 80vh;
   overflow-y: auto;
   display: block;
   width: 100%; /* или фиксированная ширина */
+  position: relative;
 }
 
 .statistics-tanks-table {
@@ -28,18 +27,19 @@
   border-collapse: collapse;
 }
 
-.statistics-tanks-table thead {
+.statistics-tanks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sticky-header {
   position: sticky;
   top: 0;
-  background-color: white; /* или любой другой цвет фона */
-  z-index: 1;
+  z-index: 10;
 }
 
 :host ::ng-deep {
-  /* Основной контейнер поля */
-
   .statistics-tanks-table {
-
     table {
       width: 100%;
 

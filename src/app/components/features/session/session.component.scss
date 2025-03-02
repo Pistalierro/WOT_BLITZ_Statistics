@@ -154,7 +154,6 @@
 
   &:hover {
     transform: scale(1.05);
-    @extend %box-shadow-gray;
   }
 
   &.flipped {
