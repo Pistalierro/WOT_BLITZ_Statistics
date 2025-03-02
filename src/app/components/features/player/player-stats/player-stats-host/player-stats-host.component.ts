@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {DatePipe, DecimalPipe, NgClass, NgIf} from '@angular/common';
+import {DatePipe, NgClass, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {ANIMATIONS} from '../../../../../shared/helpers/animations';
 import {UtilsService} from '../../../../../shared/utils.service';
@@ -8,6 +8,7 @@ import {AuthService} from '../../../../../services/auth.service';
 import {PlayerStoreService} from '../../../../../services/player/player-store.service';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
+import {TranslatePipe} from '@ngx-translate/core';
 
 
 @Component({
@@ -16,14 +17,14 @@ import {OdometerDirective} from '../../../../../shared/directives/odometer.direc
   templateUrl: './player-stats-host.component.html',
   imports: [
     DatePipe,
-    DecimalPipe,
     NgIf,
     ...MATERIAL_MODULES,
     NgClass,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    OdometerDirective
+    OdometerDirective,
+    TranslatePipe
   ],
   styleUrls: ['./player-stats-host.component.scss'],
   animations: [ANIMATIONS.fadeIn, ANIMATIONS.slideIn]

@@ -9,6 +9,7 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {getAuth, provideAuth} from '@angular/fire/auth';
 import {MatPaginatorIntl} from '@angular/material/paginator';
 import {CustomPaginatorIntl} from './shared/services/custom-paginator-intl.service';
+import {provideTranslate} from '../core/translate.provider';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDW5NiM16RpmnaXpuK3LSVhIToNW-EigyM',
@@ -33,6 +34,7 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideHttpClient(),
     provideAnimationsAsync(),
+    ...provideTranslate().providers,
     {provide: MatPaginatorIntl, useClass: CustomPaginatorIntl}
   ]
 };

@@ -5,6 +5,7 @@ import {toRoman} from '../../../../../shared/helpers/tank-utils';
 import {NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-stats-by-damage',
@@ -13,7 +14,8 @@ import {OdometerDirective} from '../../../../../shared/directives/odometer.direc
     NgIf,
     NgForOf,
     ...MATERIAL_MODULES,
-    OdometerDirective
+    OdometerDirective,
+    TranslatePipe
   ],
   templateUrl: './player-stats-by-damage.component.html',
   styleUrl: './player-stats-by-damage.component.scss'

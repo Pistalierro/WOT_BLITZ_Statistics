@@ -11,32 +11,6 @@
     text-align: center;
     margin-bottom: $gap-x2;
     color: $color-gray;
-
-    h1 {
-      @include lg-min {
-        font-size: 2.5rem;
-      }
-      @include lg-md {
-        font-size: 2rem;
-      }
-      @include md {
-        font-size: 1.5rem;
-      }
-    }
-
-    p {
-
-      @include lg-min {
-        font-size: 1.2rem;
-      }
-      @include lg-md {
-        font-size: 1rem;
-      }
-      @include md {
-        font-size: 0.85rem;
-      }
-
-    }
   }
 
   .stats-section {
@@ -67,18 +41,18 @@
       }
 
       mat-card-title {
+        font-family: $font-header;
         @include lg-min {
-          font-size: 1.5rem;
+          font-size: 2rem;
         }
         @include lg-md {
+          font-size: 1.5rem;
+        }
+        @include md {
           font-size: 1.25rem;
         }
       }
 
-      @include md {
-        font-size: 1rem;
-      }
-      font-weight: bold;
     }
 
     mat-card-content {
@@ -88,6 +62,10 @@
       justify-content: center;
       font-size: 1rem;
       text-align: center;
+
+      p {
+        line-height: 1.2em;
+      }
     }
   }
 }

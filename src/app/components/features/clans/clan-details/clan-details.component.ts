@@ -10,11 +10,12 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {ANIMATIONS} from '../../../../shared/helpers/animations';
 import {MatSort} from '@angular/material/sort';
 import {PlayerStoreService} from '../../../../services/player/player-store.service';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clan-details',
   standalone: true,
-  imports: [...MATERIAL_MODULES, NgIf, DecimalPipe, DatePipe, NgClass],
+  imports: [...MATERIAL_MODULES, NgIf, DecimalPipe, DatePipe, NgClass, TranslatePipe],
   templateUrl: './clan-details.component.html',
   styleUrl: './clan-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

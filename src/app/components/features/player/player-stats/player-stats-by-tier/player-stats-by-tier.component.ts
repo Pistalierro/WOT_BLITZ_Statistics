@@ -5,6 +5,7 @@ import {toRoman} from '../../../../../shared/helpers/tank-utils';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {UtilsService} from '../../../../../shared/utils.service';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-stats-by-tier',
@@ -13,7 +14,8 @@ import {OdometerDirective} from '../../../../../shared/directives/odometer.direc
     NgIf,
     NgForOf,
     ...MATERIAL_MODULES,
-    OdometerDirective
+    OdometerDirective,
+    TranslatePipe
   ],
   templateUrl: './player-stats-by-tier.component.html',
   styleUrls: ['./player-stats-by-tier.component.scss']

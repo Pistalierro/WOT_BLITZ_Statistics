@@ -10,6 +10,7 @@ import {ANIMATIONS} from '../../../shared/helpers/animations';
 import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 import {OdometerDirective} from '../../../shared/directives/odometer.directive';
 import {sanitizeUrl} from '../../../shared/helpers/utils';
+import {TranslatePipe} from '@ngx-translate/core';
 
 
 @Component({
@@ -20,9 +21,10 @@ import {sanitizeUrl} from '../../../shared/helpers/utils';
     NgIf,
     DecimalPipe,
     OdometerDirective,
-    NgStyle,
-    NgClass,
     NgForOf,
+    NgClass,
+    NgStyle,
+    TranslatePipe,
   ],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',

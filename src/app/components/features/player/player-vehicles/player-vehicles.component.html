@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="authService.userSignal() === null" class="overlay">
-  <p>Пожалуйста, авторизуйтесь, чтобы увидеть данные.</p>
+  <p>{{ 'TANKS_STATS.AUTH_REQUIRED' | translate }}</p>
 </div>
 
 <div *ngIf="authService.errorSignal()" class="overlay">
@@ -11,8 +11,8 @@
 </div>
 
 <mat-form-field appearance="outline" class="filter">
-  <mat-label>Filter</mat-label>
-  <input #input (keyup)="applyFilter($event)" matInput placeholder="Начните вводить информацию...">
+  <mat-label>{{ 'TANKS_STATS.FILTER_LABEL' | translate }}</mat-label>
+  <input #input (keyup)="applyFilter($event)" [placeholder]="'TANKS_STATS.FILTER_PLACEHOLDER' | translate" matInput>
 </mat-form-field>
 
 <div class="mat-elevation-z8">
@@ -22,9 +22,15 @@
       <ng-container matColumnDef="mainInfo">
         <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
           <div class="header-buttons">
-            <span class="header-button" mat-sort-header="nation" matTooltip="Сортировать по нации"><mat-icon>public</mat-icon></span>
-            <span class="header-button" mat-sort-header="tier" matTooltip="Сортировать по уровню">I-X</span>
-            <span class="header-button header-button--type" mat-sort-header="type" matTooltip="Сортировать по типу техники">Тип</span>
+            <span [matTooltip]="'TANKS_STATS.SORT.NATION' | translate" class="header-button" mat-sort-header="nation">
+              <mat-icon>public</mat-icon>
+            </span>
+            <span [matTooltip]="'TANKS_STATS.SORT.TIER' | translate" class="header-button" mat-sort-header="tier">
+              I-X
+            </span>
+            <span [matTooltip]="'TANKS_STATS.SORT.TYPE' | translate" class="header-button header-button--type" mat-sort-header="type">
+              {{ 'TANKS_STATS.SORT.TYPE' | translate }}
+            </span>
           </div>
         </th>
         <td *matCellDef="let row" class="main-info-cell" mat-cell>
@@ -34,7 +40,7 @@
             <div class="flag-content">
               <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
                    class="tank-icon-centered"/>
-              <ng-template #noImage><span class="no-image">Нет изображения</span></ng-template>
+              <ng-template #noImage><span class="no-image">{{ 'TANKS_STATS.TABLE.NO_IMAGE' | translate }}</span></ng-template>
             </div>
             <div class="tank-name">{{ row.name }}</div>
           </div>
@@ -61,7 +67,7 @@
 
       <!-- Damage Column -->
       <ng-container matColumnDef="damage">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</th>
         <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
       </ng-container>
 
@@ -69,10 +75,9 @@
       <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
 
       <tr *matNoDataRow class="mat-row">
-        <td class="mat-cell" colspan="4">Укажите технику {{ input.value }}</td>
+        <td class="mat-cell" colspan="4">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>
       </tr>
     </table>
   </div>
   <mat-paginator [pageSizeOptions]="[25, 50, 100]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
 </div>
-

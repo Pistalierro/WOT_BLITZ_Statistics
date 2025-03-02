@@ -1,49 +1,50 @@
 <div class="auth-dialog">
-  <h2 class="auth-dialog__title" mat-dialog-title>{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
+  <h2 class="auth-dialog__title" mat-dialog-title>{{ isLoginMode ? ('AUTH.LOGIN' | translate) : ('AUTH.REGISTER' | translate) }}</h2>
   <mat-dialog-content class="mat-typography">
     <form (ngSubmit)="onSubmit()" [formGroup]="authForm" class="login-form">
       <mat-form-field appearance="outline">
-        <mat-label>Email:</mat-label>
-        <input formControlName="email" matInput placeholder="Введите Email..." type="email"/>
-        <mat-error *ngIf="authForm.get('email')?.hasError('required')">Email обязателен</mat-error>
-        <mat-error *ngIf="authForm.get('email')?.hasError('email')">Некорректный Email</mat-error>
+        <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
+        <input [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" formControlName="email" matInput type="email"/>
+        <mat-error *ngIf="authForm.get('email')?.hasError('required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</mat-error>
+        <mat-error *ngIf="authForm.get('email')?.hasError('email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Пароль:</mat-label>
-        <input formControlName="password" matInput
-               matTooltip="Пароль может быть отличным от аккаутна в игре. Рекомендация использовать уникальный пароль."
+        <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
+        <input [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" formControlName="password"
+               matInput
+               matTooltip="{{ 'AUTH.TOOLTIP_PASSWORD' | translate }}"
                matTooltipClass="custom-tooltip"
-               placeholder="Необязательно от аккаунта WG..." type="password"/>
-        <mat-error *ngIf="authForm.get('password')?.hasError('required')">Пароль обязателен</mat-error>
+               type="password"/>
+        <mat-error *ngIf="authForm.get('password')?.hasError('required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field *ngIf="!isLoginMode" appearance="outline">
-        <mat-label>Подтвердите пароль:</mat-label>
-        <input formControlName="confirmPassword" matInput placeholder="Повторите пароль..." type="password"/>
+        <mat-label>{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</mat-label>
+        <input [placeholder]="'AUTH.CONFIRM_PASSWORD_PLACEHOLDER' | translate" formControlName="confirmPassword" matInput type="password"/>
         <mat-error *ngIf="authForm.get('confirmPassword')?.hasError('passwordsMismatch')">
-          Пароли не совпадают
+          {{ 'AUTH.PASSWORDS_MISMATCH' | translate }}
         </mat-error>
       </mat-form-field>
 
       <mat-form-field *ngIf="!isLoginMode" appearance="outline">
-        <mat-label>Никнейм:</mat-label>
-        <input formControlName="nickname" matInput matTooltip="Укажите в точности ник который используете в игре"
+        <mat-label>{{ 'AUTH.NICKNAME' | translate }}</mat-label>
+        <input [placeholder]="'AUTH.NICKNAME_PLACEHOLDER' | translate" formControlName="nickname" matInput
+               matTooltip="{{ 'AUTH.TOOLTIP_NICKNAME' | translate }}"
                matTooltipClass="custom-tooltip"
-               placeholder="Укажите никнейм в точности как в игре..."
                type="text"/>
         <mat-error *ngIf="authForm.get('nickname')?.hasError('required')">
-          Никнейм обязателен
+          {{ 'AUTH.NICKNAME_REQUIRED' | translate }}
         </mat-error>
       </mat-form-field>
 
       <mat-dialog-actions class="action-buttons">
         <button (click)="toggleMode($event)" class="btn" mat-raised-button type="button">
-          {{ isLoginMode ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти' }}
+          {{ isLoginMode ? ('AUTH.CREATE_ACCOUNT' | translate) : ('AUTH.ALREADY_HAVE_ACCOUNT' | translate) }}
         </button>
 
         <button [@buttonState]="buttonState" class="btn" mat-raised-button type="submit">
-          {{ isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
+          {{ isLoginMode ? ('AUTH.LOGIN_ACTION' | translate) : ('AUTH.REGISTER_ACTION' | translate) }}
         </button>
       </mat-dialog-actions>
     </form>

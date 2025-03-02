@@ -5,6 +5,7 @@ import {toRoman} from '../../../../../shared/helpers/tank-utils';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-stats-by-win-rate',
@@ -14,7 +15,8 @@ import {OdometerDirective} from '../../../../../shared/directives/odometer.direc
     NgForOf,
     ...MATERIAL_MODULES,
     NgClass,
-    OdometerDirective
+    OdometerDirective,
+    TranslatePipe
   ],
   templateUrl: './player-stats-by-win-rate.component.html',
   styleUrl: './player-stats-by-win-rate.component.scss'

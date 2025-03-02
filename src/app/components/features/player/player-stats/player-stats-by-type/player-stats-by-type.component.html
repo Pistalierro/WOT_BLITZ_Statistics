@@ -1,5 +1,5 @@
 <div *ngIf="tanksService.battlesByType() as statsType" class="progress-container">
-  <h3 class="progress-title">Бои по типу техники</h3>
+  <h3 class="progress-title">{{ 'TANKS_STATS.BATTLES_BY_TYPE' | translate }}</h3>
   <div *ngFor="let type of ['lightTank', 'mediumTank', 'heavyTank', 'AT-SPG']" class="progress-row">
     <img [src]="tankTypes(type)" alt="{{ type }}" class="tank-type-icon">
     <mat-progress-bar [value]="statsTypePercent[type]" class="progress-bar" color="warn" mode="determinate"></mat-progress-bar>

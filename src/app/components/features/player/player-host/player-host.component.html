@@ -1,10 +1,13 @@
 <div class="container">
-  <h2>Рады видеть вас, {{ authService.nicknameSignal() ? authService.nicknameSignal() : 'Гость' }}!</h2>
-  <p>Здесь вы можете проанализировать вашу статистику по аккаунту, технику, просмотреть ваши награды.</p>
+  <h2>{{ 'PLAYER_PAGE.WELCOME' | translate: {nickname: (authService.nicknameSignal() || 'Гость')} }}</h2>
+  <p>{{ 'PLAYER_PAGE.DESCRIPTION' | translate }}</p>
+
   <form (ngSubmit)="onSubmit()" [formGroup]="searchPlayerForm" class="form-search">
     <mat-form-field appearance="outline" class="form-container">
-      <mat-label class="form-label">Посмотреть статистику других игроков...</mat-label>
-      <input (keydown.enter)="onSubmit()" class="form-input" formControlName="name" matInput placeholder="Введите ник игрока" type="text">
+      <mat-label class="form-label">{{ 'PLAYER_PAGE.SEARCH_LABEL' | translate }}</mat-label>
+      <input (keydown.enter)="onSubmit()" [placeholder]="'PLAYER_PAGE.SEARCH_PLACEHOLDER' | translate" class="form-input"
+             formControlName="name"
+             matInput type="text">
       <button aria-label="Clear" class="form-action" mat-icon-button matSuffix>
         <mat-icon>search</mat-icon>
       </button>
@@ -12,9 +15,9 @@
   </form>
 
   <mat-toolbar class="player-toolbar">
-    <button mat-button routerLink="stat" routerLinkActive="active">Статистика</button>
-    <button mat-button routerLink="vehicles" routerLinkActive="active">Техника</button>
-    <button mat-button routerLink="achievements" routerLinkActive="active">Достижения</button>
+    <button mat-button routerLink="stat" routerLinkActive="active">{{ 'PLAYER_PAGE.TABS.STATISTICS' | translate }}</button>
+    <button mat-button routerLink="vehicles" routerLinkActive="active">{{ 'PLAYER_PAGE.TABS.VEHICLES' | translate }}</button>
+    <!--    <button mat-button routerLink="achievements" routerLinkActive="active">{{ 'PLAYER_PAGE.TABS.ACHIEVEMENTS' | translate }}</button>-->
   </mat-toolbar>
 
   <router-outlet></router-outlet>

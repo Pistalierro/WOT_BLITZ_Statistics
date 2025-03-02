@@ -9,6 +9,7 @@ import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
 import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../shared/helpers/tank-utils';
 import {AuthService} from '../../../../services/auth.service';
 import {sanitizeUrl} from '../../../../shared/helpers/utils';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -17,7 +18,8 @@ import {sanitizeUrl} from '../../../../shared/helpers/utils';
     ...MATERIAL_MODULES,
     DecimalPipe,
     NgIf,
-    NgStyle
+    NgStyle,
+    TranslatePipe
   ],
   templateUrl: './player-vehicles.component.html',
   styleUrl: './player-vehicles.component.scss'

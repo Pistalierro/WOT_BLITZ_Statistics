@@ -4,28 +4,18 @@
     <div class="session-header">
       <div class="session-title">
         <span class="material-symbols-outlined">stadia_controller</span>
-        <h2>Управление игровой сессией</h2>
+        <h2>{{ 'SESSION.TITLE' | translate }}</h2>
       </div>
       <div class="session-status">
-        <span *ngIf="sessionActive()" @fadeScale class="session-badge session-badge--active">
-          🟢 Сессия активна
-        </span>
-        <span *ngIf="!sessionActive()" @fadeScale class="session-badge session-badge--inactive">
-          🔴 Сессия неактивна
-        </span>
+        <span *ngIf="sessionActive()" @fadeScale class="session-badge session-badge--active">{{ 'SESSION.ACTIVE' | translate }}</span>
+        <span *ngIf="!sessionActive()" @fadeScale class="session-badge session-badge--inactive">{{ 'SESSION.INACTIVE' | translate }}</span>
       </div>
     </div>
 
-    <!-- Прогресс-бар -->
     <div class="session-progress-bar">
-      <mat-progress-bar
-        *ngIf="sessionState.loadingSignal()"
-        color="warn"
-        mode="indeterminate">
-      </mat-progress-bar>
+      <mat-progress-bar *ngIf="sessionState.loadingSignal()" color="warn" mode="indeterminate"></mat-progress-bar>
     </div>
 
-    <!-- Ошибки -->
     <div *ngIf="sessionError() as error" class="error-message">
       <p>{{ error }}</p>
     </div>
@@ -34,7 +24,7 @@
     <div class="session-controls">
       <button (click)="startSession()" *ngIf="!sessionActive()" mat-flat-button>
         <div class="actions-container">
-          <span>Начать сессию</span>
+          <span>{{ 'SESSION.START' | translate }}</span>
           <span class="material-symbols-outlined">line_start_arrow_notch</span>
         </div>
       </button>
@@ -42,13 +32,13 @@
       <ng-container *ngIf="sessionActive()">
         <button (click)="updateSession()" mat-flat-button>
           <div class="actions-container">
-            <span>Обновить сессию</span>
+            <span>{{ 'SESSION.UPDATE' | translate }}</span>
             <span class="material-symbols-outlined">refresh</span>
           </div>
         </button>
         <button (click)="endSession()" mat-flat-button>
           <div class="actions-container">
-            <span>Завершить сессию</span>
+            <span>{{ 'SESSION.END' | translate }}</span>
             <span class="material-symbols-outlined">cancel</span>
           </div>
         </button>
@@ -59,26 +49,37 @@
     <div class="session-data">
       <!-- Стартовая статистика -->
       <div *ngIf="sessionState.startStats() as startStats">
-        <h3>Стартовая статистика:</h3>
-        <p>Сыграно боёв: {{ startStats.battles | number: '1.0-0' }}</p>
-        <p>Побед: {{ startStats.wins | number: '1.0-0' }}</p>
-        <p>Винрейт: {{ (startStats.wins / startStats.battles) * 100 | number: '1.0-2' }}%</p>
-        <p>Средний урон: {{ startStats.damage_dealt / startStats.battles | number: '1.0-0' }}</p>
+        <h3>{{ 'SESSION.STATS.START' | translate }}:</h3>
+        <p>{{ 'SESSION.TANKS_STATS.TOTAL_BATTLES' | translate }}: {{ startStats.battles | number: '1.0-0' }}</p>
+        <p>{{ 'SESSION.TANKS_STATS.TOTAL_WINS' | translate }}: {{ startStats.wins | number: '1.0-0' }}</p>
+        <p>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}: {{ (startStats.wins / startStats.battles) * 100 | number: '1.0-2' }}%</p>
+        <p>{{ 'SESSION.STATS.AVG_DAMAGE' | translate }}: {{ startStats.damage_dealt / startStats.battles | number: '1.0-0' }}</p>
       </div>
 
       <!-- Промежуточные результаты -->
       <div *ngIf="sessionState.intermediateStats() as intermediateStats">
-        <h3>{{ sessionState.sessionActive() ? 'Промежуточные результаты:' : 'Итоговый результат:' }}</h3>
-        <p>Сыграно боёв: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span></p>
-        <p>Побед: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
-        <p>Винрейт: <span [appOdometer]="intermediateStats.winRate" [format]="'1.0-2'">{{ intermediateStats.winRate }}</span>%</p>
-        <p>Средний урон: <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage }}</span></p>
+        <h3>
+          {{ sessionState.sessionActive() ? ('SESSION.STATS.INTERMEDIATE' | translate) : ('SESSION.STATS.FINAL' | translate) }}:
+        </h3>
+        <p>{{ 'SESSION.STATS.BATTLES' | translate }}: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span>
+        </p>
+        <p>{{ 'SESSION.STATS.WINS' | translate }}: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
+        <p>{{ 'SESSION.STATS.WIN_RATE' | translate }}:
+          <span [appOdometer]="intermediateStats.winRate" [format]="'1.0-2'">{{ intermediateStats.winRate }}</span>%
+        </p>
+        <p>{{ 'SESSION.STATS.AVG_DAMAGE' | translate }}:
+          <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage }}</span>
+        </p>
       </div>
     </div>
 
     <!-- Статистика по танкам -->
     <div *ngIf="intermediateTanksDelta.length > 0">
-      <h3>{{ sessionState.sessionActive() ? 'Промежуточная статистика по танкам:' : 'Итоговая статистика по танкам:' }}</h3>
+      <h3>{{
+          sessionState.sessionActive()
+            ? ('SESSION.TANKS_STATS.INTERMEDIATE' | translate)
+            : ('SESSION.TANKS_STATS.FINAL' | translate)
+        }}:</h3>
       <div [@slideUp] class="card-grid">
         <mat-card (click)="toggleFlip(i)" *ngFor="let tank of tanksDelta; let i = index" [ngClass]="{'flipped': isFlipped[i]}" class="card">
 
@@ -105,7 +106,7 @@
                 <span [appOdometer]="tank.winRate" [format]="'1.2-2'">{{ tank.winRate }}%</span>
               </div>
               <div class="tank-stats__item">
-                <span>С/У</span>
+                <span>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</span>
                 <span [appOdometer]="tank.avgDamage" [format]="'1.0-0'">{{ tank.avgDamage }}</span>
               </div>
             </mat-card-actions>
@@ -113,35 +114,35 @@
 
           <!-- Задняя сторона карточки -->
           <div class="card-back">
-            <h4 class="card-back__title">Общая статистика</h4>
+            <h4 class="card-back__title">{{ 'SESSION.TANKS_STATS.GENERAL' | translate }}</h4>
             <mat-card-content class="card-back__content">
               <div class="card-back__name">{{ tank.name }}</div>
               <div class="card-back__item">
-                <span>Нация:</span>
+                <span>{{ 'SESSION.TANKS_STATS.NATION' | translate }}:</span>
                 <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)">
               </div>
               <div class="card-back__item">
-                <span>Тип:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TYPE' | translate }}:</span>
                 <img [alt]="tank.type" [src]="tankTypes(tank.type)">
               </div>
               <div class="card-back__item">
-                <span>Уровень:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TIER' | translate }}:</span>
                 <span>{{ toRoman(tank.tier) }}</span>
               </div>
               <div class="card-back__item">
-                <span>Всего боёв:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TOTAL_BATTLES' | translate }}:</span>
                 <span>{{ tank.totalBattles }}</span>
               </div>
               <div class="card-back__item">
-                <span>Всего побед:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TOTAL_WINS' | translate }}:</span>
                 <span>{{ tank.totalWins }}</span>
               </div>
               <div class="card-back__item">
-                <span>Общий процент:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}:</span>
                 <span>{{ tank.totalWinRate | number: '1.0-2' }}%</span>
               </div>
               <div class="card-back__item">
-                <span>С/У:</span>
+                <span>{{ 'SESSION.TANKS_STATS.TOTAL_AVG_DAMAGE' | translate }}:</span>
                 <span>{{ tank.totalAvgDamage | number: '1.0-0' }}</span>
               </div>
             </mat-card-content>

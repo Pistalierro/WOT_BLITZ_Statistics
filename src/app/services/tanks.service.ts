@@ -142,7 +142,6 @@ export class TanksService {
       damageByTier[tier] = (damageByTier[tier] || 0) + damage;
     });
 
-    // Гарантируем, что все уровни (1-10) есть в объекте
     for (let tier = 1; tier <= 10; tier++) {
       if (!(tier in battlesByTier)) {
         battlesByTier[tier] = 0;

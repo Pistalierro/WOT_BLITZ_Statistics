@@ -4,11 +4,12 @@ import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PlayerStoreService} from '../../../../services/player/player-store.service';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-host',
   standalone: true,
-  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, RouterLinkActive, ReactiveFormsModule],
+  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, RouterLinkActive, ReactiveFormsModule, TranslatePipe],
   templateUrl: './player-host.component.html',
   styleUrl: './player-host.component.scss'
 })

@@ -4,19 +4,21 @@
   </div>
 
   <div *ngIf="clanService.clanDetails() as clan" class="clan-info">
-    <h2 [@slideUp]>[{{ clan.tag }}] {{ clan.name }} </h2>
+    <h2 [@slideUp]>[{{ clan.tag }}] {{ clan.name }}</h2>
     <p [@slideUp]>{{ clan.motto }}</p>
     <p [@slideUp] class="clan-description">{{ clan.description }}</p>
     <div [@slideUp] class="clan-subtitle">
-      <p>Глава: {{ clan.leader_name }}</p>
-      <p *ngIf="clan.created_at">Создан: {{ clan.created_at * 1000 | date: 'dd.MM.yyyy' }}</p>
+      <p>{{ 'CLAN.LEADER' | translate }}: {{ clan.leader_name }}</p>
+      <p *ngIf="clan.created_at">
+        {{ 'CLAN.CREATED' | translate }}: {{ clan.created_at * 1000 | date: 'dd.MM.yyyy' }}
+      </p>
     </div>
     <div [@fadeScale] class="content-container">
       <mat-card appearance="outlined" class="clan-winRate">
         <mat-card-header>
           <mat-card-title>
             <ng-container *ngIf="!isMobile; else winRateIcon">
-              WinRate:
+              {{ 'CLAN.WIN_RATE' | translate }}:
             </ng-container>
             <ng-template #winRateIcon>
               <mat-icon>flag</mat-icon>
@@ -24,10 +26,7 @@
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <span
-            *ngIf="clan.winRate"
-            [ngClass]="utilsService.getWinRateColor(clan.winRate)"
-          >
+          <span *ngIf="clan.winRate" [ngClass]="utilsService.getWinRateColor(clan.winRate)">
             {{ clan.winRate | number: '1.2-2' }}%
           </span>
         </mat-card-content>
@@ -35,7 +34,7 @@
 
       <mat-card appearance="outlined" class="clan-avgDamage">
         <mat-card-header>
-          <mat-card-title>С/У</mat-card-title>
+          <mat-card-title>{{ 'CLAN.AVG_DAMAGE' | translate }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span>{{ clan.avgDamage | number: '1.0-0' }}</span>
@@ -46,7 +45,7 @@
         <mat-card-header>
           <mat-card-title>
             <ng-container *ngIf="!isMobile; else membersIcon">
-              Участники:
+              {{ 'CLAN.MEMBERS' | translate }}:
             </ng-container>
             <ng-template #membersIcon>
               <mat-icon>group</mat-icon>
@@ -61,7 +60,7 @@
   </div>
 
   <div *ngIf="clanPlayersListArray?.length" class="players-table">
-    <h3>Список игроков клана</h3>
+    <h3>{{ 'CLAN.PLAYERS_LIST' | translate }}</h3>
 
     <div class="mat-elevation-z8">
       <!-- Обёртка, в которой происходит скролл -->
@@ -110,7 +109,7 @@
 
           <!-- AvgDamage Column -->
           <ng-container matColumnDef="avgDamage">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>С/У</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'CLAN.AVG_DAMAGE' | translate }}</th>
             <td *matCellDef="let player" mat-cell>
               {{ player.avgDamage | number: '1.0-0' }}
             </td>
@@ -141,7 +140,6 @@
             </td>
           </ng-container>
 
-          <!-- Важно: добавляем класс .sticky-header -->
           <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
 
           <tr
@@ -158,7 +156,7 @@
 
   <div class="actions">
     <button (click)="goBack()" color="primary" mat-flat-button type="button">
-      Назад
+      {{ 'COMMON.BACK' | translate }}
     </button>
   </div>
 </div>

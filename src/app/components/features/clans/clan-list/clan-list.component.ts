@@ -12,6 +12,7 @@ import {MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {debounceTime, distinctUntilChanged} from 'rxjs';
 import {ClanUtilsService} from '../../../../services/clan/clan-utils.service';
 import {UtilsService} from '../../../../shared/utils.service';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clan-list',
@@ -24,7 +25,8 @@ import {UtilsService} from '../../../../shared/utils.service';
     ReactiveFormsModule,
     NgForOf,
     MatAutocompleteTrigger,
-    NgClass
+    NgClass,
+    TranslatePipe
   ],
   templateUrl: './clan-list.component.html',
   styleUrl: './clan-list.component.scss'

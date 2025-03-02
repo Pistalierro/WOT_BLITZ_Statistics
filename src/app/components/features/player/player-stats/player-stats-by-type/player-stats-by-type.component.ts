@@ -5,6 +5,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {tankTypes} from '../../../../../shared/helpers/tank-utils';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-stats-by-type',
@@ -13,7 +14,8 @@ import {OdometerDirective} from '../../../../../shared/directives/odometer.direc
     NgIf,
     NgForOf,
     ...MATERIAL_MODULES,
-    OdometerDirective
+    OdometerDirective,
+    TranslatePipe
   ],
   templateUrl: './player-stats-by-type.component.html',
   styleUrl: './player-stats-by-type.component.scss'

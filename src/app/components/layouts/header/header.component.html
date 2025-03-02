@@ -2,32 +2,38 @@
   <div class="container">
     <div class="logo">
       <img alt="WOT Blitz Logo" src="/images/logo.png"/>
-      <h1 class="site-title">WOT Blitz Statistics</h1>
+      <h1 class="site-title">{{ 'APP.TITLE' | translate }}</h1>
     </div>
     <nav class="navigation">
-      <button mat-button routerLink="/home" routerLinkActive="active">Главная</button>
-      <button mat-button routerLink="/players" routerLinkActive="active">Игроки</button>
-      <button mat-button routerLink="/session" routerLinkActive="active">Сессия</button>
-      <button mat-button routerLink="/clans" routerLinkActive="active">Кланы</button>
-      <!--      <button mat-button routerLink="/tournaments" routerLinkActive="active">Турниры</button>-->
-      <!--      <button mat-button routerLink="/history" routerLinkActive="active">История</button>-->
+      <button mat-button routerLink="/home" routerLinkActive="active">{{ 'NAV.HOME' | translate }}</button>
+      <button mat-button routerLink="/players" routerLinkActive="active">{{ 'NAV.PLAYERS' | translate }}</button>
+      <button mat-button routerLink="/session" routerLinkActive="active">{{ 'NAV.SESSION' | translate }}</button>
+      <button mat-button routerLink="/clans" routerLinkActive="active">{{ 'NAV.CLANS' | translate }}</button>
+
       <ng-container *ngIf="nickname$(); else loginButton">
         <button (click)="logout()" mat-button>
           <mat-icon>logout</mat-icon>
         </button>
         <span class="user-nickname">{{ nickname$() }}</span>
       </ng-container>
+
       <ng-template #loginButton>
         <button (click)="openDialog()" mat-button>
           <mat-icon>login</mat-icon>
         </button>
       </ng-template>
+      <div class="language-container">
+        <button (click)="switchLanguage('en')" mat-button>🇬🇧 EN</button>
+        <button (click)="switchLanguage('ua')" mat-button>🇺🇦 UA</button>
+        <button (click)="switchLanguage('ru')" mat-button>🇷🇺 RU</button>
+      </div>
     </nav>
+
     <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
-      <svg *ngIf="!isSidenavOpen" height="24" viewBox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+      <svg *ngIf="!isSidenavOpen" height="24" viewBox="0 96 960 960" width="24">
         <path d="M120 816v-60h720v60H120Zm0-180v-60h720v60H120Zm0-180v-60h720v60H120Z"/>
       </svg>
-      <svg *ngIf="isSidenavOpen" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+      <svg *ngIf="isSidenavOpen" height="24" viewBox="0 0 24 24" width="24">
         <path d="M7 10l5 5 5-5H7z"/>
       </svg>
     </button>
@@ -37,12 +43,11 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over" position="end">
     <nav class="mobile-navigation">
-      <button (click)="closeSidenav()" mat-button routerLink="/home">Главная</button>
-      <button (click)="closeSidenav()" mat-button routerLink="/players">Игроки</button>
-      <button (click)="closeSidenav()" mat-button routerLink="/session">Сессия</button>
-      <button (click)="closeSidenav()" mat-button routerLink="/clans">Кланы</button>
-      <!--      <button (click)="closeSidenav()" mat-button routerLink="/tournaments">Турниры</button>-->
-      <!--      <button (click)="closeSidenav()" mat-button routerLink="/history">История</button>-->
+      <button (click)="closeSidenav()" mat-button routerLink="/home">{{ 'NAV.HOME' | translate }}</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/players">{{ 'NAV.PLAYERS' | translate }}</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/session">{{ 'NAV.SESSION' | translate }}</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/clans">{{ 'NAV.CLANS' | translate }}</button>
+
       <ng-container *ngIf="nickname$(); else loginButton">
         <button (click)="logout()" mat-button>
           <mat-icon>logout</mat-icon>
@@ -55,7 +60,13 @@
           <mat-icon>login</mat-icon>
         </button>
       </ng-template>
+      <div class="language-container language-container--mobile">
+        <button (click)="switchLanguage('en'); closeSidenav()" mat-button>🇬🇧 EN</button>
+        <button (click)="switchLanguage('ua'); closeSidenav()" mat-button>🇺🇦 UA</button>
+        <button (click)="switchLanguage('ru'); closeSidenav()" mat-button>🇷🇺 RU</button>
+      </div>
     </nav>
+
   </mat-sidenav>
   <div class="content-container">
     <router-outlet></router-outlet>

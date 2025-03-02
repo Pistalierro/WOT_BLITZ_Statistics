@@ -6,11 +6,12 @@ import {NgIf} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthComponent} from '../../features/auth/auth.component';
 import {AuthService} from '../../../services/auth.service';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive],
+  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -21,6 +22,7 @@ export class HeaderComponent {
   isSidenavOpen: boolean = false;
   user$ = this.authService.userSignal;
   nickname$ = this.authService.nicknameSignal;
+  private translate = inject(TranslateService);
 
   toggleSidenav(): void {
     void this.sidenav.toggle();
@@ -56,12 +58,17 @@ export class HeaderComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if (appRoot) {
-        appRoot.removeAttribute('inert'); // ❗ Разблокируем фон после закрытия
+        appRoot.removeAttribute('inert');
       }
     });
   }
 
   logout(): void {
     this.authService.logout().then();
+  }
+
+  switchLanguage(lang: string) {
+    this.translate.use(lang);
+    localStorage.setItem('lang', lang); // Сохраняем язык в localStorage
   }
 }

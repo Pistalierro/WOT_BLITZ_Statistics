@@ -6,11 +6,12 @@ import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ANIMATIONS} from '../../../shared/helpers/animations';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [...MATERIAL_MODULES, ReactiveFormsModule, NgIf],
+  imports: [...MATERIAL_MODULES, ReactiveFormsModule, NgIf, TranslatePipe],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
   animations: [ANIMATIONS.buttonState],
@@ -19,7 +20,7 @@ export class AuthComponent implements OnInit {
   isLoginMode: boolean = true;
   authForm!: FormGroup;
   buttonState: 'default' | 'success' = 'default';
-
+  protected readonly sessionStorage = sessionStorage;
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -50,7 +51,6 @@ export class AuthComponent implements OnInit {
       );
     }
   }
-
 
   onSubmit() {
     if (this.authForm.valid) {

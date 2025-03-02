@@ -5,27 +5,27 @@
       <div class="stats-content">
         <h2 [@fadeScale]>{{ player.nickname }}</h2>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">ID:</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.ID' | translate }}:</span>
           <span> {{ player.account_id }}</span>
         </div>
         <div *ngIf="player.clan" [@fadeScale] class="stats">
-          <span class="stats-key">Клан:</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.CLAN' | translate }}:</span>
           <span> {{ player.clan.name }} [{{ player.clan.tag }}]</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Дата создания аккаунта:</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.CREATED_AT' | translate }}:</span>
           <span> {{ player.created_at * 1000 | date: 'dd.MM.yyyy' }}</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Последний бой:</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.LAST_BATTLE' | translate }}:</span>
           <span *ngIf="player.last_battle_time"> {{ player.last_battle_time * 1000 | date: 'dd.MM.yyyy' }}</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Боёв:&nbsp;</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.BATTLES' | translate }}:&nbsp;</span>
           <span [appOdometer]="player.statistics.all.battles"> {{ player.statistics.all.battles }}</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Процент побед:&nbsp;</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.WIN_RATE' | translate }}:&nbsp;</span>
           <span [appOdometer]="(player.statistics.all.wins / player.statistics.all.battles) * 100"
                 [format]="'1.2-2'"
                 [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)"
@@ -35,42 +35,30 @@
           <span [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)">%</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Средний урон за бой:&nbsp;</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.AVG_DAMAGE' | translate }}:&nbsp;</span>
           <span [appOdometer]="(player.statistics.all.damage_dealt / player.statistics.all.battles)">
             {{ player.statistics.all.damage_dealt / player.statistics.all.battles }}
           </span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Максимальный опыт за бой:&nbsp;</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.MAX_XP' | translate }}:&nbsp;</span>
           <span *ngIf="player.statistics.all.max_xp"
                 [appOdometer]="player.statistics.all.max_xp"> {{ player.statistics.all.max_xp }}</span>
         </div>
         <div [@fadeScale] class="stats">
-          <span class="stats-key">Точность стрельбы:&nbsp;</span>
+          <span class="stats-key">{{ 'PLAYER_STATS.STATS.ACCURACY' | translate }}:&nbsp;</span>
           <span [appOdometer]="(player.statistics.all.hits / player.statistics.all.shots) * 100" [format]="'1.2-2'">
             {{ (player.statistics.all.hits / player.statistics.all.shots) * 100 }}
           </span>%
-        </div>
-        <div [@fadeScale] class="stats">
-          <span class="stats-key">Побед:&nbsp;</span>
-          <span [appOdometer]="player.statistics.all.wins"> {{ player.statistics.all.wins }}</span>
-        </div>
-        <div [@fadeScale] class="stats">
-          <span class="stats-key">Поражений:&nbsp;</span>
-          <span *ngIf="player.statistics.all.losses" [appOdometer]="player.statistics.all.losses"> {{ player.statistics.all.losses }}</span>
-        </div>
-        <div [@fadeScale] class="stats">
-          <span class="stats-key">Максимум фрагов за бой:&nbsp;</span>
-          <span [appOdometer]="player.statistics.all.max_frags"> {{ player.statistics.all.max_frags }}</span>
         </div>
       </div>
     </div>
     <div class="stats-secondary">
       <mat-toolbar class="mat-toolbar">
-        <button mat-button routerLink="stats-tier" routerLinkActive="active">I-X</button>
-        <button mat-button routerLink="stats-winRate" routerLinkActive="active">%</button>
-        <button mat-button routerLink="stats-damage" routerLinkActive="active">С/У</button>
-        <button mat-button routerLink="stats-type" routerLinkActive="active">Тип</button>
+        <button mat-button routerLink="stats-tier" routerLinkActive="active">{{ 'PLAYER_STATS.TABS.TIER' | translate }}</button>
+        <button mat-button routerLink="stats-winRate" routerLinkActive="active">{{ 'PLAYER_STATS.TABS.WIN_RATE' | translate }}</button>
+        <button mat-button routerLink="stats-damage" routerLinkActive="active">{{ 'PLAYER_STATS.TABS.DAMAGE' | translate }}</button>
+        <button mat-button routerLink="stats-type" routerLinkActive="active">{{ 'PLAYER_STATS.TABS.TYPE' | translate }}</button>
       </mat-toolbar>
       <router-outlet></router-outlet>
     </div>
@@ -79,12 +67,9 @@
 
 <ng-template #checkAuth>
   <div *ngIf="authService.nicknameSignal() === null">
-    <p class="error">Пожалуйста, войдите в аккаунт, чтобы увидеть статистику.</p>
+    <p class="error">{{ 'PLAYER_STATS.NO_AUTH' | translate }}</p>
   </div>
   <div *ngIf="playerStore.loadingSignal()">
     <mat-progress-bar color="warn" mode="indeterminate"></mat-progress-bar>
-  </div>
-  <div *ngIf="playerStore.errorSignal()">
-    <p class="error">{{ playerStore.errorSignal() }}</p>
   </div>
 </ng-template>
