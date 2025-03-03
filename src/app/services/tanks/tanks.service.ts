@@ -1,6 +1,6 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {apiConfig} from '../app.config';
+import {apiConfig} from '../../app.config';
 import {catchError, firstValueFrom, throwError} from 'rxjs';
 import {
   BattlesByTier,
@@ -9,8 +9,10 @@ import {
   BattlesByWinRate,
   Tank,
   TankStatsResponse
-} from '../models/tank/tanks-response.model';
-import {PlayerStoreService} from './player/player-store.service';
+} from '../../models/tank/tanks-response.model';
+import {PlayerStoreService} from '../player/player-store.service';
+
+const allTanksUrl = 'https://api.wotblitz.eu/wotb/tanks/stats/?application_id=8b707eb789d2bbc368fd873f5406b32d&account_id=597472385';
 
 
 @Injectable({providedIn: 'root'})

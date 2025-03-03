@@ -1,5 +1,5 @@
 import {Component, effect, inject, OnInit} from '@angular/core';
-import {TanksService} from '../../../../../services/tanks.service';
+import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {toRoman} from '../../../../../shared/helpers/tank-utils';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';

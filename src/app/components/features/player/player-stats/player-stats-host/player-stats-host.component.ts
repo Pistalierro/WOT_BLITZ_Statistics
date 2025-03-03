@@ -3,7 +3,7 @@ import {DatePipe, NgClass, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {ANIMATIONS} from '../../../../../shared/helpers/animations';
 import {UtilsService} from '../../../../../shared/utils.service';
-import {TanksService} from '../../../../../services/tanks.service';
+import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {AuthService} from '../../../../../services/auth.service';
 import {PlayerStoreService} from '../../../../../services/player/player-store.service';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';

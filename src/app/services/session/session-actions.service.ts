@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {SessionStateService} from './session-state.service';
 import {collection, doc, setDoc} from '@angular/fire/firestore';
 import {SessionUtilsService} from './session-utils.service';
-import {TanksService} from '../tanks.service';
+import {TanksService} from '../tanks/tanks.service';
 import {PlayerStoreService} from '../player/player-store.service';
 
 

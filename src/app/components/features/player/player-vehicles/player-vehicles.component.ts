@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
-import {TanksService} from '../../../../services/tanks.service';
+import {TanksService} from '../../../../services/tanks/tanks.service';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';

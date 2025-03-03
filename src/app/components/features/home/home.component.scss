@@ -17,11 +17,12 @@
     display: grid;
     @include md-min {
       grid-template-columns: repeat(2, 1fr);
+      gap: $gap-sm * 3;
     }
     @include md {
       grid-template-columns: 1fr;
+      gap: $gap;
     }
-    gap: $gap;
 
     .stat-card {
       height: 100%;
@@ -29,6 +30,19 @@
       opacity: 0.75;
       min-height: $gap-x5 * 2;
       color: $color-gray;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.25s ease-in-out;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      &__link {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
 
       mat-card-header {
         display: flex;
@@ -60,7 +74,6 @@
     }
   }
 }
-
 
 .mat-icon {
   overflow: visible;
