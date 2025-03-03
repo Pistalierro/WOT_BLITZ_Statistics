@@ -55,12 +55,9 @@ mat-toolbar {
     button {
       color: $color-gray;
       @include lg-min {
-        font-size: 0.875rem;
-      }
-      @include lg-md {
         font-size: 0.75rem;
       }
-      @include md {
+      @include lg {
         font-size: 0.5rem;
       }
       text-transform: uppercase;
@@ -106,7 +103,7 @@ mat-toolbar {
 
 .sidenav {
   height: 100%;
-  width: $gap-x5 * 2;
+  width: $gap-x5 * 2.5;
   background-color: $color-deep-dark;
   color: $color-light;
   display: flex;
@@ -146,9 +143,56 @@ mat-toolbar {
   }
 }
 
-.user-nickname {
-  font-size: 0.875rem;
+//.user-info {
+//  display: flex;
+//  align-items: center;
+//  flex-direction: column;
+//  justify-content: space-between; // Раздвигаем ник и кнопку выхода
+//  width: 100%; // Занимаем всю ширину контейнера
+//  padding: 10px 0;
+//
+//  .user-nickname {
+//    width: 100%;
+//    font-size: 1rem;
+//    font-weight: bold;
+//    color: $color-light;
+//    text-align: center;
+//  }
+//}
+
+.user {
+  &-info {
+    width: 100%;
+
+    &--mobile {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &-nickname {
+    font-size: 1rem;
+    @extend %text-shadow-light;
+  }
 }
+
+button > mat-icon {
+  font-size: 1.25rem !important;
+  display: block;
+  //min-height: 40px;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+
+//.user-nickname {
+//  font-size: 0.85rem;
+//  font-weight: bold;
+//  color: $color-light;
+//  text-align: center;
+//}
 
 .language-select {
   display: flex;

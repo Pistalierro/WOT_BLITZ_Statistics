@@ -10,6 +10,10 @@
   text-shadow: 0 0 10px $color-black, 0 0 20px $color-black, 0 0 40px $color-black;
 }
 
+%text-shadow-light {
+  text-shadow: 0 0 $gap-sm $color-light, 0 0 $gap $color-light
+}
+
 %box-shadow-black {
   box-shadow: 0 0 $gap $color-black;
 }

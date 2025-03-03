@@ -10,18 +10,22 @@
       <button mat-button routerLink="/session" routerLinkActive="active">{{ 'NAV.SESSION' | translate }}</button>
       <button mat-button routerLink="/clans" routerLinkActive="active">{{ 'NAV.CLANS' | translate }}</button>
 
-      <ng-container *ngIf="nickname$(); else loginButton">
-        <button (click)="logout()" mat-button>
-          <mat-icon>logout</mat-icon>
-        </button>
-        <span class="user-nickname">{{ nickname$() }}</span>
-      </ng-container>
+      <div class="user">
+        <ng-container *ngIf="nickname$(); else loginButton">
+          <div class="user-info">
+            <span class="user-nickname">{{ nickname$() }}</span>
+            <button (click)="logout()" class="login-btn" mat-button>
+              <mat-icon>logout</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #loginButton>
+          <button (click)="openDialog()" mat-button>
+            <mat-icon>login</mat-icon>
+          </button>
+        </ng-template>
+      </div>
 
-      <ng-template #loginButton>
-        <button (click)="openDialog()" mat-button>
-          <mat-icon>login</mat-icon>
-        </button>
-      </ng-template>
       <div class="language-select">
         <mat-form-field color="warn">
           <mat-select (selectionChange)="switchLanguage($event.value)" [value]="currentLanguage">
@@ -53,18 +57,22 @@
       <button (click)="closeSidenav()" mat-button routerLink="/session">{{ 'NAV.SESSION' | translate }}</button>
       <button (click)="closeSidenav()" mat-button routerLink="/clans">{{ 'NAV.CLANS' | translate }}</button>
 
-      <ng-container *ngIf="nickname$(); else loginButton">
-        <button (click)="logout()" mat-button>
-          <mat-icon>logout</mat-icon>
-        </button>
-        <span class="user-nickname">{{ nickname$() }}</span>
-      </ng-container>
+      <div class="user">
+        <ng-container *ngIf="nickname$(); else loginButton">
+          <div class="user-info user-info--mobile">
+            <span class="user-nickname">{{ nickname$() }}</span>
+            <button (click)="logout()" mat-button>
+              <mat-icon>logout</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #loginButton>
+          <button (click)="openDialog()" mat-button>
+            <mat-icon>login</mat-icon>
+          </button>
+        </ng-template>
+      </div>
 
-      <ng-template #loginButton>
-        <button (click)="openDialog()" mat-button>
-          <mat-icon>login</mat-icon>
-        </button>
-      </ng-template>
       <div class="language-container language-container--mobile">
         <mat-form-field color="warn">
           <mat-select (selectionChange)="switchLanguage($event.value)" [value]="currentLanguage">
