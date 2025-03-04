@@ -1,13 +1,14 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {BasicClanData, ExtendedClanDetails} from '../../models/clan/clan-response.model';
 import {ClanUtilsService} from './clan-utils.service';
-import {ClanFirestoreService} from './clan-firestore.service';
-import {ClanIndexedDbService} from './clan-indexeddb.service';
 import {ClanDataService} from './clan-data.service';
 import {apiConfig} from '../../app.config';
 import {lastValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {PlayerInfoResponse} from '../../models/player/player-response.model';
+import {SyncService} from '../../shared/services/data/sync.service';
+import {FirestoreStorageService} from '../../shared/services/data/firestore-storage.service';
+import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
 
 
 @Injectable({
@@ -25,9 +26,10 @@ export class ClanService {
   clanPlayersList = signal<any[] | null>(null);
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
-  private firestoreService = inject(ClanFirestoreService);
-  private indexedDbService = inject(ClanIndexedDbService);
+  private firestoreService = inject(FirestoreStorageService);
+  private indexedDbService = inject(IndexedDbService);
   private clanDataService = inject(ClanDataService);
+  private syncService = inject(SyncService);
   private http = inject(HttpClient);
 
   constructor() {
@@ -57,9 +59,10 @@ export class ClanService {
       this.largeClansIds = largeClans;
 
       await Promise.all([
-        this.clanDataService.saveDataToAllStorages('allClansData', this.allClansData),
-        this.clanDataService.saveDataToAllStorages('largeClansIds', this.largeClansIds),
+        this.syncService.saveDataToAllStorages('clans', 'allClansData', this.allClansData),
+        this.syncService.saveDataToAllStorages('clans', 'largeClansIds', this.largeClansIds)
       ]);
+
 
       console.log('✅ Данные успешно сохранены в IndexedDB и Firestore');
     } catch (error: any) {
@@ -74,8 +77,8 @@ export class ClanService {
     this.topClansIds = [];
 
     if (!this.largeClansIds) {
-      const ids = await this.clanDataService.getDataFromAllStorages('largeClansIds');
-      this.largeClansIds = Array.isArray(ids) ? ids : [];
+      const largeClansIdsRow = await this.syncService.getDataFromAllStorages<number[]>('clans', 'largeClansIds');
+      this.largeClansIds = (largeClansIdsRow) ? largeClansIdsRow : [];
     }
     console.log(`Всего обрабатываем ${this.largeClansIds.length} кланов`);
 
@@ -140,7 +143,7 @@ export class ClanService {
 
       this.topClansIds = top50ByWinRate.map(clan => clan.clan_id);
       console.log('📌 Топ-50 кланов:', this.topClansIds);
-      await this.clanDataService.saveDataToAllStorages('topClansIds', this.topClansIds);
+      await this.syncService.saveDataToAllStorages('clans', 'topClansIds', this.topClansIds);
     } catch (err: any) {
       console.error('❌ Ошибка в getTopClansIds:', err.message);
       this.error.set(err.message);
@@ -154,10 +157,10 @@ export class ClanService {
       this.loading.set(true);
       this.error.set(null);
 
-      const storedData = await this.clanDataService.getDataFromAllStorages<ExtendedClanDetails[]>('topClansDetails');
+      const storedData = await this.syncService.getDataFromAllStorages<ExtendedClanDetails[]>('clans', 'topClansDetails');
       if (storedData && storedData.length > 0) {
-        const firestoreData = await this.firestoreService.loadData('topClansDetails');
-        if (firestoreData && this.clanDataService.isDataFresh(firestoreData.timestamp)) {
+        const firestoreData = await this.firestoreService.loadDataFromFirestore('clans', 'topClansDetails');
+        if (firestoreData && this.syncService.isDataFresh(firestoreData.timestamp)) {
           const timestamp = firestoreData.timestamp; // Предполагаем, что это UNIX timestamp (в миллисекундах)
           const timeDiffMs = Date.now() - timestamp;
           const hours = Math.floor(timeDiffMs / (1000 * 60 * 60));
@@ -194,7 +197,7 @@ export class ClanService {
       topClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
       this.topClansDetails.set(topClans);
 
-      await this.clanDataService.saveDataToAllStorages('topClansDetails', topClans);
+      await this.syncService.saveDataToAllStorages('clans', 'topClansDetails', topClans);
       console.log('✅ topClansDetails сохранены во все БД');
     } catch (err: any) {
       console.error('❌ Ошибка в getTopClansDetails:', err.message);
@@ -270,20 +273,17 @@ export class ClanService {
 
   async initData(): Promise<void> {
     try {
-      const [allClansData, largeClansIds, topClansIds, topClansDetails] = await Promise.all([
-        this.clanDataService.getDataFromAllStorages<BasicClanData[]>('allClansData')
-          .then(data => Array.isArray(data) ? data : []),
-        this.clanDataService.getDataFromAllStorages<number[]>('largeClansIds')
-          .then(data => Array.isArray(data) ? data : []),
-        this.clanDataService.getDataFromAllStorages<number[]>('topClansIds')
-          .then(data => Array.isArray(data) ? data : []),
-        this.clanDataService.getDataFromAllStorages<ExtendedClanDetails[]>('topClansDetails')
+      const [allClansDataRaw, largeClansIdsRaw, topClansIds, topClansDetails] = await Promise.all([
+        this.syncService.getDataFromAllStorages<BasicClanData[]>('clans', 'allClansData'),
+        this.syncService.getDataFromAllStorages<number[]>('clans', 'largeClansIds'),
+        this.syncService.getDataFromAllStorages<number[]>('clans', 'topClansIds'),
+        this.syncService.getDataFromAllStorages<ExtendedClanDetails[]>('clans', 'topClansDetails')
           .then(data => Array.isArray(data) ? data : []),
       ]);
 
-      this.allClansData = allClansData;
-      this.largeClansIds = largeClansIds;
-      this.topClansIds = topClansIds;
+      this.allClansData = Array.isArray(allClansDataRaw) ? allClansDataRaw : [];
+      this.largeClansIds = Array.isArray(largeClansIdsRaw) ? largeClansIdsRaw : [];
+      this.topClansIds = Array.isArray(topClansIds) ? topClansIds : [];
       this.topClansDetails.set(topClansDetails); // Устанавливаем данные в сигнал
 
       if (topClansDetails.length > 0) {

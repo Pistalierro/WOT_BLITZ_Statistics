@@ -2,9 +2,10 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {lastValueFrom, timeout} from 'rxjs';
 import {ApiResponse, BasicClanData} from '../../models/clan/clan-response.model';
-import {ClanIndexedDbService} from './clan-indexeddb.service';
+
 import {apiConfig} from '../../app.config';
 import {PlayerData} from '../../models/player/player-response.model';
+import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import {PlayerData} from '../../models/player/player-response.model';
 export class ClanUtilsService {
 
   private http = inject(HttpClient);
-  private indexedDbService = inject(ClanIndexedDbService);
+  private indexedDbService = inject(IndexedDbService);
 
   async fetchPaginatedData<T, R>(
     urlGenerator: (page: number) => string,
@@ -119,7 +120,7 @@ export class ClanUtilsService {
     const uniqueClans = new Map<number, BasicClanData>();
     const result: BasicClanData[] = [];
 
-    const record = await this.indexedDbService.getRecord('allClansData');
+    const record = await this.indexedDbService.getRecord('clans', 'allClansData');
     const allClans: BasicClanData[] = record?.data || [];
 
     if (!allClans.length) {

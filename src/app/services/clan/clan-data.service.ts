@@ -4,8 +4,6 @@ import {ClanUtilsService} from './clan-utils.service';
 import {ApiResponse, BasicClanData, ClanDetails, ClanListResponse, ExtendedClanDetails} from '../../models/clan/clan-response.model';
 import {apiConfig} from '../../app.config';
 import {firstValueFrom, lastValueFrom} from 'rxjs';
-import {ClanIndexedDbService} from './clan-indexeddb.service';
-import {ClanFirestoreService} from './clan-firestore.service';
 
 
 @Injectable({
@@ -15,8 +13,6 @@ export class ClanDataService {
 
   private http = inject(HttpClient);
   private utilsService = inject(ClanUtilsService);
-  private indexedDbService = inject(ClanIndexedDbService);
-  private firestoreService = inject(ClanFirestoreService);
 
   async fetchAllClans(limit: number, maxRetries: number = 3, delayMs: number = 1000): Promise<BasicClanData[]> {
     console.log(`📌 Начинаем загрузку всех кланов (лимит: ${limit})`);
@@ -167,47 +163,5 @@ export class ClanDataService {
     }
   }
 
-  async saveDataToAllStorages<T>(key: string, data: T[]): Promise<void> {
-    if (!data || data.length === 0) {
-      console.warn(`⚠ Нет данных для сохранения: ${key}`);
-      return;
-    }
 
-    try {
-      await Promise.all([
-        this.indexedDbService.saveDataToIndexedDB(key, data),
-        this.firestoreService.saveData(key, data)
-      ]);
-      console.log(`✅ Данные успешно сохранены для ключа "${key}" во всех хранилищах`);
-    } catch (error: any) {
-      console.error(`❌ Ошибка при сохранении данных для ключа "${key}":`, error.message);
-    }
-  }
-
-  async getDataFromAllStorages<T extends any[]>(key: string): Promise<T> {
-    const indexedData = await this.indexedDbService.getDataFromIndexedDB<T>(key);
-    if (indexedData && indexedData.data.length > 0) {
-      console.log(`📥 Данные для ключа "${key}" получены из IndexedDB.`);
-      return indexedData.data as T;
-    }
-
-    console.log(`⚠️ Данные для ключа "${key}" не найдены в IndexedDB. Запрашиваем из Firestore...`);
-
-    const firestoreData = await this.firestoreService.loadData<T>(key);
-    if (firestoreData && firestoreData.data.length > 0) {
-      console.log(`📥 Данные для ключа "${key}" получены из Firestore. Кэшируем в IndexedDB...`);
-      await this.indexedDbService.saveDataToIndexedDB(key, firestoreData.data, firestoreData.timestamp);
-
-      return firestoreData.data as T;
-    }
-
-    console.warn(`⚠️ Данные для ключа "${key}" не найдены ни в IndexedDB, ни в Firestore.`);
-    return [] as unknown as T;
-  }
-
-
-  isDataFresh(timestamp: number): boolean {
-    const oneDayInMs = 86400000;
-    return Date.now() - timestamp < oneDayInMs;
-  }
 }

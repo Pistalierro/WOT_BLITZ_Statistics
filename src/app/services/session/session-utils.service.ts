@@ -115,8 +115,8 @@ export class SessionUtilsService {
             type: updatedTank.type,
             nation: updatedTank.nation,
             images: {
-              preview: updatedTank.images.preview,
-              normal: updatedTank.images.normal
+              preview: updatedTank.images?.preview,
+              normal: updatedTank.images?.normal
             },
             totalBattles: globalTank?.all.battles ?? 0,
             totalWins: globalTank?.all.wins ?? 0,

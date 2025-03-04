@@ -21,7 +21,7 @@ export interface Tank {
   nation: string;
   tier: number;
   type: string;
-  images: {
+  images?: {
     preview: string;
     normal: string;
   };
@@ -38,7 +38,10 @@ export interface TankDeltaInterface {
   tier: number;
   nation: string;
   type: string;
-  images?: { preview: string, normal: string };
+  images?: {
+    preview?: string,
+    normal?: string
+  };
   name?: string;
   battles: number;
   wins: number;
@@ -55,5 +58,3 @@ export type BattlesByTier = Record<number, number>;
 export type BattlesByType = Record<string, number>;
 export type BattlesByWinRate = Record<number, number>;
 export type BattlesByWinAvgDamage = Record<number, number>;
-
-
