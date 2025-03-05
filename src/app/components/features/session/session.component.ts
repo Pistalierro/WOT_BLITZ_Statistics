@@ -11,6 +11,7 @@ import {MATERIAL_MODULES} from '../../../shared/helpers/material-providers';
 import {OdometerDirective} from '../../../shared/directives/odometer.directive';
 import {sanitizeUrl} from '../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
+import {UtilsService} from '../../../shared/utils.service';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort) sort!: MatSort;
   isFlipped: boolean[] = [];
-
+  utilsService = inject(UtilsService);
   protected readonly tankTypes = tankTypes;
   protected readonly toRoman = toRoman;
   protected readonly getFlagUrl = getFlagUrl;

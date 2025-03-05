@@ -54,6 +54,35 @@ export interface TankDeltaInterface {
   totalAvgDamage?: number;
 }
 
+export interface TanksJsonResponse {
+  data: Record<string, TankData>;
+}
+
+export interface TankData {
+  tank_id: number;
+  name: string;
+  nation: string;
+  is_premium?: boolean;
+  tier: number;
+  type: string;
+  description?: string | null;
+
+  // бывают ещё поля, пример:
+  cost?: {
+    price_credit?: number;
+    price_gold?: number;
+  } | null;
+  images?: {
+    preview?: string;
+    normal?: string;
+  };
+  creditCoeff?: number;
+  is_collectible?: boolean;
+
+  // и т.д. если есть ещё параметры
+}
+
+
 export type BattlesByTier = Record<number, number>;
 export type BattlesByType = Record<string, number>;
 export type BattlesByWinRate = Record<number, number>;

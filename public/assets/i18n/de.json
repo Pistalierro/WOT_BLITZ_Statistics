@@ -78,7 +78,7 @@
     "TABLE": {
       "WIN_RATE": "Siegquote",
       "BATTLES": "Schlachten",
-      "DAMAGE": "Schaden",
+      "DAMAGE": "Schd",
       "NO_IMAGE": "Kein Bild"
     }
   },

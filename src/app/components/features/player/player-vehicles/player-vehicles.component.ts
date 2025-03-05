@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
 import {TanksService} from '../../../../services/tanks/tanks.service';
 import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
@@ -10,6 +10,7 @@ import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../shared/
 import {AuthService} from '../../../../services/auth.service';
 import {sanitizeUrl} from '../../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
+import {TanksDataService} from '../../../../services/tanks/tanks-data.service';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -24,7 +25,7 @@ import {TranslatePipe} from '@ngx-translate/core';
   templateUrl: './player-vehicles.component.html',
   styleUrl: './player-vehicles.component.scss'
 })
-export class PlayerVehiclesComponent implements AfterViewInit {
+export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = COLUMNS_NAMES;
   dataSource = new MatTableDataSource<Tank>([]);
 
@@ -33,11 +34,11 @@ export class PlayerVehiclesComponent implements AfterViewInit {
 
   protected tanksService = inject(TanksService);
   protected authService = inject(AuthService);
-
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
   protected readonly sanitizeUrl = sanitizeUrl;
+  private tanksDataService = inject(TanksDataService);
 
   constructor() {
     effect(() => {
@@ -46,6 +47,11 @@ export class PlayerVehiclesComponent implements AfterViewInit {
         this.dataSource.data = tankList;
       }
     });
+  }
+
+  ngOnInit() {
+    // void this.tanksDataService.loadAndSaveTanks();
+    // void this.tanksService.findMissingTanks();
   }
 
   ngAfterViewInit() {

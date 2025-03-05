@@ -73,7 +73,8 @@
       "tier": 1,
       "is_premium": false,
       "creditCoeff": 156.4,
-      "images": {},
+      "images": {
+      },
       "description": "No information available from Wargaming's tankopedia for this tank. mediumTank,deprecated,lightTankArtefacts_User,improvedVentilation_class1_user,enhancedVertical_elastic_elements_user,secret"
     },
     "113": {
@@ -3372,8 +3373,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/wz-113.webp",
+        "preview": "/images/tanks/wz-113.webp"
       },
       "creditCoeff": 80
     },
@@ -4508,8 +4509,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/is-7.webp",
+        "preview": "/images/tanks/is-7.webp"
       },
       "creditCoeff": 80
     },
@@ -6260,8 +6261,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/wz-132-1.webp",
+        "preview": "/images/tanks/wz-132-1.webp"
       },
       "creditCoeff": null
     },
@@ -6396,7 +6397,8 @@
     },
     "10609": {
       "tank_id": 10609,
-      "names": {},
+      "names": {
+      },
       "nation": "other",
       "tier": 7,
       "type": "mediumTank",
@@ -6501,7 +6503,8 @@
     },
     "10801": {
       "tank_id": 10801,
-      "names": {},
+      "names": {
+      },
       "nation": "china",
       "tier": 6,
       "type": "AT-SPG",
@@ -6542,7 +6545,8 @@
     },
     "10865": {
       "tank_id": 10865,
-      "names": {},
+      "names": {
+      },
       "nation": "other",
       "tier": 8,
       "type": "mediumTank",
@@ -6691,7 +6695,8 @@
     },
     "11121": {
       "tank_id": 11121,
-      "names": {},
+      "names": {
+      },
       "nation": "other",
       "tier": 9,
       "type": "heavyTank",
@@ -7091,8 +7096,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/bz-75.webp",
+        "preview": "/images/tanks/bz-75.webp"
       },
       "creditCoeff": null
     },
@@ -7604,8 +7609,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/vz.55.webp",
+        "preview": "/images/tanks/vz.55.webp"
       },
       "creditCoeff": null
     },
@@ -8228,8 +8233,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/bz-75.webp",
+        "preview": "/images/tanks/bz-75.webp"
       },
       "creditCoeff": null
     },
@@ -8427,7 +8432,8 @@
     },
     "15729": {
       "tank_id": 15729,
-      "names": {},
+      "names": {
+      },
       "nation": "other",
       "tier": 8,
       "type": "mediumTank",
@@ -8635,7 +8641,8 @@
     },
     "16241": {
       "tank_id": 16241,
-      "names": {},
+      "names": {
+      },
       "nation": "other",
       "tier": 7,
       "type": "heavyTank",
@@ -8739,7 +8746,8 @@
     },
     "16513": {
       "tank_id": 16513,
-      "names": {},
+      "names": {
+      },
       "nation": "european",
       "tier": 8,
       "type": "AT-SPG",
@@ -9249,8 +9257,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/rinoceronte.webp",
+        "preview": "/images/tanks/rinoceronte.webp"
       },
       "creditCoeff": null
     },
@@ -10520,8 +10528,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/projet_murat.webp",
+        "preview": "/images/tanks/projet_murat.webp"
       },
       "creditCoeff": null
     },
@@ -11917,7 +11925,8 @@
     },
     "25601": {
       "tank_id": 25601,
-      "names": {},
+      "names": {
+      },
       "nation": "ussr",
       "tier": 7,
       "type": "heavyTank",
@@ -11990,8 +11999,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/obj._777.webp",
+        "preview": "/images/tanks/obj._777.webp"
       },
       "creditCoeff": null
     },

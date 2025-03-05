@@ -52,7 +52,13 @@
         <h3>{{ 'SESSION.STATS.START' | translate }}:</h3>
         <p>{{ 'SESSION.TANKS_STATS.TOTAL_BATTLES' | translate }}: {{ startStats.battles | number: '1.0-0' }}</p>
         <p>{{ 'SESSION.TANKS_STATS.TOTAL_WINS' | translate }}: {{ startStats.wins | number: '1.0-0' }}</p>
-        <p>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}: {{ (startStats.wins / startStats.battles) * 100 | number: '1.0-2' }}%</p>
+        <div class="winRate">
+          <p>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}: &nbsp;</p>
+          <p [ngClass]="utilsService.getWinRateColor((startStats.wins / startStats.battles) * 100)">
+            {{ (startStats.wins / startStats.battles) * 100 | number: '1.2-2' }}%
+          </p>
+        </div>
+
         <p>{{ 'SESSION.STATS.AVG_DAMAGE' | translate }}: {{ startStats.damage_dealt / startStats.battles | number: '1.0-0' }}</p>
       </div>
 
@@ -64,11 +70,16 @@
         <p>{{ 'SESSION.STATS.BATTLES' | translate }}: <span [appOdometer]="intermediateStats.battles">{{ intermediateStats.battles }}</span>
         </p>
         <p>{{ 'SESSION.STATS.WINS' | translate }}: <span [appOdometer]="intermediateStats.wins">{{ intermediateStats.wins }}</span></p>
-        <p>{{ 'SESSION.STATS.WIN_RATE' | translate }}:
-          <span [appOdometer]="intermediateStats.winRate" [format]="'1.0-2'">{{ intermediateStats.winRate }}</span>%
-        </p>
+        <div class="winRate">
+          <p>{{ 'SESSION.STATS.WIN_RATE' | translate }}: &nbsp;</p>
+          <p [appOdometer]="intermediateStats.winRate" [format]="'1.0-2'"
+             [ngClass]="utilsService.getWinRateColor(intermediateStats.winRate)">
+            {{ intermediateStats.avgDamage }}
+          </p>
+          <p [ngClass]="utilsService.getWinRateColor(intermediateStats.winRate)">%</p>
+        </div>
         <p>{{ 'SESSION.STATS.AVG_DAMAGE' | translate }}:
-          <span [appOdometer]="intermediateStats.avgDamage">{{ intermediateStats.avgDamage }}</span>
+          <span [appOdometer]="intermediateStats.avgDamage"></span>
         </p>
       </div>
     </div>
@@ -103,7 +114,10 @@
               </div>
               <div class="tank-stats__item">
                 <mat-icon class="stat-icon">emoji_flags</mat-icon>
-                <span [appOdometer]="tank.winRate" [format]="'1.2-2'">{{ tank.winRate }}%</span>
+                <div [ngClass]="utilsService.getWinRateColor(tank.winRate)">
+                  <span [appOdometer]="tank.winRate" [format]="'1.0-2'">{{ tank.winRate }}</span>
+                  <span>%</span>
+                </div>
               </div>
               <div class="tank-stats__item">
                 <span>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</span>

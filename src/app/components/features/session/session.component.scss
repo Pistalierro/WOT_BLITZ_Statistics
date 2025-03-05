@@ -89,38 +89,43 @@
 
     grid-template-columns: repeat(2, 1fr);
     margin-bottom: $gap-x2;
+
+    &-badge {
+      padding: $gap-xs $gap-sm;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: $gap;
+      margin-bottom: $gap-sm;
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      position: absolute;
+      @include md-min {
+        bottom: -80%;
+      }
+      @include md {
+        bottom: -40%;
+      }
+      left: 0;
+
+      &--active {
+        background: rgba(0, 255, 0, 0.2);
+        color: lime;
+      }
+
+      &--inactive {
+        background: rgba(255, 0, 0, 0.2);
+        color: red;
+      }
+    }
+
+    &-progress-bar {
+      min-height: $gap-xs;
+    }
   }
+}
 
-  &-badge {
-    padding: $gap-xs $gap-sm;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: $gap;
-    margin-bottom: $gap-sm;
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-    position: absolute;
-    @include md-min {
-      bottom: -80%;
-    }
-    @include md {
-      bottom: -40%;
-    }
-    left: 0;
-
-    &--active {
-      background: rgba(0, 255, 0, 0.2);
-      color: lime;
-    }
-
-    &--inactive {
-      background: rgba(255, 0, 0, 0.2);
-      color: red;
-    }
-  }
-
-  &-progress-bar {
-    min-height: $gap-xs;
-  }
+.winRate p {
+  display: inline-block;
+  font-weight: 400;
 }
 
 .card-grid {
