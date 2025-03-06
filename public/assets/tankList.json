@@ -12628,8 +12628,8 @@
       },
       "description": "(Data not available in Wargaming Tankopedia)",
       "images": {
-        "normal": "",
-        "preview": ""
+        "normal": "/images/tanks/xm66f.webp",
+        "preview": "/images/tanks/xm66f.webp"
       },
       "creditCoeff": null
     },

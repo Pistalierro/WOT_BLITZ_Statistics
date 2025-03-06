@@ -7,8 +7,10 @@
         <h2>{{ 'SESSION.TITLE' | translate }}</h2>
       </div>
       <div class="session-status">
-        <span *ngIf="sessionActive()" @fadeScale class="session-badge session-badge--active">{{ 'SESSION.ACTIVE' | translate }}</span>
-        <span *ngIf="!sessionActive()" @fadeScale class="session-badge session-badge--inactive">{{ 'SESSION.INACTIVE' | translate }}</span>
+        <span *ngIf="sessionActive()" @fadeScale
+              class="session-status__badge session-status__badge--active">{{ 'SESSION.ACTIVE' | translate }}</span>
+        <span *ngIf="!sessionActive()" @fadeScale
+              class="session-status__badge session-status__badge--inactive">{{ 'SESSION.INACTIVE' | translate }}</span>
       </div>
     </div>
 
@@ -153,7 +155,7 @@
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}:</span>
-                <span>{{ tank.totalWinRate | number: '1.0-2' }}%</span>
+                <span [ngClass]="utilsService.getWinRateColor(tank.winRate)">{{ tank.totalWinRate | number: '1.0-2' }}%</span>
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TOTAL_AVG_DAMAGE' | translate }}:</span>

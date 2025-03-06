@@ -74,23 +74,7 @@
     justify-content: flex-start;
     height: $gap-sm * 3;
 
-    .active-session {
-      font-weight: bold;
-    }
-
-    .inactive-session {
-      color: $color-light !important;
-    }
-  }
-
-  &-data {
-    display: grid;
-    gap: $gap;
-
-    grid-template-columns: repeat(2, 1fr);
-    margin-bottom: $gap-x2;
-
-    &-badge {
+    &__badge {
       padding: $gap-xs $gap-sm;
       font-size: 1rem;
       font-weight: bold;
@@ -116,10 +100,18 @@
         color: red;
       }
     }
+  }
 
-    &-progress-bar {
-      min-height: $gap-xs;
-    }
+  &-progress-bar {
+    min-height: $gap-xs;
+  }
+
+  &-data {
+    display: grid;
+    gap: $gap;
+
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: $gap-x2;
   }
 }
 

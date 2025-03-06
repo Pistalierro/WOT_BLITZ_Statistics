@@ -52,7 +52,8 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>
           <mat-icon>emoji_flags</mat-icon>
         </th>
-        <td *matCellDef="let row" class="win-rate" mat-cell>
+        <td *matCellDef="let row" [ngClass]="utilsService.getWinRateColor((row.all.wins / row.all.battles) * 100)"
+            class="win-rate" mat-cell>
           {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
         </td>
       </ng-container>

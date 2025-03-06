@@ -78,7 +78,7 @@
     "TABLE": {
       "WIN_RATE": "Siegquote",
       "BATTLES": "Schlachten",
-      "DAMAGE": "Schd",
+      "DAMAGE": "Ø Schd",
       "NO_IMAGE": "Kein Bild"
     }
   },
@@ -98,7 +98,7 @@
       "BATTLES": "Gespielte Schlachten",
       "WINS": "Siege",
       "WIN_RATE": "Siegquote",
-      "AVG_DAMAGE": "Durchschnittlicher Schaden"
+      "AVG_DAMAGE": "Ø Schd"
     },
     "TANKS_STATS": {
       "INTERMEDIATE": "Zwischenstatistik für Panzer",

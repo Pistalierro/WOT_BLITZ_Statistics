@@ -32,7 +32,7 @@ export class UtilsService {
 
     if (maxBattles === 0) {
       for (const tier in battlesByTier) {
-        result[tier] = minPercent; // Минимальный видимый прогресс-бар
+        result[tier] = minPercent;
       }
     } else {
       for (const tier in battlesByTier) {

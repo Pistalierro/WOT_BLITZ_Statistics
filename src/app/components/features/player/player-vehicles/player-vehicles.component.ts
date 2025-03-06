@@ -5,12 +5,13 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Tank} from '../../../../models/tank/tanks-response.model';
-import {DecimalPipe, NgIf, NgStyle} from '@angular/common';
+import {DecimalPipe, NgClass, NgIf, NgStyle} from '@angular/common';
 import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../shared/helpers/tank-utils';
 import {AuthService} from '../../../../services/auth.service';
 import {sanitizeUrl} from '../../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
 import {TanksDataService} from '../../../../services/tanks/tanks-data.service';
+import {UtilsService} from '../../../../shared/utils.service';
 
 @Component({
   selector: 'app-player-vehicles',
@@ -20,7 +21,8 @@ import {TanksDataService} from '../../../../services/tanks/tanks-data.service';
     DecimalPipe,
     NgIf,
     NgStyle,
-    TranslatePipe
+    TranslatePipe,
+    NgClass
   ],
   templateUrl: './player-vehicles.component.html',
   styleUrl: './player-vehicles.component.scss'
@@ -31,7 +33,7 @@ export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
+  utilsService = inject(UtilsService);
   protected tanksService = inject(TanksService);
   protected authService = inject(AuthService);
   protected readonly getFlagUrl = getFlagUrl;
