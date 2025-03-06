@@ -101,9 +101,9 @@
             <mat-card-content class="card-image__container">
               <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-background">
                 <img [alt]="tank.name" [src]="sanitizeUrl(tank.images?.preview)" class="tank-image">
-                <div class="tank-tier">{{ toRoman(tank.tier) }}</div>
-                <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="tank-type">
-                <div class="tank-name">{{ tank.name }}</div>
+                <div [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tank-tier">{{ toRoman(tank.tier) }}</div>
+                <img [alt]="tank.type" [src]="tankTypes(tank.type, tank)" class="tank-type">
+                <div [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tank-name">{{ tank.name }}</div>
                 <div class="card-overlay"></div>
               </div>
             </mat-card-content>
@@ -132,14 +132,14 @@
           <div class="card-back">
             <h4 class="card-back__title">{{ 'SESSION.TANKS_STATS.GENERAL' | translate }}</h4>
             <mat-card-content class="card-back__content">
-              <div class="card-back__name">{{ tank.name }}</div>
+              <div [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="card-back__name">{{ tank.name }}</div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.NATION' | translate }}:</span>
                 <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)">
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TYPE' | translate }}:</span>
-                <img [alt]="tank.type" [src]="tankTypes(tank.type)">
+                <img [alt]="tank.type" [src]="tankTypes(tank.type, tank, false)">
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TIER' | translate }}:</span>
@@ -155,7 +155,7 @@
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TOTAL_WIN_RATE' | translate }}:</span>
-                <span [ngClass]="utilsService.getWinRateColor(tank.winRate)">{{ tank.totalWinRate | number: '1.0-2' }}%</span>
+                <span>{{ tank.totalWinRate | number: '1.0-2' }}%</span>
               </div>
               <div class="card-back__item">
                 <span>{{ 'SESSION.TANKS_STATS.TOTAL_AVG_DAMAGE' | translate }}:</span>

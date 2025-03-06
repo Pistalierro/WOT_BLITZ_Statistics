@@ -79,6 +79,24 @@
   }
 }
 
+.premium {
+  color: gold !important;
+  font-weight: bold;
+  font-size: 1.5rem !important;
+}
+
+.collectible {
+  color: #71D1FF !important;
+  font-weight: bold;
+  font-size: 1.5rem !important;
+}
+
+.no {
+  color: red !important;
+  font-weight: bold;
+  font-size: 1.5rem !important;
+}
+
 .progress {
   &-container {
     padding: $gap;

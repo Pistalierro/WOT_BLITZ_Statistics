@@ -35,14 +35,14 @@
         </th>
         <td *matCellDef="let row" class="main-info-cell" mat-cell>
           <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
-            <div class="tier-label">{{ toRoman(row.tier) }}</div>
-            <img [alt]="row.type" [src]="tankTypes(row.type)" class="class-icon"/>
+            <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tier-label">{{ toRoman(row.tier) }}</div>
+            <img [alt]="row.type" [src]="tankTypes(row.type, row)" class="class-icon"/>
             <div class="flag-content">
               <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
                    class="tank-icon-centered"/>
               <ng-template #noImage><span class="no-image">{{ 'TANKS_STATS.TABLE.NO_IMAGE' | translate }}</span></ng-template>
             </div>
-            <div class="tank-name">{{ row.name }}</div>
+            <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tank-name">{{ row.name }}</div>
           </div>
         </td>
       </ng-container>

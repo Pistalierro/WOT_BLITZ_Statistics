@@ -25,6 +25,8 @@ export interface Tank {
     preview: string;
     normal: string;
   };
+  is_premium: boolean;
+  is_collectible: boolean;
   all: {
     battles: number;
     wins: number;
@@ -42,6 +44,8 @@ export interface TankDeltaInterface {
     preview?: string,
     normal?: string
   };
+  is_premium?: boolean;
+  is_collectible?: boolean;
   name?: string;
   battles: number;
   wins: number;
@@ -62,7 +66,6 @@ export interface TankData {
   tank_id: number;
   name: string;
   nation: string;
-  is_premium?: boolean;
   tier: number;
   type: string;
   description?: string | null;
@@ -77,9 +80,8 @@ export interface TankData {
     normal?: string;
   };
   creditCoeff?: number;
+  is_premium?: boolean;
   is_collectible?: boolean;
-
-  // и т.д. если есть ещё параметры
 }
 
 

@@ -44,9 +44,7 @@ export class SessionActionsService {
         startTimestamp: Date.now(),
         isActive: true,
       };
-
       await setDoc(sessionDocRef, sessionData);
-
       this.sessionState.sessionId.set(sessionDocRef.id);
       this.sessionState.sessionActive.set(true);
       this.sessionState.startStats.set(startStatsValue);

@@ -14,6 +14,8 @@ export interface SessionDeltaInterface {
   avgDamage: number;
   tanksDelta?: TankDeltaInterface[];
   tanksList?: TankDeltaInterface[];
+  is_premium?: boolean;
+  is_collectible?: boolean;
 }
 
 export interface SessionDataInterface {

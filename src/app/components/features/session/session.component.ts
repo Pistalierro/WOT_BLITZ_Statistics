@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, effect, inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {DecimalPipe, NgClass, NgForOf, NgIf, NgStyle} from '@angular/common';
+import {DecimalPipe, JsonPipe, NgClass, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {SessionStateService} from '../../../services/session/session-state.service';
 import {SessionMonitoringService} from '../../../services/session/session-monitoring.service';
 import {SessionActionsService} from '../../../services/session/session-actions.service';
@@ -26,6 +26,7 @@ import {UtilsService} from '../../../shared/utils.service';
     NgClass,
     NgStyle,
     TranslatePipe,
+    JsonPipe,
   ],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss',

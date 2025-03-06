@@ -1,13 +1,29 @@
-export function tankTypes(type: string): string {
+export function tankTypes(type: string, row?: any, shouldColorize: boolean = true): string {
+  const basePath = '/images/tank-types/';
+  let suffix = '';
+
+  if (shouldColorize && row) { // Проверяем, нужно ли вообще менять цвет
+    if (row.is_collectible) {
+      suffix = '-blue.png';
+    } else if (row.is_premium) {
+      suffix = '-gold.png';
+    } else {
+      suffix = '.png'; // Обычный танк
+    }
+  } else {
+    suffix = '.png'; // Если перекраска не нужна, всегда возвращаем обычную иконку
+  }
+
   const icons: { [key: string]: string } = {
-    'lightTank': '/images/tank-types/light-tank.png',
-    'mediumTank': '/images/tank-types/medium-tank.png',
-    'heavyTank': '/images/tank-types/heavy-tank.png',
-    'AT-SPG': '/images/tank-types/at-spg.png',
+    'lightTank': `${basePath}light-tank${suffix}`,
+    'mediumTank': `${basePath}medium-tank${suffix}`,
+    'heavyTank': `${basePath}heavy-tank${suffix}`,
+    'AT-SPG': `${basePath}at-spg${suffix}`,
   };
 
-  return icons[type] || 'unknown';
+  return icons[type] || `${basePath}unknown.png`;
 }
+
 
 export function getFlagUrl(nation: string): string {
   const flagUrls: { [key: string]: string } = {

@@ -40,6 +40,7 @@ export class SessionUtilsService {
 
       const startTanksList = this.sessionState.startsTanksStats();
       if (!startTanksList) throw new Error('Начальный список танков отсутствует');
+      console.log(startTanksList);
       const updatedTanksList = this.tanksService.tanksList();
 
       if (!startStatsValue) throw new Error('Нет стартовой статистики!');
@@ -50,6 +51,7 @@ export class SessionUtilsService {
       const winRate = deltaBattles > 0 ? (deltaWins / deltaBattles) * 100 : 0;
       const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
       const tanksDelta = this.getSessionTanks(startTanksList, updatedTanksList);
+      console.log('tanksDelta AFTER getSessionTanks => ', tanksDelta);
 
       const sessionDelta: SessionDeltaInterface = {
         battles: deltaBattles,
@@ -122,10 +124,11 @@ export class SessionUtilsService {
             totalWins: globalTank?.all.wins ?? 0,
             totalWinRate: globalTank ? (globalTank?.all.wins / globalTank?.all.battles) * 100 : 0,
             totalAvgDamage: globalTank ? globalTank.all.damage_dealt / globalTank?.all.battles : 0,
+            is_premium: globalTank?.is_premium ?? false,
+            is_collectible: globalTank?.is_collectible ?? false,
           };
         }
       }
-
       return null;
     }).filter(delta => delta !== null);
   }

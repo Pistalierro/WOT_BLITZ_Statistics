@@ -14,6 +14,16 @@ export class UtilsService {
     } else return 'winRate-white';
   }
 
+  getTankColor(row: any): string {
+    if (row.is_collectible) {
+      return '#71D1FF';
+    } else if (row.is_premium) {
+      return 'gold';
+    } else {
+      return '#c8c8c8';
+    }
+  }
+
   initTierPercentMap(tiers: any[]): Record<number, number> {
     const result: Record<number, number> = {};
     tiers.forEach(tier => {

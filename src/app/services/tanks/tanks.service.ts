@@ -46,7 +46,6 @@ export class TanksService {
 
     effect(() => {
       if (this.tanksList().length > 0) {
-        console.log('📊 Танки загружены! Пересчитываем статистику по винрейту...');
         queueMicrotask(() => {
           this.calculateStatistics();
         });
@@ -64,35 +63,25 @@ export class TanksService {
     this.error.set(null);
 
     try {
-      console.log('⏳ [fetchTankData] Загружаем данные всех танков из хранилищ...');
-
-      // 1️⃣ Получаем данные о всех танках из IndexedDB / Firestore
       const jsonTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
       this.jsonTanksList = Array.isArray(jsonTanks) ? jsonTanks : [];
 
-      console.log(`📥 [fetchTankData] Загружено ${this.jsonTanksList.length} танков из локального хранилища.`);
-
-      // 2️⃣ Фильтруем нужные поля + Обрабатываем изображения
-      const filteredTanks = this.jsonTanksList.map(({tank_id, name, nation, tier, type, images}) => ({
-        tank_id,
-        name: name ?? 'Unknown',
-        nation: nation ?? 'unknown',
-        tier: tier ?? 0,
-        type: type ?? 'unknown',
-        images: {
-          preview: images?.normal || '/images/tanks/default_tank.webp',
-          normal: images?.normal || '/images/tanks/default_tank.webp',
-        }, // 🖼 Теперь images остаётся объектом, а не строкой!
-      }));
-
-
-      console.log(`🔢 [fetchTankData] Список tank_id сформирован. Всего: ${filteredTanks.length}`);
-
-      // 3️⃣ Делаем API-запрос к Wargaming API, чтобы получить статистику
-      console.log('🌐 [fetchTankData] Запрашиваем статистику по танкам...');
+      const filteredTanks = this.jsonTanksList
+        .map(({tank_id, name, nation, tier, type, images, is_premium, is_collectible}) => ({
+          tank_id,
+          name: name ?? 'Unknown',
+          nation: nation ?? 'unknown',
+          tier: tier ?? 0,
+          type: type ?? 'unknown',
+          images: {
+            preview: images?.normal || '/images/tanks/default_tank.webp',
+            normal: images?.normal || '/images/tanks/default_tank.webp',
+          },
+          is_premium: is_premium ?? false,
+          is_collectible: is_collectible ?? false,
+        }));
 
       const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=tank_id%2C+last_battle_time%2C+all.battles%2C+all.damage_dealt%2C+all.max_frags%2C+all.wins`;
-
       const res = await firstValueFrom(
         this.http.get<TankStatsResponse>(url).pipe(
           catchError(err => throwError(() => new Error('Ошибка получения данных о танках: ' + err.message)))
@@ -106,14 +95,8 @@ export class TanksService {
       }
 
       const statsData = res.data[accountId];
-      console.log(`📊 [fetchTankData] Загружена статистика по ${statsData.length} танкам.`);
-
-      // 5️⃣ Оставляем только танки, на которых были бои
       const tankStatsFiltered = statsData.filter(tank => tank.all.battles >= 0);
 
-      console.log(`📊 [fetchTankData] Отфильтровано танков с боями: ${tankStatsFiltered.length}`);
-
-      // 6️⃣ Мержим статистику с локальными данными по tank_id и добавляем картинки
       const mergedTanks: Tank[] = tankStatsFiltered.map(stat => {
         const localTank = filteredTanks.find(tank => tank.tank_id === stat.tank_id) as Partial<TankData> || {};
 
@@ -126,29 +109,62 @@ export class TanksService {
           images: {
             preview: localTank.images?.normal || '/images/tanks/default_tank.webp',
             normal: localTank.images?.normal || '/images/tanks/default_tank.webp',
-          }, // 🛠 Теперь images всегда объект с полями preview и normal
+          },
+          is_premium: localTank.is_premium ?? false,
+          is_collectible: localTank.is_collectible ?? false,
         };
       });
 
-
-      console.log(`🔄 [fetchTankData] Успешно объединены данные по ${mergedTanks.length} танкам.`);
-
-      // 7️⃣ Сохраняем объединённый список в tanksList
       this.tanksList.set(mergedTanks);
-      console.log('✅ [fetchTankData] Данные по танкам обновлены!');
 
     } catch (err: any) {
-      console.error(`❌ [fetchTankData] Ошибка: ${err.message}`);
       this.error.set(`⚠️ Ошибка загрузки данных о танках: ${err.message}`);
-
     } finally {
       this.loading.set(false);
-      console.log('🏁 [fetchTankData] Завершение загрузки данных.');
     }
   }
 
+  async findMissingTanks(): Promise<void> {
+    try {
+      console.log('⏳ [findMissingTanks] Загружаем список танков из Wargaming API...');
 
-  calculateStatistics(): void {
+      const url = `https://api.wotblitz.eu/wotb/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
+      const res = await firstValueFrom(
+        this.http.get<{ status: string; data: { [key: number]: { tank_id: number } } }>(url).pipe(
+          catchError(err => throwError(() => new Error('Ошибка получения данных о танках из Wargaming API: ' + err.message)))
+        )
+      );
+
+      if (res.status !== 'ok' || !res.data) {
+        console.warn('⚠️ [findMissingTanks] API Wargaming не вернул данные.');
+        return;
+      }
+
+      const apiTankIds = new Set(Object.keys(res.data).map(Number)); // Список tank_id из API
+      console.log(`📊 [findMissingTanks] Загружено танков из API: ${apiTankIds.size}`);
+
+      // 2️⃣ Загружаем локальный JSON (BlitzStars)
+      const jsonTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
+      const jsonTanksList = Array.isArray(jsonTanks) ? jsonTanks : [];
+
+      console.log(`📥 [findMissingTanks] Загружено танков из локального JSON: ${jsonTanksList.length}`);
+
+      // 3️⃣ Находим танки 10 уровня, которых нет в API, но есть в JSON
+      const missingTanks = jsonTanksList.filter(tank => tank.tier === 10 && !apiTankIds.has(tank.tank_id));
+
+      console.log(`🚨 [findMissingTanks] Найдено ${missingTanks.length} танков 10 уровня, отсутствующих в API Wargaming:`);
+      console.table(missingTanks);
+
+      // 4️⃣ (Опционально) Сохраняем список отсутствующих танков 10 уровня в локальное хранилище
+      await this.syncService.saveDataToAllStorages('tanks', 'missingTanksTier10', missingTanks);
+
+      console.log('✅ [findMissingTanks] Список отсутствующих танков 10 уровня сохранён.');
+    } catch (err: any) {
+      console.error(`❌ [findMissingTanks] Ошибка: ${err.message}`);
+    }
+  }
+
+  private calculateStatistics(): void {
     const battlesByTier: BattlesByTier = {};
     const battlesByType: BattlesByType = {};
     const winRateByTier: Record<number, number> = {};
@@ -190,48 +206,4 @@ export class TanksService {
     this.winRateByTier.set(winRateByTier);
     this.avgDamageByTier.set(avgDamageByTier);
   }
-
-  async findMissingTanks(): Promise<void> {
-    try {
-      console.log('⏳ [findMissingTanks] Загружаем список танков из Wargaming API...');
-
-      // 1️⃣ Загружаем список танков из API (Wargaming)
-      const url = `https://api.wotblitz.eu/wotb/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
-
-      const res = await firstValueFrom(
-        this.http.get<{ status: string; data: { [key: number]: { tank_id: number } } }>(url).pipe(
-          catchError(err => throwError(() => new Error('Ошибка получения данных о танках из Wargaming API: ' + err.message)))
-        )
-      );
-
-      if (res.status !== 'ok' || !res.data) {
-        console.warn('⚠️ [findMissingTanks] API Wargaming не вернул данные.');
-        return;
-      }
-
-      const apiTankIds = new Set(Object.keys(res.data).map(Number)); // Список tank_id из API
-      console.log(`📊 [findMissingTanks] Загружено танков из API: ${apiTankIds.size}`);
-
-      // 2️⃣ Загружаем локальный JSON (BlitzStars)
-      const jsonTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
-      const jsonTanksList = Array.isArray(jsonTanks) ? jsonTanks : [];
-
-      console.log(`📥 [findMissingTanks] Загружено танков из локального JSON: ${jsonTanksList.length}`);
-
-      // 3️⃣ Находим танки 10 уровня, которых нет в API, но есть в JSON
-      const missingTanks = jsonTanksList.filter(tank => tank.tier === 10 && !apiTankIds.has(tank.tank_id));
-
-      console.log(`🚨 [findMissingTanks] Найдено ${missingTanks.length} танков 10 уровня, отсутствующих в API Wargaming:`);
-      console.table(missingTanks);
-
-      // 4️⃣ (Опционально) Сохраняем список отсутствующих танков 10 уровня в локальное хранилище
-      await this.syncService.saveDataToAllStorages('tanks', 'missingTanksTier10', missingTanks);
-
-      console.log('✅ [findMissingTanks] Список отсутствующих танков 10 уровня сохранён.');
-    } catch (err: any) {
-      console.error(`❌ [findMissingTanks] Ошибка: ${err.message}`);
-    }
-  }
-
-
 }
