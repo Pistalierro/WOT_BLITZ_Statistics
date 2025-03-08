@@ -41,9 +41,16 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'vehicles',
-        loadComponent: () => import('./components/features/player/player-vehicles/player-vehicles.component')
-          .then(m => m.PlayerVehiclesComponent)
+        path: 'tanks',
+        loadComponent: () => import('./components/features/player/player-tanks-host/player-tanks-list/player-tanks-list.component')
+          .then(m => m.PlayerTanksListComponent),
+        children: [
+          {
+            path: ':tankId',
+            loadComponent: () => import('./components/features/player/player-tanks-host/player-tank-details/player-tank-details.component')
+              .then(m => m.PlayerTankDetailsComponent),
+          }
+        ]
       },
       {
         path: 'achievements',

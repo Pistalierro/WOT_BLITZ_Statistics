@@ -73,7 +73,7 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
-      <tr (click)="getTankFullInfo(row.tank_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
+      <tr (click)="navigateToTankDetails(row.tank_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
 
       <tr *matNoDataRow class="mat-row">
         <td class="mat-cell" colspan="4">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>

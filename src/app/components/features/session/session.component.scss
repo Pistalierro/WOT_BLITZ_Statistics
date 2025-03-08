@@ -110,7 +110,12 @@
     display: grid;
     gap: $gap;
 
-    grid-template-columns: repeat(2, 1fr);
+    @include sm-min {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include sm {
+      grid-template-columns: 1fr;
+    }
     margin-bottom: $gap-x2;
   }
 }

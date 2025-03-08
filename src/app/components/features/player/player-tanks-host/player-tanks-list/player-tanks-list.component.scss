@@ -1,6 +1,6 @@
-@use "../../../../../styles/presets/variables" as *;
-@use "../../../../../styles/presets/skin" as *;
-@use "../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../../styles/presets/variables" as *;
+@use "../../../../../../styles/presets/skin" as *;
+@use "../../../../../../styles/mixins/mixins-media" as *;
 
 .progress-bar {
   margin-top: -$gap;

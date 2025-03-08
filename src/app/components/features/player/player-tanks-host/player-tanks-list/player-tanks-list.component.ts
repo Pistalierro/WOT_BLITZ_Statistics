@@ -1,20 +1,20 @@
 import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
-import {TanksService} from '../../../../services/tanks/tanks.service';
-import {MATERIAL_MODULES} from '../../../../shared/helpers/material-providers';
+import {TanksService} from '../../../../../services/tanks/tanks.service';
+import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {Tank} from '../../../../models/tank/tanks-response.model';
+import {Tank} from '../../../../../models/tank/tanks-response.model';
 import {DecimalPipe, NgClass, NgIf, NgStyle} from '@angular/common';
-import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../shared/helpers/tank-utils';
-import {AuthService} from '../../../../services/auth.service';
-import {sanitizeUrl} from '../../../../shared/helpers/utils';
+import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../../shared/helpers/tank-utils';
+import {AuthService} from '../../../../../services/auth.service';
+import {sanitizeUrl} from '../../../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
-import {TanksDataService} from '../../../../services/tanks/tanks-data.service';
-import {UtilsService} from '../../../../shared/utils.service';
+import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
+import {UtilsService} from '../../../../../shared/utils.service';
 
 @Component({
-  selector: 'app-player-vehicles',
+  selector: 'app-player-tanks-list',
   standalone: true,
   imports: [
     ...MATERIAL_MODULES,
@@ -24,10 +24,10 @@ import {UtilsService} from '../../../../shared/utils.service';
     TranslatePipe,
     NgClass
   ],
-  templateUrl: './player-vehicles.component.html',
-  styleUrl: './player-vehicles.component.scss'
+  templateUrl: './player-tanks-list.component.html',
+  styleUrl: './player-tanks-list.component.scss'
 })
-export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
+export class PlayerTanksListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = COLUMNS_NAMES;
   dataSource = new MatTableDataSource<Tank>([]);
 
@@ -89,7 +89,7 @@ export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTankFullInfo(tankId: number) {
+  navigateToTankDetails(tankId: number) {
     void this.tanksService.getTanksProps(tankId);
   }
 }
