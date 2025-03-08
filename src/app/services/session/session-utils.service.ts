@@ -30,7 +30,7 @@ export class SessionUtilsService {
 
       const accountId = this.playerStore.accountIdSignal();
       if (!accountId) throw new Error('Account ID отсутствует');
-      await this.tanksService.fetchTankData(accountId);
+      await this.tanksService.getTanksData(accountId);
 
       const playerData = this.playerStore.playerDataSignal();
       if (!playerData) throw new Error('Нет данных об игроке.');

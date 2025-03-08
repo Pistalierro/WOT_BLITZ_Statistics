@@ -103,6 +103,7 @@
     border-radius: 0 0 4px 4px;
     background-color: rgba($color-light, 0.1);
     width: 100%;
+    height: 600px;
   }
 
   &-title {
@@ -119,9 +120,10 @@
     margin-bottom: $gap-sm * 3;
     color: $color-gray;
     font-size: 1.2rem;
+    height: $gap-sm * 3;
 
     .tier-label {
-      flex: 0 0 30px; // Фиксированная ширина для уровня
+      flex: 0 0 $gap-sm * 3; // Фиксированная ширина для уровня
       font-weight: bold;
       text-align: right;
       color: $color-gray;

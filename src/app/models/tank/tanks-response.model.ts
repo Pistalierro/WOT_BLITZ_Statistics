@@ -69,8 +69,7 @@ export interface TankData {
   tier: number;
   type: string;
   description?: string | null;
-
-  // бывают ещё поля, пример:
+  all: { battles: number, wins: number, damageDealt: number };
   cost?: {
     price_credit?: number;
     price_gold?: number;

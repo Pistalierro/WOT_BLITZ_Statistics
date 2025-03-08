@@ -1,9 +1,12 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {collection, doc, Firestore, setDoc} from '@angular/fire/firestore';
+import {collection, doc, Firestore, getDoc, setDoc} from '@angular/fire/firestore';
 import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
-import {TankData, TanksJsonResponse} from '../../models/tank/tanks-response.model';
-import {lastValueFrom} from 'rxjs';
+import {BattlesByTier, BattlesByWinAvgDamage, BattlesByWinRate, TankData, TankStatsResponse} from '../../models/tank/tanks-response.model';
+import {SyncService} from '../../shared/services/data/sync.service';
+import {catchError, firstValueFrom, lastValueFrom, throwError} from 'rxjs';
+import {apiConfig} from '../../app.config';
+import {ApiResponse, TankProfile} from '../../models/tank/tank-full-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,31 +16,105 @@ export class TanksDataService {
   private http = inject(HttpClient);
   private firestore = inject(Firestore);
   private indexedDbService = inject(IndexedDbService);
+  private syncService = inject(SyncService);
 
   async getTanksFromJson(): Promise<TankData[]> {
-    try {
-      const response = await lastValueFrom(
-        this.http.get<TanksJsonResponse>('assets/tankList.json')
-      );
+    let cachedTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
+    cachedTanks = Array.from(cachedTanks) ? cachedTanks : [];
+    if (cachedTanks.length > 0) {
+      console.log('✅ [TanksJsonService] Найдены данные jsonTanks в локальных хранилищах. Не перезаписываем.');
+      return cachedTanks;
+    }
 
-      if (!response || !response.data) {
-        console.warn('⚠️ [TanksDataService] Похоже, что tankList.json пустой или не содержит поля data');
-        return [];
-      }
-
-      return Object.keys(response.data).map(key => {
-        const item = response.data[key];
-        if (!item.tank_id) {
-          item.tank_id = Number(key);
-        }
-        return item;
-      });
-
-    } catch (err) {
-      console.error('❌ [TanksDataService] Ошибка при загрузке tankList.json:', err);
+    const loadedJson = await lastValueFrom(this.http.get<TankData[]>('/assets/tankList.json'));
+    if (!Array.isArray(loadedJson) || loadedJson.length === 0) {
+      console.error('❌ [TanksJsonService] Ошибка: tankList.json пуст.');
       return [];
     }
+
+    await this.syncService.saveDataToAllStorages('tanks', 'jsonTanks', loadedJson);
+    console.log(`✅ [TanksJsonService] jsonTanks загружен из assets и сохранён: ${loadedJson.length}`);
+
+    return loadedJson;
   }
+
+  async getPlayerTanksStats(accountId: number): Promise<TankStatsResponse['data'][number]> {
+    const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}`;
+    try {
+      const res = await lastValueFrom(this.http.get<TankStatsResponse>(url).pipe(
+        catchError(err => throwError(() => new Error('Ошибка API: ' + err.message)))
+      ));
+
+      if (res.status !== 'ok' || !res.data[accountId]) {
+        throw new Error('❌ Ошибка: данные о танках отсутствуют');
+      }
+
+      return res.data[accountId];
+    } catch (error: any) {
+      console.error(`[TanksApiService] Ошибка загрузки данных танков: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async getTankProfile(tankId: number): Promise<TankProfile | null> {
+    const url = `${apiConfig.baseUrl}/encyclopedia/vehicleprofile/?application_id=${apiConfig.applicationId}&tank_id=${tankId}`;
+    try {
+      const res = await firstValueFrom(this.http.get<ApiResponse<TankProfile>>(url).pipe(
+        catchError(err => throwError(() => new Error('Ошибка API: ' + err.message)))
+      ));
+
+      if (res.status !== 'ok' || !res.data || !res.data[tankId]) {
+        console.warn(`[TanksApiService] ❌ Ошибка: данные о характеристиках танка отсутствуют`);
+        return null;
+      }
+      return res.data[tankId];
+    } catch (error: any) {
+      console.error(`[TanksApiService] Ошибка загрузки характеристик танка: ${error.message}`);
+      return null;
+    }
+  }
+
+  async getAllTanksFromApi(): Promise<Set<number>> {
+    const url = `https://api.wotblitz.eu/wotb/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
+
+    try {
+      const res = await firstValueFrom(
+        this.http.get<{ status: string; data: { [key: number]: { tank_id: number } } }>(url).pipe(
+          catchError(err => throwError(() => new Error('Ошибка получения данных о танках из Wargaming API: ' + err.message)))
+        )
+      );
+
+      if (res.status !== 'ok' || !res.data) {
+        throw new Error('⚠️ [TanksApiService] API Wargaming не вернул данные.');
+      }
+
+      console.log(`📊 [TanksApiService] Загружено танков из API: ${Object.keys(res.data).length}`);
+      return new Set(Object.keys(res.data).map(Number)); // Возвращаем Set tank_id
+    } catch (error: any) {
+      console.error(`[TanksApiService] ❌ Ошибка загрузки списка танков: ${error.message}`);
+      throw error;
+    }
+  }
+
+  calculateWinRateAndAvgDamage(
+    battlesByTier: BattlesByTier,
+    winsByTier: Record<number, number>,
+    damageByTier: Record<number, number>
+  ) {
+    return Object.keys(battlesByTier).reduce((acc, tier) => {
+      const tierNum = Number(tier);
+      const totalBattles = battlesByTier[tierNum];
+
+      acc.winRateByTier[tierNum] = totalBattles > 0 ? (winsByTier[tierNum] / totalBattles) * 100 : 0;
+      acc.avgDamageByTier[tierNum] = totalBattles > 0 ? damageByTier[tierNum] / totalBattles : 0;
+
+      return acc;
+    }, {
+      winRateByTier: {} as BattlesByWinRate,
+      avgDamageByTier: {} as BattlesByWinAvgDamage
+    });
+  }
+
 
   async loadAndSaveTanks(): Promise<void> {
     try {
@@ -58,16 +135,23 @@ export class TanksDataService {
     }
   }
 
-  private async saveTanksInChunksToFirestore(tanks: TankData[]): Promise<void> {
+  private async saveTanksInChunksToFirestore(tanks: TankData[], forceRefresh: boolean = false): Promise<void> {
+    const parentDocRef = doc(this.firestore, 'tanks', 'jsonTanks');
+    const docSnap = await getDoc(parentDocRef);
+
+    if (!forceRefresh && docSnap.exists()) {
+      console.log('✅ [TanksDataService] Документ tanks/jsonTanks УЖЕ существует. Пропускаем запись чанков.');
+      return;
+    }
+
     const total = tanks.length;
     const chunkCount = Math.ceil(total / this.CHUNK_SIZE);
     console.log(`📌 [TanksDataService] Сохраняем танки по ${this.CHUNK_SIZE} шт. Итого чанков: ${chunkCount}`);
 
-    const parentDocRef = doc(this.firestore, 'tanks', 'jsonTanks');
     const chunksRef = collection(parentDocRef, 'chunks');
     const timestamp = Date.now();
 
-    await setDoc(parentDocRef, {chunkCount, timestamp,});
+    await setDoc(parentDocRef, {chunkCount, timestamp});
     console.log('ℹ️ [TanksDataService] Записали метаданные в документ: tanks/jsonTanks');
 
     for (let i = 0; i < chunkCount; i++) {
