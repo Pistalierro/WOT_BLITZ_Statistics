@@ -1,7 +1,7 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {apiConfig} from '../../app.config';
-import {catchError, firstValueFrom, throwError} from 'rxjs';
+import {catchError, firstValueFrom, lastValueFrom, throwError} from 'rxjs';
 import {
   BattlesByTier,
   BattlesByType,
@@ -13,6 +13,7 @@ import {
 } from '../../models/tank/tanks-response.model';
 import {PlayerStoreService} from '../player/player-store.service';
 import {SyncService} from '../../shared/services/data/sync.service';
+import {ApiResponse, TankProfile} from '../../models/tank/tank-full-info.model';
 
 const allTanksUrl = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=597472385`;
 
@@ -21,6 +22,7 @@ const allTanksUrl = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfi
 
 export class TanksService {
   tanksList = signal<Tank[]>([]);
+  tankFullInfo = signal<TankProfile | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
   battlesByTier = signal<BattlesByTier>({});
@@ -35,11 +37,12 @@ export class TanksService {
   private syncService = inject(SyncService);
 
   constructor() {
+    void this.initData();
     effect(() => {
       const accountId = this.playerStore.accountIdSignal();
       if (accountId) {
         queueMicrotask(() => {
-          this.fetchTankData(accountId).then();
+          void this.fetchTankData(accountId);
         });
       }
     });
@@ -47,7 +50,7 @@ export class TanksService {
     effect(() => {
       if (this.tanksList().length > 0) {
         queueMicrotask(() => {
-          this.calculateStatistics();
+          void this.calculateStatistics();
         });
       }
     });
@@ -63,7 +66,7 @@ export class TanksService {
     this.error.set(null);
 
     try {
-      const jsonTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
+      const jsonTanks = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
       this.jsonTanksList = Array.isArray(jsonTanks) ? jsonTanks : [];
 
       const filteredTanks = this.jsonTanksList
@@ -81,14 +84,15 @@ export class TanksService {
           is_collectible: is_collectible ?? false,
         }));
 
-      const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=tank_id%2C+last_battle_time%2C+all.battles%2C+all.damage_dealt%2C+all.max_frags%2C+all.wins`;
-      const res = await firstValueFrom(
+      const fields = 'tank_id%2C+last_battle_time%2C+all.battles%2C+all.damage_dealt%2C+all.max_frags%2C+all.wins';
+      const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}&fields=${fields}`;
+
+      const res = await lastValueFrom(
         this.http.get<TankStatsResponse>(url).pipe(
           catchError(err => throwError(() => new Error('Ошибка получения данных о танках: ' + err.message)))
         )
       );
 
-      // 4️⃣ Проверяем ответ API
       if (res.status !== 'ok' || !res.data[accountId]) {
         this.error.set('❌ Ошибка: данные о танках отсутствуют');
         return;
@@ -114,13 +118,28 @@ export class TanksService {
           is_collectible: localTank.is_collectible ?? false,
         };
       });
-
       this.tanksList.set(mergedTanks);
-
+      await this.syncService.saveDataToAllStorages('tanks', 'jsonTanks', mergedTanks);
     } catch (err: any) {
       this.error.set(`⚠️ Ошибка загрузки данных о танках: ${err.message}`);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async getTanksProps(tankId: number): Promise<any> {
+    try {
+      const url = `${apiConfig.baseUrl}/encyclopedia/vehicleprofile/?application_id=${apiConfig.applicationId}&tank_id=${tankId}`;
+      const res = await firstValueFrom(this.http.get<ApiResponse<TankProfile>>(url));
+
+      if (res.status !== 'ok' || !res.data) {
+        console.log('Ошибка получения характеристик танка');
+      }
+
+      this.tankFullInfo.set(res.data[tankId]);
+      console.log(this.tankFullInfo());
+    } catch (error: any) {
+      console.log(error.message);
     }
   }
 
@@ -205,5 +224,16 @@ export class TanksService {
     this.totalBattles.set(Object.values(battlesByTier).reduce((acc, count) => acc + count, 0));
     this.winRateByTier.set(winRateByTier);
     this.avgDamageByTier.set(avgDamageByTier);
+  }
+
+  private async initData(): Promise<void> {
+    try {
+      const [tanksList] = await Promise.all([
+        this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'jsonTanks'),
+      ]);
+      this.tanksList.set(tanksList);
+    } catch (error: any) {
+      console.error('❌ Ошибка при инициализации данных:', error.message);
+    }
   }
 }

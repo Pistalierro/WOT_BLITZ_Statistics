@@ -52,7 +52,7 @@ export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // void this.tanksDataService.loadAndSaveTanks();
+    void this.tanksDataService.loadAndSaveTanks();
     // void this.tanksService.findMissingTanks();
   }
 
@@ -87,5 +87,9 @@ export class PlayerVehiclesComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  getTankFullInfo(tankId: number) {
+    void this.tanksService.getTanksProps(tankId);
   }
 }

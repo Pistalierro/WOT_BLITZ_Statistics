@@ -2,16 +2,16 @@ export function tankTypes(type: string, row?: any, shouldColorize: boolean = tru
   const basePath = '/images/tank-types/';
   let suffix = '';
 
-  if (shouldColorize && row) { // Проверяем, нужно ли вообще менять цвет
+  if (shouldColorize && row) {
     if (row.is_collectible) {
       suffix = '-blue.png';
     } else if (row.is_premium) {
       suffix = '-gold.png';
     } else {
-      suffix = '.png'; // Обычный танк
+      suffix = '.png';
     }
   } else {
-    suffix = '.png'; // Если перекраска не нужна, всегда возвращаем обычную иконку
+    suffix = '.png';
   }
 
   const icons: { [key: string]: string } = {
