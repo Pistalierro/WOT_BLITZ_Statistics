@@ -157,19 +157,37 @@ export class ClanService {
       this.loading.set(true);
       this.error.set(null);
 
-      const storedData = await this.syncService.getDataFromAllStorages<ExtendedClanDetails[]>('clans', 'topClansDetails');
-      if (storedData && storedData.length > 0) {
-        const firestoreData = await this.firestoreService.loadDataFromFirestore('clans', 'topClansDetails');
-        if (firestoreData && this.syncService.isDataFresh(firestoreData.timestamp)) {
-          const timestamp = firestoreData.timestamp; // Предполагаем, что это UNIX timestamp (в миллисекундах)
-          const timeDiffMs = Date.now() - timestamp;
-          const hours = Math.floor(timeDiffMs / (1000 * 60 * 60));
-          const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
-          console.log(`✅ Данные свежие (${hours}ч ${minutes}м назад)`);
-          this.topClansDetails.set(storedData);
+      if (!this.topClansIds.length) {
+        const topClansIdsArr = await this.syncService.getDataFromAllStorages('clans', 'topClansIds');
+        this.topClansIds = Array.isArray(topClansIdsArr) ? topClansIdsArr : [];
+      }
+
+      const storedData = await this.indexedDbService.getDataFromIndexedDB<ExtendedClanDetails[]>('clans', 'topClansDetails');
+      if (storedData && storedData.data.length > 0) {
+        if (this.syncService.isDataFresh(storedData.timestamp)) {
+          const timestamp = storedData.timestamp; // Ваш timestamp
+          const now = Date.now(); // Текущая дата
+          const diffMs = now - timestamp; // Разница в миллисекундах
+          const diffMinutes = Math.floor(diffMs / (1000 * 60)); // Перевод в минуты
+          const diffHours = Math.floor(diffMinutes / 60); // Перевод в часы
+          console.log(`⏳ Данные из IndexedDB были получены ${diffMinutes} минут назад (${diffHours} часов).`);
+          this.topClansDetails.set(storedData.data);
           return;
         }
       }
+
+      const firestoreData = await this.firestoreService.loadDataFromFirestore('clans', 'topClansDetails');
+      if (firestoreData && firestoreData.data.length > 0) {
+        if (this.syncService.isDataFresh(firestoreData.timestamp)) {
+          console.log(`✅ Данные в Firestore свежие, используем их.`);
+          this.topClansDetails.set(firestoreData.data);
+
+          await this.indexedDbService.saveDataToIndexedDB('clans', 'topClansDetails', firestoreData.data, firestoreData.timestamp);
+          console.log(`✅ Данные из Firestore сохранены в IndexedDB.`);
+          return;
+        }
+      }
+      console.warn(`⚠ Данные устарели, загружаем свежие из API...`);
 
       const topClans = await this.clanDataService.fetchTopClansDetails(this.topClansIds)
         .then(data => Array.isArray(data) ? data : []);

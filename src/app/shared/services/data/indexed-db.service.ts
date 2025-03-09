@@ -50,7 +50,9 @@ export class IndexedDbService {
         return;
       }
 
-      const payload: IStoreRecord = {key, data, timestamp: timestamp ?? Date.now()};
+      const finalTimestamp = timestamp ?? Date.now();
+      const payload: IStoreRecord = {key, data, timestamp: finalTimestamp};
+
       const table = this.db[store] as Table<IStoreRecord, string | number>;
       if (!table) {
         console.error(`❌ [IndexedDB] Ошибка: таблица "${store}" не найдена.`);
@@ -58,11 +60,11 @@ export class IndexedDbService {
       }
 
       await table.put(payload);
-      console.log(`✅ [IndexedDB] Данные успешно сохранены в "${store}" с ключом "${key}"`);
     } catch (error) {
       console.error(`❌ [IndexedDB] Ошибка при сохранении данных (store: ${store}, key: ${key}):`, error);
     }
   }
+
 
   async getDataFromIndexedDB<T>(
     store: keyof AppDB,
@@ -79,13 +81,14 @@ export class IndexedDbService {
 
       return {
         data: record.data as T,
-        timestamp: record.timestamp
+        timestamp: record.timestamp ?? 0
       };
     } catch (error) {
       console.error(`❌ [IndexedDB] Ошибка при получении данных (store: ${store}, key: ${key}):`, error);
       return null;
     }
   }
+
 
   async findClansByNameOrTag(searchTerm: string): Promise<BasicClanData[]> {
     console.log(`🔎 Поиск в IndexedDB (store: "clans"): "${searchTerm}"`);

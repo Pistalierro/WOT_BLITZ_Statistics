@@ -27,23 +27,29 @@ export class SyncService {
     }
   }
 
-  async getDataFromAllStorages<T extends any[]>(store: keyof AppDB, key: string | number, fetchApiFn?: () => Promise<T>,): Promise<T> {
+  async getDataFromAllStorages<T extends any[]>(
+    store: keyof AppDB,
+    key: string | number,
+    fetchApiFn?: () => Promise<T>
+  ): Promise<T> {
     try {
       const indexedDbRecord = await this.indexedDbService.getDataFromIndexedDB<T>(store, key);
+
       if (indexedDbRecord) {
         const {data, timestamp} = indexedDbRecord;
-        if (data.length > 0 && this.isDataFresh(timestamp)) {
-          console.log(`📥 [Sync] Данные "${key}" получены из IndexedDB (хранилище: ${store}), и они свежие.`);
+
+        if (data.length > 0) {
           return data;
         }
-        console.log(`⚠️ [Sync] Данные "${key}" в IndexedDB устарели или пусты. Запрашиваем Firestore...`);
+
+        console.log(`⚠️ [Sync] Данные "${key}" в IndexedDB пусты. Запрашиваем Firestore...`);
       } else {
         console.log(`⚠️ [Sync] Данные "${key}" не найдены в IndexedDB. Переходим к Firestore...`);
       }
 
       const firestoreResult = await this.firestoreService.loadDataFromFirestore<T>(store, key.toString());
       if (firestoreResult && firestoreResult.data.length > 0) {
-        console.log(`📥 [Sync] Данные "${key}" получены из Firestore (хранилище: ${store}). Сохраняем в IndexedDB...`);
+        console.log(`📥 [Sync] Данные "${key}" получены из Firestore (хранилище: ${store}) с timestamp: ${firestoreResult.timestamp}. Сохраняем в IndexedDB...`);
 
         await this.indexedDbService.saveDataToIndexedDB(store, key, firestoreResult.data, firestoreResult.timestamp);
 
@@ -55,9 +61,8 @@ export class SyncService {
         const apiData = await fetchApiFn();
         if (apiData && apiData.length > 0) {
           const now = Date.now();
-          // Сохраняем в IndexedDB с текущей меткой времени
           await this.indexedDbService.saveDataToIndexedDB(store, key, apiData, now);
-          console.log(`✅ [Sync] Данные "${key}" загружены из API и сохранены в IndexedDB.`);
+          console.log(`✅ [Sync] Данные "${key}" загружены из API и сохранены в IndexedDB с timestamp: ${now}`);
           return apiData;
         }
         console.warn(`❌ [Sync] API вернул пустоту для "${key}". Возвращаем [].`);
@@ -74,7 +79,8 @@ export class SyncService {
   }
 
   isDataFresh(timestamp: number): boolean {
-    const oneDayInMs = 86400000;
-    return Date.now() - timestamp < oneDayInMs;
+    const TWELVE_HOURS = 12 * 60 * 60 * 1000; // 12 часов в миллисекундах
+    const now = Date.now();
+    return now - timestamp <= TWELVE_HOURS;
   }
 }
