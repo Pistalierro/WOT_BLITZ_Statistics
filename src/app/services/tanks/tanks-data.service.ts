@@ -88,7 +88,9 @@ export class TanksDataService {
       }
 
       const apiTankData = res.data[tankId];
-      const jsonTanks = await this.getTanksFromJson();
+      let jsonTanks = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+      jsonTanks = Array.isArray(jsonTanks) ? jsonTanks : [];
+
       const jsonTankData = jsonTanks.find(tank => tank.tank_id === tankId);
 
       if (!jsonTankData) {
@@ -156,7 +158,9 @@ export class TanksDataService {
 
   async loadAndSaveTanks(): Promise<void> {
     try {
-      const tanks = await this.getTanksFromJson();
+      let tanks = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+      tanks = Array.isArray(tanks) ? tanks : [];
+
       if (!tanks.length) {
         console.warn('⚠️ [TanksDataService] Танки не были загружены (массив пуст). Сохранение пропускаем.');
         return;

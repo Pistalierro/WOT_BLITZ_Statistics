@@ -54,7 +54,7 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    void this.tanksDataService.loadAndSaveTanks();
+    // void this.tanksDataService.loadAndSaveTanks();
     // void this.tanksService.findMissingTanks();
   }
 

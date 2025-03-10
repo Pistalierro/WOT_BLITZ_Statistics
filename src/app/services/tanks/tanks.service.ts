@@ -61,19 +61,8 @@ export class TanksService {
     this.error.set(null);
 
     try {
-      let jsonTanksList: TankData[] = [];
-
-      try {
-        jsonTanksList = await this.tanksDataService.getTanksFromJson();
-      } catch (error: any) {
-        console.error('❌ [TanksDataService] Ошибка получения jsonTanks:', error.message);
-        jsonTanksList = [];
-      }
-
-      if (!jsonTanksList.length) {
-        console.error('❌ [TanksDataService] jsonTanksList пуст, останавливаемся.');
-        return;
-      }
+      let jsonTanksList = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+      jsonTanksList = Array.isArray(jsonTanksList) ? jsonTanksList : [];
 
       const statsData = await this.tanksDataService.getPlayerTanksStats(accountId);
       if (!statsData.length) {
@@ -112,7 +101,6 @@ export class TanksService {
     }
   }
 
-
   async getTanksProps(tankId: number): Promise<TankProfile | null> {
     try {
       const tankFullInfo = await this.tanksDataService.getTankProfile(tankId);
@@ -129,11 +117,12 @@ export class TanksService {
     }
   }
 
-
   async findMissingTanks(): Promise<void> {
     try {
       const apiTankIds = await this.tanksDataService.getAllTanksFromApi();
-      const jsonTanksList = await this.tanksDataService.getTanksFromJson();
+      let jsonTanksList = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+      jsonTanksList = Array.isArray(jsonTanksList) ? jsonTanksList : [];
+
       const missingTanks = jsonTanksList.filter(tank => tank.tier === 10 && !apiTankIds.has(tank.tank_id));
 
       console.log(`🚨 [TanksService] Найдено ${missingTanks.length} танков 10 уровня, отсутствующих в API Wargaming:`);
