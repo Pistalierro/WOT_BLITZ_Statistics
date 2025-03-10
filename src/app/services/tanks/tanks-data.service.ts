@@ -19,24 +19,43 @@ export class TanksDataService {
   private syncService = inject(SyncService);
 
   async getTanksFromJson(): Promise<TankData[]> {
-    let cachedTanks = await this.syncService.getDataFromAllStorages('tanks', 'jsonTanks');
-    cachedTanks = Array.from(cachedTanks) ? cachedTanks : [];
+    let cachedTanks: TankData[] = [];
+
+    try {
+      cachedTanks = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+
+      if (!Array.isArray(cachedTanks)) {
+        console.warn('⚠ cachedTanks не является массивом, присваиваем []');
+        cachedTanks = [];
+      }
+    } catch (error: any) {
+      console.error('❌ [TanksJsonService] Ошибка получения jsonTanks из хранилища:', error.message);
+      cachedTanks = [];
+    }
+
     if (cachedTanks.length > 0) {
-      console.log('✅ [TanksJsonService] Найдены данные jsonTanks в локальных хранилищах. Не перезаписываем.');
+      console.log('✅ [TanksJsonService] jsonTanks загружен из локального хранилища.');
       return cachedTanks;
     }
 
-    const loadedJson = await lastValueFrom(this.http.get<TankData[]>('/assets/tankList.json'));
-    if (!Array.isArray(loadedJson) || loadedJson.length === 0) {
-      console.error('❌ [TanksJsonService] Ошибка: tankList.json пуст.');
+    try {
+      const loadedJson = await lastValueFrom(this.http.get<TankData[]>('/assets/tankList.json'));
+
+      if (!Array.isArray(loadedJson) || loadedJson.length === 0) {
+        console.error('❌ [TanksJsonService] Ошибка: tankList.json пуст.');
+        return [];
+      }
+
+      await this.syncService.saveDataToAllStorages('tanks', 'jsonTanks', loadedJson);
+      console.log(`✅ [TanksJsonService] jsonTanks загружен из assets и сохранён: ${loadedJson.length}`);
+
+      return loadedJson;
+    } catch (error: any) {
+      console.error('❌ [TanksJsonService] Ошибка загрузки tankList.json:', error.message);
       return [];
     }
-
-    await this.syncService.saveDataToAllStorages('tanks', 'jsonTanks', loadedJson);
-    console.log(`✅ [TanksJsonService] jsonTanks загружен из assets и сохранён: ${loadedJson.length}`);
-
-    return loadedJson;
   }
+
 
   async getPlayerTanksStats(accountId: number): Promise<TankStatsResponse['data'][number]> {
     const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}`;
@@ -67,7 +86,31 @@ export class TanksDataService {
         console.warn(`[TanksApiService] ❌ Ошибка: данные о характеристиках танка отсутствуют`);
         return null;
       }
-      return res.data[tankId];
+
+      const apiTankData = res.data[tankId];
+      const jsonTanks = await this.getTanksFromJson();
+      const jsonTankData = jsonTanks.find(tank => tank.tank_id === tankId);
+
+      if (!jsonTankData) {
+        console.warn(`⚠️ [TanksApiService] Танка с ID ${tankId} нет в JSON.`);
+        return apiTankData; // Если в JSON нет, возвращаем только API-данные
+      }
+
+      return {
+        ...apiTankData,
+        tank_id: jsonTankData.tank_id,
+        name: jsonTankData.name,
+        tier: jsonTankData.tier,
+        type: jsonTankData.type,
+        nation: jsonTankData.nation,
+        is_premium: jsonTankData.is_premium,
+        is_collectible: jsonTankData.is_collectible,
+        images: {
+          normal: jsonTankData.images?.normal ?? '',
+          preview: jsonTankData.images?.normal ?? '',
+        }
+      };
+
     } catch (error: any) {
       console.error(`[TanksApiService] Ошибка загрузки характеристик танка: ${error.message}`);
       return null;
@@ -75,7 +118,7 @@ export class TanksDataService {
   }
 
   async getAllTanksFromApi(): Promise<Set<number>> {
-    const url = `https://api.wotblitz.eu/wotb/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
+    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
 
     try {
       const res = await firstValueFrom(
@@ -96,11 +139,7 @@ export class TanksDataService {
     }
   }
 
-  calculateWinRateAndAvgDamage(
-    battlesByTier: BattlesByTier,
-    winsByTier: Record<number, number>,
-    damageByTier: Record<number, number>
-  ) {
+  calculateWinRateAndAvgDamage(battlesByTier: BattlesByTier, winsByTier: Record<number, number>, damageByTier: Record<number, number>) {
     return Object.keys(battlesByTier).reduce((acc, tier) => {
       const tierNum = Number(tier);
       const totalBattles = battlesByTier[tierNum];
@@ -114,7 +153,6 @@ export class TanksDataService {
       avgDamageByTier: {} as BattlesByWinAvgDamage
     });
   }
-
 
   async loadAndSaveTanks(): Promise<void> {
     try {

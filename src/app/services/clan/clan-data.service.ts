@@ -151,12 +151,9 @@ export class ClanDataService {
         return [];
       }
 
-      const clanDetails: ExtendedClanDetails[] = Object.values(response.data).map(clan => ({
+      return Object.values(response.data).map(clan => ({
         ...clan, winRate: null, avgDamage: null, zeroBattlesCount: null
       } as ExtendedClanDetails));
-
-      console.log(`✅ Получено ${clanDetails.length} кланов`);
-      return clanDetails;
     } catch (error: any) {
       console.error('❌ Ошибка при загрузке списка топ-кланов:', error.message);
       return [];

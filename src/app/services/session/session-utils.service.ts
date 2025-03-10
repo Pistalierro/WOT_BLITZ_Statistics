@@ -38,10 +38,8 @@ export class SessionUtilsService {
       const updatedStatsValue = playerData.statistics.all;
       const startStatsValue = this.sessionState.startStats();
 
-      const startTanksList = this.sessionState.startsTanksStats();
-      if (!startTanksList) throw new Error('Начальный список танков отсутствует');
-      console.log(startTanksList);
-      const updatedTanksList = this.tanksService.tanksList();
+      const startTanksList = this.sessionState.startsTanksStats() ?? [];
+      const updatedTanksList = this.tanksService.tanksList() ?? [];
 
       if (!startStatsValue) throw new Error('Нет стартовой статистики!');
 
@@ -51,8 +49,6 @@ export class SessionUtilsService {
       const winRate = deltaBattles > 0 ? (deltaWins / deltaBattles) * 100 : 0;
       const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
       const tanksDelta = this.getSessionTanks(startTanksList, updatedTanksList);
-      console.log('tanksDelta AFTER getSessionTanks => ', tanksDelta);
-
       const sessionDelta: SessionDeltaInterface = {
         battles: deltaBattles,
         wins: deltaWins,
@@ -81,7 +77,7 @@ export class SessionUtilsService {
       }
 
       await updateDoc(sessionDocRef, updateData);
-      console.log(`Сессия ${isFinal ? 'завершена' : 'обновлена'}:`, sessionDelta);
+      console.log(`🎯 Сессия ${isFinal ? 'завершена' : 'обновлена'}:`, sessionDelta);
     } catch (error: any) {
       this.handleError(error, 'Ошибка при обновлении/завершении сессии');
     } finally {
@@ -89,9 +85,10 @@ export class SessionUtilsService {
     }
   }
 
+
   getSessionTanks(startTanksList: Tank[], updatedTankList: Tank[]): TankDeltaInterface[] {
     const startTanksMap = new Map(startTanksList.map(tank => [tank.tank_id, tank]));
-    const tanksData = new Map(this.tanksService.tanksList().map(tank => [tank.tank_id, tank]));
+    const tanksData = new Map(updatedTankList.map(tank => [tank.tank_id, tank]));
 
     return updatedTankList.map(updatedTank => {
       const startTank = startTanksMap.get(updatedTank.tank_id);
@@ -105,6 +102,7 @@ export class SessionUtilsService {
         const avgDamage = deltaBattles > 0 ? deltaDamage / deltaBattles : 0;
 
         if (deltaBattles > 0) {
+          console.log(`✅ ${updatedTank.name} добавлен в tanksDelta!`);
           return {
             tank_id: updatedTank.tank_id,
             name: updatedTank.name,
@@ -122,8 +120,8 @@ export class SessionUtilsService {
             },
             totalBattles: globalTank?.all.battles ?? 0,
             totalWins: globalTank?.all.wins ?? 0,
-            totalWinRate: globalTank ? (globalTank?.all.wins / globalTank?.all.battles) * 100 : 0,
-            totalAvgDamage: globalTank ? globalTank.all.damage_dealt / globalTank?.all.battles : 0,
+            totalWinRate: globalTank ? (globalTank.all.wins / globalTank.all.battles) * 100 : 0,
+            totalAvgDamage: globalTank ? globalTank.all.damage_dealt / globalTank.all.battles : 0,
             is_premium: globalTank?.is_premium ?? false,
             is_collectible: globalTank?.is_collectible ?? false,
           };
@@ -132,6 +130,7 @@ export class SessionUtilsService {
       return null;
     }).filter(delta => delta !== null);
   }
+
 
   handleError(error: any, contextMessage: string): void {
     const userFriendlyMessage = error.message || `${contextMessage}. Попробуйте снова.`;

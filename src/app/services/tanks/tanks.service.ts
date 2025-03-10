@@ -1,5 +1,4 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
-import {apiConfig} from '../../app.config';
 import {
   BattlesByTier,
   BattlesByType,
@@ -12,9 +11,6 @@ import {PlayerStoreService} from '../player/player-store.service';
 import {SyncService} from '../../shared/services/data/sync.service';
 import {TankProfile} from '../../models/tank/tank-full-info.model';
 import {TanksDataService} from './tanks-data.service';
-
-const allTanksUrl = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=597472385`;
-
 
 @Injectable({providedIn: 'root'})
 
@@ -61,22 +57,30 @@ export class TanksService {
       return;
     }
 
-    if (this.playerStore.accountIdSignal() !== accountId) {
-      this.tanksList.set([]);
-    }
-    if (this.tanksList().length > 0) return;
-
     this.loading.set(true);
     this.error.set(null);
 
     try {
-      let jsonTanksList = await this.tanksDataService.getTanksFromJson();
+      let jsonTanksList: TankData[] = [];
+
+      try {
+        jsonTanksList = await this.tanksDataService.getTanksFromJson();
+      } catch (error: any) {
+        console.error('❌ [TanksDataService] Ошибка получения jsonTanks:', error.message);
+        jsonTanksList = [];
+      }
+
       if (!jsonTanksList.length) {
         console.error('❌ [TanksDataService] jsonTanksList пуст, останавливаемся.');
         return;
       }
 
       const statsData = await this.tanksDataService.getPlayerTanksStats(accountId);
+      if (!statsData.length) {
+        console.warn('⚠ [TanksDataService] statsData пуст, не создаём mergedTanks.');
+        return;
+      }
+
       const mergedTanks: Tank[] = statsData.map(stat => {
         const localTank = jsonTanksList.find(tank => tank.tank_id === stat.tank_id) || {} as TankData;
 
@@ -96,6 +100,11 @@ export class TanksService {
         };
       });
 
+      if (!mergedTanks.length) {
+        console.warn('⚠ [TanksDataService] mergedTanks пуст, не сохраняем в tanksList.');
+        return;
+      }
+
       this.tanksList.set(mergedTanks);
       await this.syncService.saveDataToAllStorages('tanks', 'playerTanksList', mergedTanks);
     } finally {
@@ -103,17 +112,23 @@ export class TanksService {
     }
   }
 
-  async getTanksProps(tankId: number): Promise<void> {
-    try {
-      const tankProfile = await this.tanksDataService.getTankProfile(tankId);
-      if (!tankProfile) return;
 
-      this.tankFullInfo.set(tankProfile);
-      console.log('✅ [TanksService] Характеристики танка загружены:', this.tankFullInfo());
+  async getTanksProps(tankId: number): Promise<TankProfile | null> {
+    try {
+      const tankFullInfo = await this.tanksDataService.getTankProfile(tankId);
+      if (!tankFullInfo) return null;
+
+      this.tankFullInfo.set(tankFullInfo);
+      console.log('✅ [TanksService] Характеристики танка загружены:', tankFullInfo);
+      await this.syncService.saveDataToAllStorages('tanks', 'tankFullInfo', tankFullInfo);
+
+      return tankFullInfo;
     } catch (error: any) {
       console.error(`❌ [TanksService] Ошибка загрузки характеристик танка: ${error.message}`);
+      return null;
     }
   }
+
 
   async findMissingTanks(): Promise<void> {
     try {
@@ -164,14 +179,24 @@ export class TanksService {
 
   private async initData(): Promise<void> {
     try {
-      const [jsonTanksList, playerTanksList] = await Promise.all([
+      const [jsonTanksList, playerTanksList, tankFullInfo] = await Promise.all([
         this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks'),
-        this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'playerTanksList')
+        this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'playerTanksList'),
+        this.syncService.getDataFromAllStorages<TankProfile>('tanks', 'tankFullInfo'),
       ]);
+
+      // ✅ Проверяем, что jsonTanksList действительно массив, иначе делаем []
       this.jsonTanksList = Array.isArray(jsonTanksList) ? jsonTanksList : [];
-      this.tanksList.set(playerTanksList);
+
+      // ✅ Проверяем, что playerTanksList не null перед установкой
+      this.tanksList.set(Array.isArray(playerTanksList) ? playerTanksList : []);
+
+      // ✅ Просто устанавливаем tankFullInfo, тут null - ок
+      this.tankFullInfo.set(tankFullInfo ?? null);
+
     } catch (error: any) {
       console.error('❌ Ошибка при инициализации данных:', error.message);
     }
   }
+
 }

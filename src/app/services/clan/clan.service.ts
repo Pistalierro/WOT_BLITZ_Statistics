@@ -153,10 +153,9 @@ export class ClanService {
   }
 
   async getTopClansDetails(): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
     try {
-      this.loading.set(true);
-      this.error.set(null);
-
       if (!this.topClansIds.length) {
         const topClansIdsArr = await this.syncService.getDataFromAllStorages('clans', 'topClansIds');
         this.topClansIds = Array.isArray(topClansIdsArr) ? topClansIdsArr : [];
@@ -176,7 +175,7 @@ export class ClanService {
         }
       }
 
-      const firestoreData = await this.firestoreService.loadDataFromFirestore('clans', 'topClansDetails');
+      const firestoreData = await this.firestoreService.loadDataFromFirestore<ExtendedClanDetails[]>('clans', 'topClansDetails');
       if (firestoreData && firestoreData.data.length > 0) {
         if (this.syncService.isDataFresh(firestoreData.timestamp)) {
           console.log(`✅ Данные в Firestore свежие, используем их.`);

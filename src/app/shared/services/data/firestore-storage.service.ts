@@ -10,124 +10,149 @@ export class FirestoreStorageService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
 
-  private batchSize = 9000;
+  /** Максимальное кол-во элементов в массиве на 1 чанк */
+  private readonly BATCH_SIZE = 9000;
 
-  async saveDataToFirestore<T extends any[]>(collectionName: string, documentId: string, data: T): Promise<void> {
+  /**
+   * Сохраняет данные в Firestore:
+   * - Если массив слишком большой => сохраняем чанками
+   * - Иначе сохраняем одним документом
+   */
+  async saveDataToFirestore<T>(collectionName: string, documentId: string, data: T): Promise<void> {
     const user = this.auth.currentUser;
     if (!user) {
       console.error('❌ Ошибка: пользователь не аутентифицирован!');
       return;
     }
-    console.log('✅ Пользователь залогинен:', user.uid);
 
-    if (!data || data.length === 0) {
+    if (data == null) {
       console.warn(`⚠ Нет данных для сохранения в Firestore: ${collectionName}/${documentId}`);
       return;
     }
 
     try {
       const timestamp = Date.now();
-      const payload = sanitizeData({data, timestamp});
+      // "Санитизируем" (убираем лишние ссылки, undefined и т.п.)
+      const payload = sanitize({data, timestamp});
 
-      console.log(`📌 Размер данных: ${JSON.stringify(payload).length / 1024} KB`);
-
-      if (data.length > this.batchSize) {
-        await this.saveLargeData(collectionName, documentId, payload);
+      // Если это массив И он крупнее BATCH_SIZE => чанк
+      if (Array.isArray(data) && data.length > this.BATCH_SIZE) {
+        await this.saveLargeArray(collectionName, documentId, payload);
       } else {
+        // Иначе сохраняем одним документом
         const ref = doc(this.firestore, collectionName, documentId);
         await setDoc(ref, payload);
-        console.log(`✅ Документ '${collectionName}/${documentId}' успешно сохранён (целиком).`);
+        console.log(`✅ [Firestore] '${collectionName}/${documentId}' сохранён (целиком).`);
       }
     } catch (error: any) {
-      console.error(`❌ Ошибка при сохранении '${collectionName}/${documentId}' в Firestore:`, error.message);
+      console.error(`❌ [Firestore] Ошибка сохранения '${collectionName}/${documentId}':`, error.message);
     }
   }
 
-  async loadDataFromFirestore<T extends any[]>(
-    collectionName: string,
-    documentId: string
-  ): Promise<{ data: T; timestamp: number } | null> {
+  /**
+   * Загружает данные из Firestore:
+   * - Сначала ищем единый документ
+   * - Если нет => пробуем читать чанки
+   * - Если ничего нет => возвращаем null
+   */
+  async loadDataFromFirestore<T>(collectionName: string, documentId: string): Promise<{ data: T; timestamp: number } | null> {
     try {
-      const ref = doc(this.firestore, collectionName, documentId);
-      const snapshot = await getDoc(ref);
+      const docRef = doc(this.firestore, collectionName, documentId);
+      const snap = await getDoc(docRef);
 
-      if (snapshot.exists()) {
-        console.log(`✅ Документ '${collectionName}/${documentId}' найден (целиком).`);
-        return snapshot.data() as { data: T; timestamp: number };
+      if (snap.exists()) {
+        console.log(`✅ [Firestore] '${collectionName}/${documentId}' найден (целиком).`);
+        return snap.data() as { data: T; timestamp: number };
       }
 
-      return await this.loadLargeData<T>(collectionName, documentId);
+      // Если нет цельного документа, пробуем chunks
+      console.log(`⚠ '${collectionName}/${documentId}' нет цельного документа. Пробуем chunks...`);
+      const chunkData = await this.loadLargeArray<T>(collectionName, documentId);
+      if (chunkData) {
+        return chunkData;
+      }
+
+      // Если ничего не нашли
+      console.warn(`⚠ [Firestore] '${collectionName}/${documentId}' не найден ни целиком, ни чанками. Возвращаем null.`);
+      return null;
     } catch (error: any) {
-      console.error(`❌ Ошибка при загрузке '${collectionName}/${documentId}' из Firestore:`, error.message);
+      console.error(`❌ [Firestore] Ошибка загрузки '${collectionName}/${documentId}':`, error.message);
       return null;
     }
   }
 
-  private async saveLargeData<T extends any[]>(collectionName: string, documentId: string, payload: {
-    data: T;
-    timestamp: number
-  }): Promise<void> {
-    const batchCount = Math.ceil(payload.data.length / this.batchSize);
-    console.log(`📌 Сохраняем '${collectionName}/${documentId}' по ~${this.batchSize} элементов. Всего частей: ${batchCount}`);
+  /**
+   * Приватный метод — сохранение большого массива чанками
+   */
+  private async saveLargeArray<T>(
+    collectionName: string,
+    documentId: string,
+    payload: { data: T; timestamp: number }
+  ): Promise<void> {
+    const arr = payload.data as unknown as any[];
+    const total = arr.length;
+    const batchCount = Math.ceil(total / this.BATCH_SIZE);
 
-    const docRef = doc(this.firestore, collectionName, documentId);
-    const chunksRef = collection(docRef, 'chunks');
+    console.log(`📌 [Firestore] Сохраняем '${collectionName}/${documentId}' батчами (${this.BATCH_SIZE} эл.): всего ${batchCount} частей.`);
+
+    const parentRef = doc(this.firestore, collectionName, documentId);
+    const chunksRef = collection(parentRef, 'chunks');
+
+    // (При желании можно удалить старые чанки перед сохранением)
+    // ...
 
     for (let i = 0; i < batchCount; i++) {
-      const chunkSlice = payload.data.slice(i * this.batchSize, (i + 1) * this.batchSize);
-      const chunk = sanitizeData(chunkSlice);
-
-      const ref = doc(chunksRef, `batch_${i}`);
-      await setDoc(ref, {data: chunk, timestamp: payload.timestamp});
-      console.log(`✅ Сохранён батч ${i + 1}/${batchCount} (${chunkSlice.length} элементов)`);
+      const slice = arr.slice(i * this.BATCH_SIZE, (i + 1) * this.BATCH_SIZE);
+      const batchRef = doc(chunksRef, `batch_${i}`);
+      await setDoc(batchRef, {data: sanitize(slice), timestamp: payload.timestamp});
+      console.log(`✅ Чанк ${i + 1}/${batchCount} записан (${slice.length} эл.)`);
     }
-
-    console.log(`🎉 Все батчи для '${collectionName}/${documentId}' сохранены.`);
   }
 
-  private async loadLargeData<T extends any[]>(
-    collectionName: string,
-    documentId: string
-  ): Promise<{ data: T; timestamp: number } | null> {
-    console.log(`📌 Загружаем '${collectionName}/${documentId}' из Firestore частями...`);
-
-    const combinedData: T = [] as unknown as T;
-    const docRef = doc(this.firestore, collectionName, documentId);
-    const chunksRef = collection(docRef, 'chunks');
-
+  /**
+   * Приватный метод — загрузка массива чанками
+   */
+  private async loadLargeArray<T>(collectionName: string, documentId: string): Promise<{ data: T; timestamp: number } | null> {
     try {
-      const snapshot = await getDocs(chunksRef);
+      const parentRef = doc(this.firestore, collectionName, documentId);
+      const chunksRef = collection(parentRef, 'chunks');
+      const snap = await getDocs(chunksRef);
 
-      if (snapshot.empty) {
-        console.warn(`⚠ В Firestore нет данных (ни целикового документа, ни chunks) для '${collectionName}/${documentId}'`);
+      if (snap.empty) {
+        console.warn(`⚠ [Firestore] Нет чанков у '${collectionName}/${documentId}'`);
         return null;
       }
 
-      let timestamp: number | null = null;
+      let combinedArray: any[] = [];
+      let overallTimestamp: number | null = null;
 
-      snapshot.forEach(docSnap => {
-        const chunk = docSnap.data()['data'] as T;
-        combinedData.push(...chunk);
-
-        if (timestamp === null) {
-          timestamp = docSnap.data()['timestamp'];
+      snap.forEach(docSnap => {
+        const chunkData = docSnap.data()['data'] as any[];
+        if (Array.isArray(chunkData)) {
+          combinedArray = combinedArray.concat(chunkData);
+        }
+        if (overallTimestamp == null) {
+          overallTimestamp = docSnap.data()['timestamp'] || null;
         }
       });
 
-      if (timestamp === null) {
-        console.warn(`⚠ Не удалось получить метку времени для '${collectionName}/${documentId}'`);
-        return null;
+      if (overallTimestamp == null) {
+        overallTimestamp = Date.now();
       }
 
-      console.log(`🎉 Все части '${collectionName}/${documentId}' загружены (${combinedData.length} элементов)`);
-      return {data: combinedData, timestamp};
+      console.log(`✅ [Firestore] Чанки '${collectionName}/${documentId}' собраны (${combinedArray.length} эл.)`);
+      return {data: combinedArray as unknown as T, timestamp: overallTimestamp};
     } catch (error: any) {
-      console.error(`❌ Ошибка при загрузке '${collectionName}/${documentId}' из Firestore:`, error.message);
+      console.error(`❌ [Firestore] Ошибка загрузки чанков '${collectionName}/${documentId}':`, error.message);
       return null;
     }
   }
 }
 
-function sanitizeData<T>(data: T): T {
-  return JSON.parse(JSON.stringify(data));
+/**
+ * Рекурсивно приводим data в JSON-вид
+ * (убираем undefined, Date -> string и т.п.)
+ */
+function sanitize<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value));
 }

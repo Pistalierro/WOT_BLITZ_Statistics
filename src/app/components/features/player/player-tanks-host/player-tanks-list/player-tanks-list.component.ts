@@ -12,6 +12,7 @@ import {sanitizeUrl} from '../../../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
 import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
 import {UtilsService} from '../../../../../shared/utils.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-player-tanks-list',
@@ -41,6 +42,7 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
   protected readonly tankTypes = tankTypes;
   protected readonly sanitizeUrl = sanitizeUrl;
   private tanksDataService = inject(TanksDataService);
+  private router = inject(Router);
 
   constructor() {
     effect(() => {
@@ -90,6 +92,6 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
   }
 
   navigateToTankDetails(tankId: number) {
-    void this.tanksService.getTanksProps(tankId);
+    void this.router.navigate([`/tanks/${tankId}`]);
   }
 }

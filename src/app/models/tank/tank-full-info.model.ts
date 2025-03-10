@@ -1,8 +1,19 @@
 export interface TankProfile {
+  name: string;
+  tank_id: number;
+  tier: number;
+  type: string;
+  nation: string;
+  is_premium?: boolean;
+  is_collectible?: boolean;
+  images: {
+    preview: string;
+    normal: string;
+  };
   weight: number;
   profile_id: string;
   firepower: number;
-  shot_efficiency: number;
+  shot_efficiency: number; // 🆕 **Эффективность стрельбы**
   gun_id: number;
   armor: {
     turret: ArmorSection;
@@ -27,14 +38,15 @@ export interface TankProfile {
   speed_forward: number;
   suspension: Suspension;
   suspension_id: number;
-  turret: Turret;
-  turret_id: number;
+  turret: Turret | null; // 🆕 **Турель может отсутствовать**
+  turret_id: number | null; // 🆕 **ID может быть `null`**
 }
 
 export interface ArmorSection {
   front?: number;
   sides?: number;
   rear?: number;
+  traverse_speed?: number; // 🆕 **Добавлена скорость поворота корпуса (если появится в API)**
 }
 
 export interface Engine {
@@ -54,13 +66,22 @@ export interface Gun {
   reload_time?: number;
   aim_time?: number;
   dispersion?: number;
+  fire_rate: number; // Скорострельность
+  clip_reload_time: number; // Время перезарядки барабана
+  clip_capacity: number; // Количество снарядов в барабане
+  traverse_speed: number; // 🆕 Скорость поворота орудия (если ПТ-САУ без башни)
+  traverse_left_arc?: number; // 🆕 УГН влево для ПТ-САУ без башни
+  traverse_right_arc?: number; // 🆕 УГН вправо для ПТ-САУ без башни
+  tier: number;
+  is_default?: boolean;
 }
+
 
 export interface Shell {
   type: string;
   damage: number;
   penetration: number;
-  speed: number;
+  speed?: number; // У некоторых снарядов скорость может отсутствовать
 }
 
 export interface Suspension {
@@ -75,10 +96,13 @@ export interface Turret {
   name: string;
   weight: number;
   view_range: number;
-  traverse_left_arc: number;
-  traverse_right_arc?: number;
+  traverse_left_arc?: number; // 🆕 Добавили для УГН
+  traverse_right_arc?: number; // 🆕 Добавили для УГН
   hp: number;
+  traverse_speed: number;
+  tier: number;
 }
+
 
 export interface ApiResponse<T> {
   status: 'ok' | 'error';

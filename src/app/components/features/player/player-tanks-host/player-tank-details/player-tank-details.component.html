@@ -1,1 +1,191 @@
-<p>player-tank-details works!</p>
+<div *ngIf="tanksService.tankFullInfo() as tank" class="container">
+  <h3 [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tank__title">{{ tank.name }}</h3>
+  <section class="tank-characteristics container-grid">
+
+    <!-- 🔹 Общие характеристики -->
+    <article class="tank-summary">
+      <mat-card appearance="outlined" class="card">
+        <mat-card-title class="card-title">Общие</mat-card-title>
+        <div class="card-image card-image--tank">
+          <img [alt]="tank.name" [src]="tank.images.normal" mat-card-image>
+        </div>
+        <mat-card-content class="card-content">
+          <div class="card-content-row">
+            <p class="card-content-row__title">ID:</p>
+            <p class="card-content-row__value">{{ tank.tank_id }}</p>
+          </div>
+          <div class="card-content-row">
+            <p class="card-content-row__title">Уровень:</p>
+            <p class="card-content-row__value">{{ toRoman(tank.tier) }}</p>
+          </div>
+          <div class="card-content-row">
+            <p class="card-content-row__title">Нация:</p>
+            <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)" class="card-content-row__image">
+          </div>
+          <div class="card-content-row">
+            <p class="card-content-row__title">Тип:</p>
+            <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="card-content-row__image">
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </article>
+
+    <!-- 🔹 Снаряды -->
+    <article class="tank-ammo">
+      <mat-card appearance="outlined" class="card">
+        <mat-card-title class="card-title">Снаряды</mat-card-title>
+        <div class="card-image">
+          <img alt="Орудие" mat-card-image src="/images/tanks/ammo.webp">
+        </div>
+        <mat-card-content class="card-content">
+          <div class="card-content-ammo">
+            <p class="card-content-ammo__title">Урон</p>
+            <div *ngFor="let shell of tank.shells" class="card-content-row">
+              <p class="card-content-row__title">{{ getShellType(shell.type) }}</p>
+              <p class="card-content-row__value">{{ shell.damage }}</p>
+            </div>
+          </div>
+          <div class="card-content-ammo">
+            <p class="card-content-ammo__title">Пробитие</p>
+            <div *ngFor="let shell of tank.shells" class="card-content-row">
+              <p class="card-content-row__title">{{ getShellType(shell.type) }}</p>
+              <p class="card-content-row__value">{{ shell.penetration }} мм</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </article>
+
+    <!-- 🔹 Орудие -->
+    <article class="tank-gun">
+      <mat-card appearance="outlined" class="card">
+        <mat-card-title class="card-title">Орудие</mat-card-title>
+        <div class="card-image">
+          <img alt="Орудие" mat-card-image src="/images/tanks/gun.webp">
+        </div>
+        <mat-card-content class="card-content">
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">Название:</p>
+            <p class="card-content-row__value">{{ tank.gun.name }}</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">Калибр:</p>
+            <p class="card-content-row__value">{{ tank.gun.caliber }} мм</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">{{ tank.gun.clip_capacity > 1 ? 'К/Д барабана' : 'К/Д:' }}</p>
+            <p class="card-content-row__value">{{ tank.gun.reload_time }} сек</p>
+          </div>
+
+          <!-- ✅ Для барабанных танков -->
+          <div *ngIf="tank.gun.clip_capacity > 1">
+            <div class="card-content-row">
+              <p class="card-content-row__title">Снарядов в барабане:</p>
+              <p class="card-content-row__value">{{ tank.gun.clip_capacity }}</p>
+            </div>
+            <div class="card-content-row">
+              <p class="card-content-row__title">К/Д внутри барабана:</p>
+              <p class="card-content-row__value">{{ tank.gun.clip_reload_time }} сек</p>
+            </div>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">Сведение:</p>
+            <p class="card-content-row__value">{{ tank.gun.aim_time }} сек</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">Точность:</p>
+            <p class="card-content-row__value">{{ tank.gun.dispersion }} м</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">УВН вниз:</p>
+            <p class="card-content-row__value">{{ tank.gun.move_down_arc }}°</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">УВН вверх:</p>
+            <p class="card-content-row__value">{{ tank.gun.move_up_arc }}°</p>
+          </div>
+
+          <div class="card-content-row">
+            <p class="card-content-row__title">Скорострельность:</p>
+            <p class="card-content-row__value">{{ tank.gun.fire_rate }} в/м</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </article>
+
+    <!-- 🔹 Башня -->
+    <article class="tank-turret">
+      <mat-card class="card">
+        <mat-card-title class="card-title">Башня</mat-card-title>
+        <div class="card-image">
+          <img alt="Башня" mat-card-image src="/images/tanks/turret.webp">
+        </div>
+        <mat-card-content class="card-content">
+
+          <!-- 🔹 Бронирование башни -->
+          <div *ngIf="tank.armor?.turret">
+            <div *ngIf="tank.armor.turret.front && tank.armor.turret.front > 0" class="card-content-row">
+              <p class="card-content-row__title">Броня лоб:</p>
+              <p class="card-content-row__value">{{ tank.armor.turret.front }} мм</p>
+            </div>
+            <div *ngIf="tank.armor.turret.sides && tank.armor.turret.sides > 0" class="card-content-row">
+              <p class="card-content-row__title">Броня борта:</p>
+              <p class="card-content-row__value">{{ tank.armor.turret.sides }} мм</p>
+            </div>
+            <div *ngIf="tank.armor.turret.rear && tank.armor.turret.rear > 0" class="card-content-row">
+              <p class="card-content-row__title">Броня корма:</p>
+              <p class="card-content-row__value">{{ tank.armor.turret.rear }} мм</p>
+            </div>
+          </div>
+
+
+          <!-- 🔹 Если у танка есть полноценная башня (турель НЕ `null`), показываем скорость поворота -->
+          <div *ngIf="tank.turret_id !== null && tank.turret">
+            <div class="card-content-row">
+              <p class="card-content-row__title">Скорость поворота башни:</p>
+              <p class="card-content-row__value">{{ tank.turret.traverse_speed }}°/с</p>
+            </div>
+          </div>
+
+          <!-- 🔹 Если у танка НЕТ башни (ПТ-САУ без башни), но turret существует -->
+          <div *ngIf="tank.turret_id === null && tank.turret">
+            <!-- 🔹 Если ПТ-САУ без башни, но поворот больше 20° - ограничение поворота башни -->
+            <div *ngIf="tank.turret.traverse_left_arc !== undefined && tank.turret.traverse_right_arc !== undefined
+           && tank.turret.traverse_left_arc > 20 && tank.turret.traverse_right_arc > 20">
+              <div class="card-content-row">
+                <p class="card-content-row__title">Поворот влево:</p>
+                <p class="card-content-row__value">{{ tank.turret.traverse_left_arc }}°</p>
+              </div>
+              <div class="card-content-row">
+                <p class="card-content-row__title">Поворот вправо:</p>
+                <p class="card-content-row__value">{{ tank.turret.traverse_right_arc }}°</p>
+              </div>
+            </div>
+
+            <!-- 🔹 Если ПТ-САУ без башни и угол ≤ 20° - УГН -->
+            <div *ngIf="tank.turret.traverse_left_arc !== undefined && tank.turret.traverse_right_arc !== undefined
+           && tank.turret.traverse_left_arc <= 20 && tank.turret.traverse_right_arc <= 20">
+              <div class="card-content-row">
+                <p class="card-content-row__title">УГН влево:</p>
+                <p class="card-content-row__value">{{ tank.turret.traverse_left_arc }}°</p>
+              </div>
+              <div class="card-content-row">
+                <p class="card-content-row__title">УГН вправо:</p>
+                <p class="card-content-row__value">{{ tank.turret.traverse_right_arc }}°</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </article>
+
+
+  </section>
+</div>

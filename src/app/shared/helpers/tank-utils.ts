@@ -63,3 +63,23 @@ export function toRoman(num: number): string {
   return romanNumerals[num] || num.toString(); // Возвращаем римскую цифру или исходное число, если оно больше 10
 }
 
+export function getShellType(type: string): string {
+  const shellTypes: Record<string, string> = {
+    armor_piercing: 'Бронебойный:',
+    armor_piercing_cr: 'Подкалиберный:',
+    high_explosive: 'Осколочно-фугасный:',
+    hollow_charge: 'Кумулятивный:',
+    hesh: 'Хэш-фугасный:',
+    premium_ap: 'Премиум бронебойный:',
+    premium_apcr: 'Премиум подкалиберный:',
+    premium_heat: 'Премиум кумулятивный:',
+    premium_he: 'Премиум фугасный:',
+  };
+
+  const normalizedType = type.toLowerCase(); // Приводим к нижнему регистру
+
+  return shellTypes[normalizedType] || `Неизвестный тип (${type})`;
+}
+
+
+

@@ -2,6 +2,7 @@ import {Routes} from '@angular/router';
 import {HomeComponent} from './components/features/home/home.component';
 import {authGuard} from './guards/auth.guard';
 import {clanResolver} from './resolvers/clan.resolver';
+import {tankResolver} from './resolvers/tank.resolver';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -44,13 +45,6 @@ export const routes: Routes = [
         path: 'tanks',
         loadComponent: () => import('./components/features/player/player-tanks-host/player-tanks-list/player-tanks-list.component')
           .then(m => m.PlayerTanksListComponent),
-        children: [
-          {
-            path: ':tankId',
-            loadComponent: () => import('./components/features/player/player-tanks-host/player-tank-details/player-tank-details.component')
-              .then(m => m.PlayerTankDetailsComponent),
-          }
-        ]
       },
       {
         path: 'achievements',
@@ -64,6 +58,12 @@ export const routes: Routes = [
     loadComponent: () => import('./components/features/session/session.component')
       .then(m => m.SessionComponent),
     canActivate: [authGuard],
+  },
+  {
+    path: 'tanks/:id',
+    loadComponent: () => import('./components/features/player/player-tanks-host/player-tank-details/player-tank-details.component')
+      .then(m => m.PlayerTankDetailsComponent),
+    resolve: {tank: tankResolver}
   },
   {
     path: 'clans',

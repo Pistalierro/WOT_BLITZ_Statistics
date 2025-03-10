@@ -1,0 +1,83 @@
+@use "../../../../../../styles/presets/variables" as *;
+@use "../../../../../../styles/presets/skin" as *;
+@use "../../../../../../styles/mixins/mixins-media" as *;
+@use "../../../../../../styles/mixins/extends" as *;
+
+.container {
+  @extend %container;
+
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: $gap;
+  }
+
+  .card {
+    background-color: $color-deep-dark;
+    width: 400px;
+    height: 100%;
+
+    &-title {
+      color: $color-gray-dark;
+      display: block;
+      text-align: center;
+      font-family: $font-header;
+      text-transform: uppercase;
+      margin-top: $gap-sm;
+      font-size: 1.5rem;
+    }
+
+    &-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        height: $gap-sm * 15;
+      }
+
+      &--tank img {
+        height: $gap-sm * 25
+      }
+    }
+
+    &-content {
+      &-row {
+        display: flex;
+        gap: $gap;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $gap;
+        //border-bottom: 1px dotted $color-gray-darken;
+
+        &__title {
+          margin: 0;
+          flex: 1;
+          align-items: center;
+          justify-content: start;
+        }
+
+        &__value {
+          margin: 0;
+          text-align: right;
+          display: flex;
+          align-items: center; // Выравнивание по вертикали
+          justify-content: end;
+        }
+
+        &__image {
+          height: $gap-sm * 3;
+        }
+      }
+
+      &-ammo {
+        &__title {
+          display: block;
+          text-align: center;
+          font-family: $font-header;
+          margin-bottom: $gap;
+        }
+      }
+    }
+  }
+}
