@@ -61,8 +61,19 @@ export class TanksService {
     this.error.set(null);
 
     try {
-      let jsonTanksList = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
-      jsonTanksList = Array.isArray(jsonTanksList) ? jsonTanksList : [];
+      let jsonTanksList: TankData[] = [];
+
+      try {
+        jsonTanksList = await this.tanksDataService.getTanksFromJson();
+      } catch (error: any) {
+        console.error('❌ [TanksDataService] Ошибка получения jsonTanks:', error.message);
+        jsonTanksList = [];
+      }
+
+      if (!jsonTanksList.length) {
+        console.error('❌ [TanksDataService] jsonTanksList пуст, останавливаемся.');
+        return;
+      }
 
       const statsData = await this.tanksDataService.getPlayerTanksStats(accountId);
       if (!statsData.length) {
@@ -100,6 +111,7 @@ export class TanksService {
       this.loading.set(false);
     }
   }
+
 
   async getTanksProps(tankId: number): Promise<TankProfile | null> {
     try {
