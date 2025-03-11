@@ -6,6 +6,8 @@ import {TankProfile} from '../../../../../models/tank/tank-full-info.model';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {UtilsService} from '../../../../../shared/utils.service';
 import {getFlagUrl, getShellType, tankTypes, toRoman} from '../../../../../shared/helpers/tank-utils';
+import {user} from '@angular/fire/auth';
+import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
 
 @Component({
   selector: 'app-player-tank-details',
@@ -20,22 +22,34 @@ import {getFlagUrl, getShellType, tankTypes, toRoman} from '../../../../../share
   styleUrl: './player-tank-details.component.scss'
 })
 export class PlayerTankDetailsComponent implements OnInit {
-
+  statsPercent: Record<string, number> = {};
   tank!: TankProfile;
   tanksService = inject(TanksService);
+  tanksDataService = inject(TanksDataService);
   utilsService = inject(UtilsService);
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly getShellType = getShellType;
+  protected readonly user = user;
   private activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({tank}) => {
-      console.log('Загруженный танк:', tank);
       this.tank = tank;
     });
-    console.log('🚀 Загруженный танк:', this.tank);
-    console.log('📌 Снаряды:', this.tank?.shells);
+
+    this.tanksDataService.loadMaxValues().subscribe(() => {
+      setTimeout(() => {
+        this.statsPercent = {
+          hp: this.tanksDataService.getStatPercentage('hp', this.tank.hp),
+          damage: this.tanksDataService.getStatPercentage('damage', this.tank.shells[0].damage || 0),
+          fire_rate: this.tanksDataService.getStatPercentage('fire_rate', this.tank.gun.fire_rate),
+          penetration: this.tanksDataService.getStatPercentage('penetration', this.tank.shells[0].penetration || 0),
+          speed: this.tanksDataService.getStatPercentage('speed', this.tank.speed_forward),
+          traverse: this.tanksDataService.getStatPercentage('traverse', this.tank.suspension.traverse_speed),
+        };
+      }, 0);
+    });
   }
 }

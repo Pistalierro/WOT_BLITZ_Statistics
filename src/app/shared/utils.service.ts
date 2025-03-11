@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {TankInfo} from '../models/tank/tank-full-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,27 +33,6 @@ export class UtilsService {
     return result;
   }
 
-  calculateScaledPercentages(
-    battlesByTier: Record<number, number>,
-    maxPercent = 90,
-    minPercent = 0.01
-  ): Record<number, number> {
-    const result: Record<number, number> = {};
-    const maxBattles = Math.max(...Object.values(battlesByTier));
-
-    if (maxBattles === 0) {
-      for (const tier in battlesByTier) {
-        result[tier] = minPercent;
-      }
-    } else {
-      for (const tier in battlesByTier) {
-        const battles = battlesByTier[tier];
-        result[tier] = Math.max((battles / maxBattles) * maxPercent, minPercent);
-      }
-    }
-    return result;
-  }
-
   calculatePercentageDirectly(
     winRateByTier: Record<number, number>,
     minPercent = 0.01
@@ -65,5 +45,49 @@ export class UtilsService {
     }
 
     return result;
+  }
+
+  calculateScaledPercentages(
+    values: Record<number, number>,
+    maxPercent = 100,
+    minPercent = 0.01
+  ): Record<number, number> {
+    const result: Record<number, number> = {};
+    const maxValue = Math.max(...Object.values(values));
+
+    if (maxValue === 0) {
+      for (const key in values) {
+        result[key as any] = minPercent; // 🔥 Оставляем ключ в исходном виде
+      }
+    } else {
+      for (const key in values) {
+        const value = values[key]; // 🔥 Не изменяем ключ, чтобы не сломать вызовы
+        result[key as any] = Math.max((value / maxValue) * maxPercent, minPercent);
+      }
+    }
+    return result;
+  }
+
+  calculateMaxValues(tanks: TankInfo[]): Record<string, number> {
+    return {
+      hp: Math.max(...tanks.map(tank => tank.default_profile?.hp || 0)),
+      damage: Math.max(...tanks.map(tank => tank.default_profile.shells[0].damage || 0)),
+      fire_rate: Math.max(...tanks.map(tank => tank.default_profile.gun.fire_rate || 0)),
+      penetration: Math.max(...tanks.map(tank => tank.default_profile.shells[0].penetration || 0)),
+      speed: Math.max(...tanks.map(tank => tank.default_profile.speed_forward || 0)),
+      traverse: Math.max(...tanks.map(tank => tank.default_profile.suspension.traverse_speed || 0)),
+    };
+  }
+
+
+  calculateStatPercentages(maxValues: Record<string, number>): Record<string, Record<number, number>> {
+    return {
+      hp: this.calculateScaledPercentages({1: maxValues['hp'] || 1}, 100),
+      damage: this.calculateScaledPercentages({1: maxValues['damage'] || 1}, 100),
+      fire_rate: this.calculateScaledPercentages({1: maxValues['fire_rate'] || 1}, 100),
+      penetration: this.calculateScaledPercentages({1: maxValues['penetration'] || 1}, 100),
+      speed: this.calculateScaledPercentages({1: maxValues['speed'] || 1}, 100),
+      traverse: this.calculateScaledPercentages({1: maxValues['traverse'] || 1}, 100),
+    };
   }
 }

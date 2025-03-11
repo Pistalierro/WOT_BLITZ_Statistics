@@ -124,7 +124,6 @@ export class TanksService {
       if (!tankFullInfo) return null;
 
       this.tankFullInfo.set(tankFullInfo);
-      console.log('✅ [TanksService] Характеристики танка загружены:', tankFullInfo);
       await this.syncService.saveDataToAllStorages('tanks', 'tankFullInfo', tankFullInfo);
 
       return tankFullInfo;

@@ -8,13 +8,14 @@
 
   &-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: $gap;
+    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+    gap: $gap-sm;
+    margin-top: 20px;
   }
 
   .card {
     background-color: $color-deep-dark;
-    width: 400px;
+    width: 390px;
     height: 100%;
 
     &-title {
@@ -25,6 +26,69 @@
       text-transform: uppercase;
       margin-top: $gap-sm;
       font-size: 1.5rem;
+    }
+
+    &-header {
+      &-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+      }
+
+      &__background {
+        position: absolute;
+        inset: $gap-sm;
+        border-radius: 4px;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba($color-black, 0.6); // затемнение
+          border-radius: inherit;
+          z-index: 1;
+        }
+      }
+
+      &__image {
+        height: 250px;
+        z-index: 2;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &__item {
+        z-index: 2;
+        position: absolute;
+        @extend %text-shadow;
+
+        &--name {
+          bottom: 0;
+          left: $gap-sm;
+        }
+
+        &--tier {
+          top: $gap-sm;
+          left: $gap-sm;
+        }
+
+        &--type {
+          height: $gap-sm * 3;
+          right: $gap-sm;
+          top: $gap-sm;
+        }
+      }
+
+
     }
 
     &-image {
@@ -42,13 +106,18 @@
     }
 
     &-content {
+      &__title {
+        text-align: center;
+        font-family: $font-header;
+        margin-bottom: 20px;
+      }
+
       &-row {
         display: flex;
         gap: $gap;
         align-items: center;
         justify-content: space-between;
         margin-bottom: $gap;
-        //border-bottom: 1px dotted $color-gray-darken;
 
         &__title {
           margin: 0;
@@ -78,6 +147,22 @@
           margin-bottom: $gap;
         }
       }
+    }
+  }
+}
+
+.content {
+  &-item {
+    margin-bottom: 10px;
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__progress {
+      margin-top: -5px;
     }
   }
 }

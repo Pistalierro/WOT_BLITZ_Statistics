@@ -4,20 +4,23 @@ import {collection, doc, Firestore, getDoc, setDoc} from '@angular/fire/firestor
 import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
 import {BattlesByTier, BattlesByWinAvgDamage, BattlesByWinRate, TankData, TankStatsResponse} from '../../models/tank/tanks-response.model';
 import {SyncService} from '../../shared/services/data/sync.service';
-import {catchError, firstValueFrom, lastValueFrom, throwError} from 'rxjs';
+import {catchError, firstValueFrom, lastValueFrom, map, Observable, throwError} from 'rxjs';
 import {apiConfig} from '../../app.config';
-import {ApiResponse, TankProfile} from '../../models/tank/tank-full-info.model';
-import {FirestoreStorageService} from '../../shared/services/data/firestore-storage.service';
+import {ApiResponse, TankInfo, TankProfile, TankValues} from '../../models/tank/tank-full-info.model';
+import {UtilsService} from '../../shared/utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TanksDataService {
+  statsPercent: Record<string, Record<number, number>> = {};
+  private maxValues: Record<string, number> = {};
   private http = inject(HttpClient);
   private firestore = inject(Firestore);
   private indexedDbService = inject(IndexedDbService);
   private syncService = inject(SyncService);
-  private firestoreService = inject(FirestoreStorageService);
+  private utilsService = inject(UtilsService);
+
 
   async getJsonTanks(): Promise<TankData[]> {
     try {
@@ -106,7 +109,6 @@ export class TanksDataService {
     }
   }
 
-
   async getPlayerTanksStats(accountId: number): Promise<TankStatsResponse['data'][number]> {
     const url = `${apiConfig.baseUrl}/tanks/stats/?application_id=${apiConfig.applicationId}&account_id=${accountId}`;
     try {
@@ -143,7 +145,7 @@ export class TanksDataService {
 
       if (!jsonTankData) {
         console.warn(`⚠️ [TanksApiService] Танка с ID ${tankId} нет в JSON.`);
-        return apiTankData; // Если в JSON нет, возвращаем только API-данные
+        return apiTankData;
       }
 
       return {
@@ -202,6 +204,27 @@ export class TanksDataService {
       winRateByTier: {} as BattlesByWinRate,
       avgDamageByTier: {} as BattlesByWinAvgDamage
     });
+  }
+
+  loadMaxValues(): Observable<void> {
+    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
+    return this.http.get<ApiResponse<TankValues>>(url).pipe(
+      map(res => {
+        const tanksArray: TankInfo[] = Object.values(res.data as unknown as Record<string, TankInfo>);
+        this.maxValues = this.utilsService.calculateMaxValues(tanksArray);
+        console.log('Посчитанные maxValues:', this.maxValues);
+        this.statsPercent = this.utilsService.calculateStatPercentages(this.maxValues);
+      })
+    );
+  }
+
+  getMaxValues(key: keyof typeof this.maxValues): number {
+    return this.maxValues[key] || 1;
+  }
+
+  getStatPercentage(key: keyof typeof this.maxValues, value: number): number {
+    const max = this.getMaxValues(key);
+    return (value / max) * 100 || 1; // Минимум 1%, чтобы шкала не была пустой
   }
 
 }

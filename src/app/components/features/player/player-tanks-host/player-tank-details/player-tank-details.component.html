@@ -1,30 +1,66 @@
 <div *ngIf="tanksService.tankFullInfo() as tank" class="container">
-  <h3 [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tank__title">{{ tank.name }}</h3>
+  <h3 [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="container-title">{{ tank.name }}</h3>
   <section class="tank-characteristics container-grid">
 
     <!-- 🔹 Общие характеристики -->
     <article class="tank-summary">
       <mat-card appearance="outlined" class="card">
-        <mat-card-title class="card-title">Общие</mat-card-title>
-        <div class="card-image card-image--tank">
-          <img [alt]="tank.name" [src]="tank.images.normal" mat-card-image>
+        <!--        <mat-card-title class="card-title">Общие</mat-card-title>-->
+        <div class="card-header-container">
+          <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="card-header__background">
+            <img [alt]="tank.name" [src]="tank.images.normal" class="card-header__image">
+            <p [style.color]="utilsService.getTankColor(tank) + ' !important'" class="card-header__item card-header__item--tier ">
+              {{ toRoman(tank.tier) }}
+            </p>
+            <img [alt]="tank.type" [src]="tankTypes(tank.type, tank)" class="card-header__item card-header__item--type">
+            <p [style.color]="utilsService.getTankColor(tank) + ' !important'" class="card-header__item card-header__item--name">
+              {{ tank.name }}
+            </p>
+          </div>
         </div>
         <mat-card-content class="card-content">
-          <div class="card-content-row">
-            <p class="card-content-row__title">ID:</p>
-            <p class="card-content-row__value">{{ tank.tank_id }}</p>
+          <p class="card-content__title">Краткие характеристики</p>
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Прочность:</p>
+              <p class="content-row__value">{{ tank.hp }}</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['hp']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
-          <div class="card-content-row">
-            <p class="card-content-row__title">Уровень:</p>
-            <p class="card-content-row__value">{{ toRoman(tank.tier) }}</p>
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Разовый урон:</p>
+              <p class="content-row__value">{{ tank.shells[0].damage }}</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['damage']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
-          <div class="card-content-row">
-            <p class="card-content-row__title">Нация:</p>
-            <img [alt]="tank.nation" [src]="getFlagUrl(tank.nation)" class="card-content-row__image">
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Скорострельность:</p>
+              <p class="content-row__value">{{ tank.gun.fire_rate }}вс/м</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['fire_rate']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
-          <div class="card-content-row">
-            <p class="card-content-row__title">Тип:</p>
-            <img [alt]="tank.type" [src]="tankTypes(tank.type)" class="card-content-row__image">
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Пробитие:</p>
+              <p class="content-row__value">{{ tank.shells[0].penetration }}мм</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['penetration']" class="content-row__progress" mode="determinate"></mat-progress-bar>
+          </div>
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Скорость:</p>
+              <p class="content-row__value">{{ tank.speed_forward }}км/ч</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['speed']" class="content-row__progress" mode="determinate"></mat-progress-bar>
+          </div>
+          <div class="content-item">
+            <div class="content-row">
+              <p class="content-row__title">Вращение:</p>
+              <p class="content-row__value">{{ tank.suspension.traverse_speed }}°/с</p>
+            </div>
+            <mat-progress-bar [value]="statsPercent['traverse']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
         </mat-card-content>
       </mat-card>
@@ -39,7 +75,7 @@
         </div>
         <mat-card-content class="card-content">
           <div class="card-content-ammo">
-            <p class="card-content-ammo__title">Урон</p>
+            <p class="card-content__title">Урон</p>
             <div *ngFor="let shell of tank.shells" class="card-content-row">
               <p class="card-content-row__title">{{ getShellType(shell.type) }}</p>
               <p class="card-content-row__value">{{ shell.damage }}</p>
@@ -64,22 +100,18 @@
           <img alt="Орудие" mat-card-image src="/images/tanks/gun.webp">
         </div>
         <mat-card-content class="card-content">
-
           <div class="card-content-row">
             <p class="card-content-row__title">Название:</p>
             <p class="card-content-row__value">{{ tank.gun.name }}</p>
           </div>
-
           <div class="card-content-row">
             <p class="card-content-row__title">Калибр:</p>
             <p class="card-content-row__value">{{ tank.gun.caliber }} мм</p>
           </div>
-
           <div class="card-content-row">
             <p class="card-content-row__title">{{ tank.gun.clip_capacity > 1 ? 'К/Д барабана' : 'К/Д:' }}</p>
             <p class="card-content-row__value">{{ tank.gun.reload_time }} сек</p>
           </div>
-
           <!-- ✅ Для барабанных танков -->
           <div *ngIf="tank.gun.clip_capacity > 1">
             <div class="card-content-row">
@@ -114,7 +146,7 @@
 
           <div class="card-content-row">
             <p class="card-content-row__title">Скорострельность:</p>
-            <p class="card-content-row__value">{{ tank.gun.fire_rate }} в/м</p>
+            <p class="card-content-row__value">{{ tank.gun.fire_rate }} вс/м</p>
           </div>
         </mat-card-content>
       </mat-card>
@@ -185,7 +217,5 @@
         </mat-card-content>
       </mat-card>
     </article>
-
-
   </section>
 </div>
