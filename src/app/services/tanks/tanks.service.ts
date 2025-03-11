@@ -64,10 +64,15 @@ export class TanksService {
       let jsonTanksList: TankData[] = [];
 
       try {
-        jsonTanksList = await this.tanksDataService.getTanksFromJson();
+        jsonTanksList = await this.tanksDataService.getJsonTanks();
       } catch (error: any) {
         console.error('❌ [TanksDataService] Ошибка получения jsonTanks:', error.message);
         jsonTanksList = [];
+      }
+
+      if (!jsonTanksList.length) {
+        console.error('❌ [TanksDataService] jsonTanksList пуст, останавливаемся.');
+        return;
       }
 
       if (!jsonTanksList.length) {

@@ -7,51 +7,101 @@ import {SyncService} from '../../shared/services/data/sync.service';
 import {catchError, firstValueFrom, lastValueFrom, throwError} from 'rxjs';
 import {apiConfig} from '../../app.config';
 import {ApiResponse, TankProfile} from '../../models/tank/tank-full-info.model';
+import {FirestoreStorageService} from '../../shared/services/data/firestore-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TanksDataService {
-  private readonly CHUNK_SIZE = 100;
   private http = inject(HttpClient);
   private firestore = inject(Firestore);
   private indexedDbService = inject(IndexedDbService);
   private syncService = inject(SyncService);
+  private firestoreService = inject(FirestoreStorageService);
 
-  async getTanksFromJson(): Promise<TankData[]> {
-    let cachedTanks: TankData[] = [];
-
+  async getJsonTanks(): Promise<TankData[]> {
     try {
-      cachedTanks = await this.syncService.getDataFromAllStorages<TankData[]>('tanks', 'jsonTanks');
+      const indexedDbTanks = await this.indexedDbService.getDataFromIndexedDB<TankData[]>('tanks', 'jsonTanks');
 
-      if (!Array.isArray(cachedTanks)) {
-        console.warn('⚠ cachedTanks не является массивом, присваиваем []');
-        cachedTanks = [];
+      if (indexedDbTanks?.data?.length) {
+        console.log('✅ [TanksDataService] Данные найдены в IndexedDB, используем их.');
+        return indexedDbTanks.data;
       }
-    } catch (error: any) {
-      console.error('❌ [TanksJsonService] Ошибка получения jsonTanks из хранилища:', error.message);
-      cachedTanks = [];
-    }
 
-    if (cachedTanks.length > 0) {
-      console.log('✅ [TanksJsonService] jsonTanks загружен из локального хранилища.');
-      return cachedTanks;
-    }
+      const jsonTanks = await this.syncService.getDataFromAllStorages<TankData[]>(
+        'tanks',
+        'jsonTanks',
+        () => this.getTanksFromJsonFile()
+      );
 
-    try {
-      const loadedJson = await lastValueFrom(this.http.get<TankData[]>('/assets/tankList.json'));
-
-      if (!Array.isArray(loadedJson) || loadedJson.length === 0) {
-        console.error('❌ [TanksJsonService] Ошибка: tankList.json пуст.');
+      if (!jsonTanks || jsonTanks.length === 0) {
+        console.warn('⚠️ [TanksDataService] Данные о танках отсутствуют в Firestore.');
         return [];
       }
 
-      await this.syncService.saveDataToAllStorages('tanks', 'jsonTanks', loadedJson);
-      console.log(`✅ [TanksJsonService] jsonTanks загружен из assets и сохранён: ${loadedJson.length}`);
+      const parentDocRef = doc(this.firestore, 'tanks', 'jsonTanks');
+      const docSnap = await getDoc(parentDocRef);
 
-      return loadedJson;
+      if (!docSnap.exists()) {
+        console.log('🆕 [TanksDataService] Firestore пуст. Сохраняем...');
+        await this.saveJsonTanksToFirestore(jsonTanks);
+      }
+
+      await this.indexedDbService.saveDataToIndexedDB('tanks', 'jsonTanks', jsonTanks);
+      return jsonTanks;
     } catch (error: any) {
-      console.error('❌ [TanksJsonService] Ошибка загрузки tankList.json:', error.message);
+      console.error('❌ [TanksDataService] Ошибка загрузки танков из Firestore:', error.message);
+      return [];
+    }
+  }
+
+  async saveJsonTanksToFirestore(jsonTanks: TankData[]): Promise<void> {
+    if (!jsonTanks.length) {
+      console.warn('⚠ [TanksDataService] jsonTanksList пуст, сохранение отменено.');
+      return;
+    }
+    const parentDocRef = doc(this.firestore, 'tanks', 'jsonTanks');
+    const chunksRef = collection(parentDocRef, 'chunks');
+    const chunkSize = 100;
+    const chunkCount = Math.ceil(jsonTanks.length / chunkSize);
+    const timestamp = Date.now();
+    console.log(`📌 [TanksDataService] Сохраняем ${jsonTanks.length} танков чанками по ${chunkSize}.`);
+
+    await setDoc(parentDocRef, {chunkCount, timestamp});
+
+    for (let i = 0; i < chunkCount; i++) {
+      const chunk = jsonTanks.slice(i * chunkSize, (i + 1) * chunkSize);
+      await setDoc(doc(chunksRef, `batch_${i}`), {data: chunk, timestamp});
+      console.log(`✅ [TanksDataService] Чанк #${i + 1}/${chunkCount} сохранён!`);
+    }
+    console.log('🎉 [TanksDataService] Все чанки успешно сохранены в Firestore!');
+  }
+
+  async getTanksFromJsonFile(): Promise<TankData[]> {
+    console.log('📂 [TanksDataService] Загружаем танки из JSON-файла...');
+    try {
+      const response = this.http.get<{ data: Record<string, TankData>; status: string; meta: any }>('/assets/tankList.json');
+      console.log('🔄 [TanksDataService] Запрос JSON-файла отправлен...');
+
+      const loadedJson = await lastValueFrom(response);
+      console.log('📥 [TanksDataService] Ответ JSON-файла получен:', loadedJson);
+
+      if (!loadedJson || !loadedJson.data) {
+        console.warn('⚠️ [TanksDataService] Файл tankList.json пуст или поврежден.');
+        return [];
+      }
+
+      const tanksArray = Object.values(loadedJson.data);
+
+      if (!Array.isArray(tanksArray) || tanksArray.length === 0) {
+        console.warn('⚠️ [TanksDataService] Данные в tankList.json пусты после преобразования.');
+        return [];
+      }
+
+      console.log(`✅ [TanksDataService] Загружено ${tanksArray.length} танков из JSON.`);
+      return tanksArray;
+    } catch (error: any) {
+      console.error('❌ [TanksDataService] Ошибка загрузки JSON-файла:', error.message);
       return [];
     }
   }
@@ -88,7 +138,7 @@ export class TanksDataService {
       }
 
       const apiTankData = res.data[tankId];
-      const jsonTanks = await this.getTanksFromJson();
+      const jsonTanks = await this.getJsonTanks();
       const jsonTankData = jsonTanks.find(tank => tank.tank_id === tankId);
 
       if (!jsonTankData) {
@@ -154,54 +204,4 @@ export class TanksDataService {
     });
   }
 
-  async loadAndSaveTanks(): Promise<void> {
-    try {
-      const tanks = await this.getTanksFromJson();
-      if (!tanks.length) {
-        console.warn('⚠️ [TanksDataService] Танки не были загружены (массив пуст). Сохранение пропускаем.');
-        return;
-      }
-      console.log(`✅ [TanksDataService] Загружено танков: ${tanks.length}`);
-
-      await this.saveTanksInChunksToFirestore(tanks);
-
-      await this.indexedDbService.saveDataToIndexedDB('tanks', 'jsonTanks', tanks);
-      console.log('✅ [TanksDataService] Все танки сохранены в IndexedDB (целиком).');
-
-    } catch (error) {
-      console.error('❌ [TanksDataService] Ошибка в loadAndSaveTanks:', error);
-    }
-  }
-
-  private async saveTanksInChunksToFirestore(tanks: TankData[], forceRefresh: boolean = false): Promise<void> {
-    const parentDocRef = doc(this.firestore, 'tanks', 'jsonTanks');
-    const docSnap = await getDoc(parentDocRef);
-
-    if (!forceRefresh && docSnap.exists()) {
-      console.log('✅ [TanksDataService] Документ tanks/jsonTanks УЖЕ существует. Пропускаем запись чанков.');
-      return;
-    }
-
-    const total = tanks.length;
-    const chunkCount = Math.ceil(total / this.CHUNK_SIZE);
-    console.log(`📌 [TanksDataService] Сохраняем танки по ${this.CHUNK_SIZE} шт. Итого чанков: ${chunkCount}`);
-
-    const chunksRef = collection(parentDocRef, 'chunks');
-    const timestamp = Date.now();
-
-    await setDoc(parentDocRef, {chunkCount, timestamp});
-    console.log('ℹ️ [TanksDataService] Записали метаданные в документ: tanks/jsonTanks');
-
-    for (let i = 0; i < chunkCount; i++) {
-      const start = i * this.CHUNK_SIZE;
-      const end = start + this.CHUNK_SIZE;
-      const chunk = tanks.slice(start, end);
-
-      const batchRef = doc(chunksRef, `batch_${i}`);
-      await setDoc(batchRef, {data: chunk, timestamp});
-
-      console.log(`✅ [TanksDataService] Чанк #${i + 1}/${chunkCount} (размер: ${chunk.length}) сохранён!`);
-    }
-    console.log('🎉 [TanksDataService] Все чанки успешно сохранены в Firestore!');
-  }
 }

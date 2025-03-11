@@ -1,4 +1,5 @@
 export function tankTypes(type: string, row?: any, shouldColorize: boolean = true): string {
+  // console.log('Tank Data', row);
   const basePath = '/images/tank-types/';
   let suffix = '';
 

@@ -9,15 +9,8 @@ export class FirestoreStorageService {
 
   private firestore = inject(Firestore);
   private auth = inject(Auth);
-
-  /** Максимальное кол-во элементов в массиве на 1 чанк */
   private readonly BATCH_SIZE = 9000;
 
-  /**
-   * Сохраняет данные в Firestore:
-   * - Если массив слишком большой => сохраняем чанками
-   * - Иначе сохраняем одним документом
-   */
   async saveDataToFirestore<T>(collectionName: string, documentId: string, data: T): Promise<void> {
     const user = this.auth.currentUser;
     if (!user) {
@@ -49,12 +42,6 @@ export class FirestoreStorageService {
     }
   }
 
-  /**
-   * Загружает данные из Firestore:
-   * - Сначала ищем единый документ
-   * - Если нет => пробуем читать чанки
-   * - Если ничего нет => возвращаем null
-   */
   async loadDataFromFirestore<T>(collectionName: string, documentId: string): Promise<{ data: T; timestamp: number } | null> {
     try {
       const docRef = doc(this.firestore, collectionName, documentId);
@@ -62,24 +49,27 @@ export class FirestoreStorageService {
 
       if (snap.exists()) {
         console.log(`✅ [Firestore] '${collectionName}/${documentId}' найден (целиком).`);
-        return snap.data() as { data: T; timestamp: number };
+
+        const docData = snap.data() as { data: T; timestamp: number };
+        if (Array.isArray(docData?.data) && docData.data.length > 0) {
+          console.log(`📋 [Firestore] '${collectionName}/${documentId}' содержит ${docData.data.length} элементов.`);
+          return docData;
+        }
+
+        console.warn(`⚠ [Firestore] '${collectionName}/${documentId}' найден, но data пуст.`);
+      } else {
+        console.log(`⚠ '${collectionName}/${documentId}' нет цельного документа. Пробуем chunks...`);
       }
 
-      // Если нет цельного документа, пробуем chunks
-      console.log(`⚠ '${collectionName}/${documentId}' нет цельного документа. Пробуем chunks...`);
-      const chunkData = await this.loadLargeArray<T>(collectionName, documentId);
-      if (chunkData) {
-        return chunkData;
-      }
+      // Если цельного документа нет или data пустая → грузим чанки
+      return await this.loadLargeArray<T>(collectionName, documentId);
 
-      // Если ничего не нашли
-      console.warn(`⚠ [Firestore] '${collectionName}/${documentId}' не найден ни целиком, ни чанками. Возвращаем null.`);
-      return null;
     } catch (error: any) {
       console.error(`❌ [Firestore] Ошибка загрузки '${collectionName}/${documentId}':`, error.message);
       return null;
     }
   }
+
 
   /**
    * Приватный метод — сохранение большого массива чанками

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
 import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
@@ -28,7 +28,7 @@ import {Router} from '@angular/router';
   templateUrl: './player-tanks-list.component.html',
   styleUrl: './player-tanks-list.component.scss'
 })
-export class PlayerTanksListComponent implements OnInit, AfterViewInit {
+export class PlayerTanksListComponent implements AfterViewInit {
   displayedColumns: string[] = COLUMNS_NAMES;
   dataSource = new MatTableDataSource<Tank>([]);
 
@@ -51,11 +51,6 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
         this.dataSource.data = tankList;
       }
     });
-  }
-
-  ngOnInit() {
-    void this.tanksDataService.loadAndSaveTanks();
-    // void this.tanksService.findMissingTanks();
   }
 
   ngAfterViewInit() {
