@@ -49,7 +49,7 @@ export class PlayerTankDetailsComponent implements OnInit {
           speed: this.tanksDataService.getStatPercentage('speed', this.tank.speed_forward),
           traverse: this.tanksDataService.getStatPercentage('traverse', this.tank.suspension.traverse_speed),
         };
-      }, 0);
+      }, 100);
     });
   }
 }

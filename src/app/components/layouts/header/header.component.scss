@@ -28,6 +28,8 @@ mat-toolbar {
   .logo {
     display: flex;
     align-items: center;
+    user-select: none;
+    cursor: pointer;
 
     img {
       height: $gap-sm * 5; // Размер логотипа
@@ -37,8 +39,15 @@ mat-toolbar {
     .site-title {
       font-size: 1.25rem;
       font-weight: bold;
-      color: $color-light;
+      color: $color-gray-dark;
       margin: 0;
+      transition: text-shadow 250ms ease-in-out, transform 250ms ease-in-out;
+
+      &:hover,
+      &:focus {
+        @extend %text-shadow-light;
+        transform: scale(1.05);
+      }
     }
   }
 

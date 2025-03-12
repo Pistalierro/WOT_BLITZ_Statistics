@@ -10,75 +10,78 @@
   <p class="error">{{ authService.errorSignal() }}</p>
 </div>
 
-<mat-form-field appearance="outline" class="filter">
-  <mat-label>{{ 'TANKS_STATS.FILTER_LABEL' | translate }}</mat-label>
-  <input #input (keyup)="applyFilter($event)" [placeholder]="'TANKS_STATS.FILTER_PLACEHOLDER' | translate" matInput>
-</mat-form-field>
+<div *ngIf="authService.userSignal()">
+  <mat-form-field appearance="outline" class="filter">
+    <mat-label>{{ 'TANKS_STATS.FILTER_LABEL' | translate }}</mat-label>
+    <input #input (keyup)="applyFilter($event)" [placeholder]="'TANKS_STATS.FILTER_PLACEHOLDER' | translate" matInput>
+  </mat-form-field>
 
-<div class="mat-elevation-z8">
-  <div class="table-container">
-    <table [dataSource]="dataSource" class="statistics-tanks-table" mat-table matSort>
-      <!-- Основная информация -->
-      <ng-container matColumnDef="mainInfo">
-        <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
-          <div class="header-buttons">
+  <div class="mat-elevation-z8">
+    <div class="table-container">
+      <table [dataSource]="dataSource" class="statistics-tanks-table" mat-table matSort>
+        <!-- Основная информация -->
+        <ng-container matColumnDef="mainInfo">
+          <th *matHeaderCellDef class="main-info-cell" mat-header-cell>
+            <div class="header-buttons">
             <span [matTooltip]="'TANKS_STATS.SORT.NATION' | translate" class="header-button" mat-sort-header="nation">
               <mat-icon>public</mat-icon>
             </span>
-            <span [matTooltip]="'TANKS_STATS.SORT.TIER' | translate" class="header-button" mat-sort-header="tier">
+              <span [matTooltip]="'TANKS_STATS.SORT.TIER' | translate" class="header-button" mat-sort-header="tier">
               I-X
             </span>
-            <span [matTooltip]="'TANKS_STATS.SORT.TYPE' | translate" class="header-button header-button--type" mat-sort-header="type">
+              <span [matTooltip]="'TANKS_STATS.SORT.TYPE' | translate" class="header-button header-button--type" mat-sort-header="type">
               {{ 'TANKS_STATS.SORT.TYPE' | translate }}
             </span>
-          </div>
-        </th>
-        <td *matCellDef="let row" class="main-info-cell" mat-cell>
-          <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
-            <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tier-label">{{ toRoman(row.tier) }}</div>
-            <img [alt]="row.type" [src]="tankTypes(row.type, row)" class="class-icon"/>
-            <div class="flag-content">
-              <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
-                   class="tank-icon-centered"/>
-              <ng-template #noImage><span class="no-image">{{ 'TANKS_STATS.TABLE.NO_IMAGE' | translate }}</span></ng-template>
             </div>
-            <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tank-name">{{ row.name }}</div>
-          </div>
-        </td>
-      </ng-container>
+          </th>
+          <td *matCellDef="let row" class="main-info-cell" mat-cell>
+            <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
+              <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tier-label">{{ toRoman(row.tier) }}</div>
+              <img [alt]="row.type" [src]="tankTypes(row.type, row)" class="class-icon"/>
+              <div class="flag-content">
+                <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
+                     class="tank-icon-centered"/>
+                <ng-template #noImage><span class="no-image">{{ 'TANKS_STATS.TABLE.NO_IMAGE' | translate }}</span></ng-template>
+              </div>
+              <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tank-name">{{ row.name }}</div>
+            </div>
+          </td>
+        </ng-container>
 
-      <!-- Win_Rate Column -->
-      <ng-container matColumnDef="win_rate">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-          <mat-icon>emoji_flags</mat-icon>
-        </th>
-        <td *matCellDef="let row" [ngClass]="utilsService.getWinRateColor((row.all.wins / row.all.battles) * 100)"
-            class="win-rate" mat-cell>
-          {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
-        </td>
-      </ng-container>
+        <!-- Win_Rate Column -->
+        <ng-container matColumnDef="win_rate">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            <mat-icon>emoji_flags</mat-icon>
+          </th>
+          <td *matCellDef="let row" [ngClass]="utilsService.getWinRateColor((row.all.wins / row.all.battles) * 100)"
+              class="win-rate" mat-cell>
+            {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
+          </td>
+        </ng-container>
 
-      <!-- Battles Column -->
-      <ng-container matColumnDef="battles">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-          <span class="material-symbols-outlined">swords</span>
-        </th>
-        <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
-      </ng-container>
+        <!-- Battles Column -->
+        <ng-container matColumnDef="battles">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            <span class="material-symbols-outlined">swords</span>
+          </th>
+          <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
+        </ng-container>
 
-      <!-- Damage Column -->
-      <ng-container matColumnDef="damage">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</th>
-        <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
-      </ng-container>
+        <!-- Damage Column -->
+        <ng-container matColumnDef="damage">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</th>
+          <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
+        </ng-container>
 
-      <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
-      <tr (click)="navigateToTankDetails(row.tank_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row" mat-row></tr>
+        <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
+        <tr (click)="navigateToTankDetails(row.tank_id)" *matRowDef="let row; columns: displayedColumns;" class="clickable-row"
+            mat-row></tr>
 
-      <tr *matNoDataRow class="mat-row">
-        <td class="mat-cell" colspan="4">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>
-      </tr>
-    </table>
+        <tr *matNoDataRow class="mat-row">
+          <td class="mat-cell" colspan="4">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
   </div>
-  <mat-paginator [pageSizeOptions]="[25, 50, 100]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
 </div>

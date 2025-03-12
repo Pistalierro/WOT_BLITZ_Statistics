@@ -224,7 +224,7 @@ export class TanksDataService {
 
   getStatPercentage(key: keyof typeof this.maxValues, value: number): number {
     const max = this.getMaxValues(key);
-    return (value / max) * 100 || 1; // Минимум 1%, чтобы шкала не была пустой
+    return (value / max) * 100 || 1; // Обычный расчёт для остальных
   }
 
 }

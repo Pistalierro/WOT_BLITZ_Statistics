@@ -1,15 +1,25 @@
 <div class="container">
   <section class="welcome-section">
-    <h1>{{ 'HOME.WELCOME' | translate }}</h1>
-    <p>{{ 'HOME.DESCRIPTION' | translate }}</p>
+    <h1 class="welcome-title">{{ 'HOME.WELCOME' | translate }}</h1>
+    <div class="welcome-content">
+      <p class="welcome-content__title">{{ 'HOME.DESCRIPTION.TITLE' | translate }}</p>
+      <div class="welcome-content__description">
+        <ul class="welcome-content__list">
+          <li *ngFor="let item of ('HOME.DESCRIPTION.LIST' | translate)" class="welcome-content__item">{{ item }}</li>
+        </ul>
+      </div>
+      <p class="welcome-content__sub">
+        {{ 'HOME.DESCRIPTION.SUB' | translate }}
+      </p>
+    </div>
   </section>
 
   <section class="stats-section">
-    <article @slideUp>
+    <article @slideUp class="players">
       <mat-card class="stat-card">
         <a class="stat-card__link" routerLink="/players"></a>
         <mat-card-header>
-          <h2 class="mat-card-title">{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</h2>
+          <h3 class="mat-card-title">{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</h3>
           <mat-icon>stars</mat-icon>
         </mat-card-header>
         <mat-card-content>
@@ -18,11 +28,11 @@
       </mat-card>
     </article>
 
-    <article @slideUp>
+    <article @slideUp class="clans">
       <mat-card class="stat-card">
         <a class="stat-card__link" routerLink="/clans"></a>
         <mat-card-header>
-          <h2 class="mat-card-title">{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</h2>
+          <h3 class="mat-card-title">{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</h3>
           <mat-icon>groups</mat-icon>
         </mat-card-header>
         <mat-card-content>
@@ -31,11 +41,11 @@
       </mat-card>
     </article>
 
-    <article @slideUp>
+    <article @slideUp class="session">
       <mat-card class="stat-card">
         <a class="stat-card__link" routerLink="/session"></a>
         <mat-card-header>
-          <h2 class="mat-card-title">{{ 'HOME.SESSION.TITLE' | translate }}</h2>
+          <h3 class="mat-card-title">{{ 'HOME.SESSION.TITLE' | translate }}</h3>
           <mat-icon>insights</mat-icon>
         </mat-card-header>
         <mat-card-content>
@@ -44,25 +54,26 @@
       </mat-card>
     </article>
 
-    <article @slideUp>
+    <article @slideUp class="tanks">
       <mat-card class="stat-card">
+        <a class="stat-card__link" routerLink="/players/tanks"></a>
         <mat-card-header>
-          <h2 class="mat-card-title">{{ 'HOME.TOURNAMENTS.TITLE' | translate }}</h2>
-          <mat-icon>emoji_events</mat-icon>
+          <h3 class="mat-card-title">{{ 'HOME.TANKS.TITLE' | translate }}</h3>
+          <mat-icon>insights</mat-icon>
         </mat-card-header>
         <mat-card-content>
-          <strong>{{ 'HOME.TOURNAMENTS.DESCRIPTION' | translate }}</strong>
+          <strong>{{ 'HOME.TANKS.DESCRIPTION' | translate }}</strong>
         </mat-card-content>
       </mat-card>
     </article>
   </section>
 
-  <section class="advantages">
-    <h2 class="advantages-title">{{ 'HOME.WHY_US.TITLE' | translate }}</h2>
-    <ul class="advantages-list">
-      <li class="advantages-item">{{ 'HOME.WHY_US.STATS' | translate }}</li>
-      <li class="advantages-item">{{ 'HOME.WHY_US.ANALYSIS' | translate }}</li>
-      <li class="advantages-item">{{ 'HOME.WHY_US.INTERFACE' | translate }}</li>
-    </ul>
-  </section>
+  <!--  <section class="advantages">-->
+  <!--    <h2 class="advantages-title">{{ 'HOME.WHY_US.TITLE' | translate }}</h2>-->
+  <!--    <ul class="advantages-list">-->
+  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.STATS' | translate }}</li>-->
+  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.ANALYSIS' | translate }}</li>-->
+  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.INTERFACE' | translate }}</li>-->
+  <!--    </ul>-->
+  <!--  </section>-->
 </div>

@@ -1,7 +1,16 @@
 {
   "HOME": {
     "WELCOME": "Welcome to WOT Blitz Statistics",
-    "DESCRIPTION": "Explore player, clan, and tournament statistics to become better in World of Tanks Blitz!",
+    "DESCRIPTION": {
+      "TITLE": "Our site is a portal dedicated to the popular online shooter WoT Blitz. If you strive for maximum results, it is crucial to track your progress. That’s exactly what our site is for – STATISTICS!",
+      "LIST": [
+        "🔹 Track your game statistics: account, vehicles, clans.",
+        "🔹 Analyze your results and improve your skills.",
+        "🔹 Log game sessions and find weak points.",
+        "🔹 Use new features – we are constantly evolving the portal!"
+      ],
+      "SUB": "Stay on top of your progress and take your gameplay to the next level!"
+    },
     "SEARCH_PLAYERS": {
       "TITLE": "Player Search",
       "DESCRIPTION": "On our platform, you can find any player with access to their statistical data"
@@ -13,6 +22,10 @@
     "TOURNAMENTS": {
       "TITLE": "Latest Tournaments",
       "DESCRIPTION": "We have news about upcoming tournaments as well as the history of those that have already ended"
+    },
+    "TANKS": {
+      "TITLE": "Vehicles",
+      "DESCRIPTION": "Interested in the technical characteristics of your tanks? Click here!"
     },
     "SESSION": {
       "TITLE": "Game Session",

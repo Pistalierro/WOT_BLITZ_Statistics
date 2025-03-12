@@ -1,6 +1,7 @@
 @use 'presets/variables' as *;
 @use 'presets/skin' as *;
 @use 'mixins/mixins-media' as *;
+@use 'mixins/mixins' as *;
 
 html, body {
   margin: 0;
@@ -75,4 +76,8 @@ strong {
   @include sm {
     font-size: 1rem !important;
   }
+}
+
+ul {
+  @include list-none()
 }

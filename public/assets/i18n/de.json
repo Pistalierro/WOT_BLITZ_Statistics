@@ -1,7 +1,16 @@
 {
   "HOME": {
-    "WELCOME": "Willkommen bei WOT Blitz Statistics",
-    "DESCRIPTION": "Erkunden Sie die Statistiken von Spielern, Clans und Turnieren, um in World of Tanks Blitz besser zu werden!",
+    "WELCOME": "Willkommen bei der WOT Blitz-Statistik",
+    "DESCRIPTION": {
+      "TITLE": "Unsere Website ist ein Portal, das dem beliebten Online-Shooter WoT Blitz gewidmet ist. Wenn du das beste Ergebnis erzielen möchtest, ist es entscheidend, deinen Fortschritt zu verstehen. Genau dafür wurde unsere Website geschaffen – STATISTIK!",
+      "LIST": [
+        "🔹 Verfolge deine Spielstatistiken: Konto, Fahrzeuge, Clans.",
+        "🔹 Analysiere deine Ergebnisse und verbessere deine Fähigkeiten.",
+        "🔹 Zeichne Spielsitzungen auf und finde Schwachstellen.",
+        "🔹 Nutze neue Features – wir entwickeln das Portal ständig weiter!"
+      ],
+      "SUB": "Bleib über deinen Fortschritt auf dem Laufenden und hebe dein Spiel auf das nächste Level!"
+    },
     "SEARCH_PLAYERS": {
       "TITLE": "Spielersuche",
       "DESCRIPTION": "Auf unserer Plattform können Sie jeden Spieler mit Zugriff auf seine Statistikdaten finden."
@@ -13,6 +22,10 @@
     "TOURNAMENTS": {
       "TITLE": "Neueste Turniere",
       "DESCRIPTION": "Wir haben Neuigkeiten über bevorstehende Turniere sowie die Geschichte der bereits beendeten."
+    },
+    "TANKS": {
+      "TITLE": "Fahrzeuge",
+      "DESCRIPTION": "Interessiert an den technischen Daten deiner Panzer? Klicke hier!"
     },
     "SESSION": {
       "TITLE": "Spielsession",

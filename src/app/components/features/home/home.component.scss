@@ -7,10 +7,65 @@
 .container {
   @extend %container;
 
-  .welcome-section {
-    text-align: center;
-    margin-bottom: $gap-x2;
-    color: $color-gray;
+  .welcome {
+    &-section {
+      text-align: center;
+      margin-bottom: $gap-x2;
+      color: $color-gray;
+    }
+
+    &-title {
+      margin-bottom: 30px;
+      @include lg-min {
+        font-size: 2.5rem !important;
+      }
+      @include lg-md {
+        font-size: 2rem !important;
+      }
+      @include md-sm {
+        font-size: 1.5rem !important;
+      }
+      @include sm {
+        font-size: 1.15rem !important;
+      }
+    }
+
+    &-content {
+      &__title {
+        line-height: 1.2em;
+        margin-bottom: $gap;
+      }
+
+      &__description {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      &__list {
+        margin-bottom: $gap-sm *3;
+      }
+
+      &__item {
+        @include md-min {
+          font-size: 1.5rem !important;
+        }
+        @include md-sm {
+          font-size: 1.25rem !important;
+        }
+        @include sm {
+          font-size: 1rem !important;
+        }
+        margin-bottom: $gap;
+        text-align: left;
+        font-weight: 100;
+      }
+
+      &__sub {
+        font-family: $font-header;
+        line-height: 1.2em;
+      }
+    }
   }
 
   .stats-section {
@@ -28,7 +83,7 @@
       height: 100%;
       background-color: $color-dark;
       opacity: 0.75;
-      min-height: $gap-x5 * 2;
+      min-height: $gap-sm * 15;
       color: $color-gray;
       position: relative;
       cursor: pointer;

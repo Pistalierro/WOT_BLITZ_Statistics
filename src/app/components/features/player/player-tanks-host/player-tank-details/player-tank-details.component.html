@@ -20,6 +20,10 @@
         </div>
         <mat-card-content class="card-content">
           <p class="card-content__title">Краткие характеристики</p>
+          <div class="card-content-row">
+            <p class="card-content-row__title">ID:</p>
+            <p class="card-content-row__value">{{ tank.tank_id }}</p>
+          </div>
           <div class="content-item">
             <div class="content-row">
               <p class="content-row__title">Прочность:</p>
@@ -65,6 +69,32 @@
         </mat-card-content>
       </mat-card>
     </article>
+
+    <!-- 🔹 Выживаемость -->
+    <!--    <article class="tank-survival">-->
+    <!--      <mat-card appearance="outlined" class="card">-->
+    <!--        <mat-card-title class="card-title">Снаряды</mat-card-title>-->
+    <!--        <div class="card-image">-->
+    <!--          <img alt="Орудие" mat-card-image src="/images/tanks/ammo.webp">-->
+    <!--        </div>-->
+    <!--        <mat-card-content class="card-content">-->
+    <!--          <div class="card-content-ammo">-->
+    <!--            <p class="card-content__title">Урон</p>-->
+    <!--            <div *ngFor="let shell of tank.shells" class="card-content-row">-->
+    <!--              <p class="card-content-row__title">{{ getShellType(shell.type) }}</p>-->
+    <!--              <p class="card-content-row__value">{{ shell.damage }}</p>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--          <div class="card-content-ammo">-->
+    <!--            <p class="card-content-ammo__title">Пробитие</p>-->
+    <!--            <div *ngFor="let shell of tank.shells" class="card-content-row">-->
+    <!--              <p class="card-content-row__title">{{ getShellType(shell.type) }}</p>-->
+    <!--              <p class="card-content-row__value">{{ shell.penetration }} мм</p>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </mat-card-content>-->
+    <!--      </mat-card>-->
+    <!--    </article>-->
 
     <!-- 🔹 Снаряды -->
     <article class="tank-ammo">
