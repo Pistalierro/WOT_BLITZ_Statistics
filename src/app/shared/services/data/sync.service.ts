@@ -42,41 +42,64 @@ export class SyncService {
   async getDataFromAllStorages<T>(
     store: keyof AppDB,
     key: string | number,
-    fetchApiFn?: () => Promise<T>
+    fetchApiFn?: () => Promise<T>,
+    isFreshNeeded: boolean = false,
+    maxAgeHours: number = 12,
   ): Promise<T> {
     try {
-      // 1) IndexedDB
+      // 1) Проверяем IndexedDB
       const fromIndexedDb = await this.indexedDb.getDataFromIndexedDB<T>(store, key);
       if (fromIndexedDb && !isEmptyData(fromIndexedDb.data)) {
         console.log(`✅ [Sync] '${key}' получены из IndexedDB (store='${store}'), ts=${fromIndexedDb.timestamp}`);
-        return fromIndexedDb.data;
+        if (isFreshNeeded) {
+          if (this.isDataFresh(fromIndexedDb.timestamp, maxAgeHours)) {
+            console.log(`⏰ [Sync] '${key}' в IndexedDB свежие – возвращаем.`);
+            return fromIndexedDb.data;
+          } else {
+            console.warn(`⚠ [Sync] '${key}' в IndexedDB протухли – ищем дальше...`);
+          }
+        } else {
+          return fromIndexedDb.data;
+        }
+      } else {
+        console.log(`⚠ [Sync] '${key}' нет в IndexedDB (или пусты). Идём в Firestore...`);
       }
-      console.log(`⚠ [Sync] '${key}' нет в IndexedDB (или пусты). Переходим к Firestore...`);
 
-      // 2) Firestore
+      // 2) Проверяем Firestore
       const fromFirestore = await this.firestore.loadDataFromFirestore<T>(store, key.toString());
       if (fromFirestore && !isEmptyData(fromFirestore.data)) {
-        console.log(`📥 [Sync] '${key}' получены из Firestore (store='${store}'), ts=${fromFirestore.timestamp}. Сохраняем в IndexedDB...`);
-        await this.indexedDb.saveDataToIndexedDB(store, key, fromFirestore.data, fromFirestore.timestamp);
-        return fromFirestore.data;
+        console.log(`📥 [Sync] '${key}' получены из Firestore, ts=${fromFirestore.timestamp}`);
+        if (isFreshNeeded) {
+          if (this.isDataFresh(fromFirestore.timestamp, maxAgeHours)) {
+            console.log(`⏰ [Sync] '${key}' в Firestore свежие – пишем в IndexedDB и возвращаем.`);
+            await this.indexedDb.saveDataToIndexedDB(store, key, fromFirestore.data, fromFirestore.timestamp);
+            return fromFirestore.data;
+          } else {
+            console.warn(`⚠ [Sync] '${key}' в Firestore устарели – пойдём в API...`);
+          }
+        } else {
+          await this.indexedDb.saveDataToIndexedDB(store, key, fromFirestore.data, fromFirestore.timestamp);
+          return fromFirestore.data;
+        }
+      } else {
+        console.log(`⚠ [Sync] '${key}' нет в Firestore (или пустые).`);
       }
 
-      // 3) Если есть функция загрузки из API
+      // 3) Данных нет или устарели, пробуем API
       if (fetchApiFn) {
-        console.warn(`⚠ [Sync] '${key}' нет ни в IndexedDB, ни в Firestore. Вызываем fetchApiFn...`);
+        console.warn(`⚠ [Sync] '${key}' нет/устарели в БД. Вызываем fetchApiFn...`);
         const apiData = await fetchApiFn();
         if (!isEmptyData(apiData)) {
-          const now = Date.now();
-          await this.indexedDb.saveDataToIndexedDB(store, key, apiData, now);
-          console.log(`✅ [Sync] '${key}' загружены из API и сохранены в IndexedDB (ts=${now}).`);
+          await this.saveDataToAllStorages(store, key, apiData);
+          console.log(`✅ [Sync] '${key}' загружены из API и сохранены в БД.`);
           return apiData;
         }
-        console.warn(`❌ [Sync] API вернул пустые данные для '${key}'.`);
+        console.warn(`❌ [Sync] API вернул пустые данные для '${key}'. Возвращаем []...`);
         return getEmptyData<T>();
       }
 
-      // 4) Иначе возвращаем пустое
-      console.warn(`⚠ [Sync] '${key}' не найдены ни в IndexedDB, ни в Firestore, ни в API. Возвращаем пустые.`);
+      // 4) Если fetchApiFn не задан или данные пустые даже из API
+      console.warn(`⚠ [Sync] '${key}' нет ни в IndexedDB, ни в Firestore, ни в API. Возвращаем [].`);
       return getEmptyData<T>();
     } catch (error: any) {
       console.error(`❌ [Sync] Ошибка getDataFromAllStorages('${store}', '${key}'):`, error);

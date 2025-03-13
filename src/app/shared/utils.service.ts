@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {TankInfo} from '../models/tank/tank-full-info.model';
+import {MaxValues, TankInfo} from '../models/tank/tank-full-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +68,7 @@ export class UtilsService {
     return result;
   }
 
-  calculateMaxValues(tanks: TankInfo[]): Record<string, number> {
+  calculateMaxValues(tanks: TankInfo[]): MaxValues {
     return {
       hp: Math.max(...tanks.map(tank => tank.default_profile?.hp || 0)),
       damage: Math.max(...tanks.map(tank => tank.default_profile.shells[0].damage || 0)),
@@ -80,7 +80,7 @@ export class UtilsService {
   }
 
 
-  calculateStatPercentages(maxValues: Record<string, number>): Record<string, Record<number, number>> {
+  calculateStatPercentages(maxValues: MaxValues): Record<string, Record<number, number>> {
     return {
       hp: this.calculateScaledPercentages({1: maxValues['hp'] || 1}, 100),
       damage: this.calculateScaledPercentages({1: maxValues['damage'] || 1}, 100),

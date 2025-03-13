@@ -4,17 +4,24 @@ import {collection, doc, Firestore, getDoc, setDoc} from '@angular/fire/firestor
 import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
 import {BattlesByTier, BattlesByWinAvgDamage, BattlesByWinRate, TankData, TankStatsResponse} from '../../models/tank/tanks-response.model';
 import {SyncService} from '../../shared/services/data/sync.service';
-import {catchError, firstValueFrom, lastValueFrom, map, Observable, throwError} from 'rxjs';
+import {catchError, firstValueFrom, from, lastValueFrom, map, Observable, throwError} from 'rxjs';
 import {apiConfig} from '../../app.config';
-import {ApiResponse, TankInfo, TankProfile, TankValues} from '../../models/tank/tank-full-info.model';
+import {ApiResponse, MaxValues, TankInfo, TankProfile, TankValues} from '../../models/tank/tank-full-info.model';
 import {UtilsService} from '../../shared/utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TanksDataService {
-  statsPercent: Record<string, Record<number, number>> = {};
-  private maxValues: Record<string, number> = {};
+  statsPercent: Record<string, any> = {};
+  maxValues: MaxValues = {
+    hp: 0,
+    damage: 0,
+    fire_rate: 0,
+    penetration: 0,
+    speed: 0,
+    traverse: 0
+  };
   private http = inject(HttpClient);
   private firestore = inject(Firestore);
   private indexedDbService = inject(IndexedDbService);
@@ -206,14 +213,36 @@ export class TanksDataService {
     });
   }
 
-  loadMaxValues(): Observable<void> {
-    const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
-    return this.http.get<ApiResponse<TankValues>>(url).pipe(
-      map(res => {
-        const tanksArray: TankInfo[] = Object.values(res.data as unknown as Record<string, TankInfo>);
-        this.maxValues = this.utilsService.calculateMaxValues(tanksArray);
-        console.log('Посчитанные maxValues:', this.maxValues);
+  public loadMaxValues(): Observable<void> {
+    return from(
+      this.syncService.getDataFromAllStorages<MaxValues>(
+        'tanks',
+        'maxValues',
+        async () => {
+          // Функция, если нет/устарели данные – дёрнем API
+          const url = `${apiConfig.baseUrl}/encyclopedia/vehicles/?application_id=${apiConfig.applicationId}`;
+          const res = await this.http.get<ApiResponse<TankValues>>(url).toPromise();
+          if (!res?.data) {
+            console.warn('⚠ Ответ от API пуст, возвращаем базовый объект');
+            return {
+              hp: 0, damage: 0, fire_rate: 0, penetration: 0, speed: 0, traverse: 0
+            };
+          }
+          const tanksArray: TankInfo[] = Object.values(res.data as unknown as Record<string, TankInfo>);
+          return this.utilsService.calculateMaxValues(tanksArray);
+        },
+        true, 24
+      )
+    ).pipe(
+      map((loadedValues: MaxValues) => {
+        if (!loadedValues || Object.keys(loadedValues).length === 0) {
+          console.warn('⚠ maxValues пустые!');
+          return;
+        }
+        this.maxValues = loadedValues;
+        // Сразу считаем проценты
         this.statsPercent = this.utilsService.calculateStatPercentages(this.maxValues);
+        console.log('✅ loadMaxValues: все готово');
       })
     );
   }

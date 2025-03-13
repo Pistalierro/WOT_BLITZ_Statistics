@@ -127,6 +127,15 @@ export interface TankInfo {
   };
 }
 
+export interface MaxValues {
+  hp: number;
+  damage: number;
+  fire_rate: number;
+  penetration: number;
+  speed: number;
+  traverse: number;
+}
+
 
 // Описание ответа от API с множеством танков
 export type TankValues = Record<number, TankInfo>;

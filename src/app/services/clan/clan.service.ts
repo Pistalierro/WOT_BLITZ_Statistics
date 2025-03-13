@@ -155,67 +155,54 @@ export class ClanService {
   async getTopClansDetails(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
+
     try {
       if (!this.topClansIds.length) {
-        const topClansIdsArr = await this.syncService.getDataFromAllStorages('clans', 'topClansIds');
+        const topClansIdsArr = await this.syncService.getDataFromAllStorages<number[]>('clans', 'topClansIds');
         this.topClansIds = Array.isArray(topClansIdsArr) ? topClansIdsArr : [];
       }
 
-      const storedData = await this.indexedDbService.getDataFromIndexedDB<ExtendedClanDetails[]>('clans', 'topClansDetails');
-      if (storedData && storedData.data.length > 0) {
-        if (this.syncService.isDataFresh(storedData.timestamp)) {
-          const timestamp = storedData.timestamp; // Ваш timestamp
-          const now = Date.now(); // Текущая дата
-          const diffMs = now - timestamp; // Разница в миллисекундах
-          const diffMinutes = Math.floor(diffMs / (1000 * 60)); // Перевод в минуты
-          const diffHours = Math.floor(diffMinutes / 60); // Перевод в часы
-          console.log(`⏳ Данные из IndexedDB были получены ${diffMinutes} минут назад (${diffHours} часов).`);
-          this.topClansDetails.set(storedData.data);
-          return;
-        }
+      const topClans = await this.syncService.getDataFromAllStorages<ExtendedClanDetails[]>(
+        'clans',
+        'topClansDetails',
+        async () => {
+          const arrFromApi = await this.clanDataService.fetchTopClansDetails(this.topClansIds)
+            .then(data => Array.isArray(data) ? data : []);
+          if (!arrFromApi.length) {
+            console.warn('⚠ Не удалось получить детали топ-кланов (API вернул пусто).');
+            return [];
+          }
+
+          const batchSize = 20;
+          const batches = [];
+          for (let i = 0; i < arrFromApi.length; i += batchSize) {
+            const batch = arrFromApi.slice(i, i + batchSize);
+            batches.push(
+              Promise.allSettled(
+                batch.map(async (clan) => {
+                  const stats = await this.clanUtilsService.getClansStats(clan.members_ids);
+                  clan.winRate = stats.winRate;
+                  clan.avgDamage = stats.avgDamage;
+                })
+              )
+            );
+            await new Promise(resolve => setTimeout(resolve, 100)); // Небольшая задержка для API
+          }
+          await Promise.all(batches);
+
+          arrFromApi.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
+          return arrFromApi;
+        },
+        true, 6
+      );
+
+      if (!topClans || !topClans.length) {
+        console.warn('⚠ Данные по топ-кланам не найдены или API вернул пусто.');
+      } else {
+        this.topClansDetails.set(topClans);
+        console.log('✅ topClansDetails получены и обновлены.');
       }
 
-      const firestoreData = await this.firestoreService.loadDataFromFirestore<ExtendedClanDetails[]>('clans', 'topClansDetails');
-      if (firestoreData && firestoreData.data.length > 0) {
-        if (this.syncService.isDataFresh(firestoreData.timestamp)) {
-          console.log(`✅ Данные в Firestore свежие, используем их.`);
-          this.topClansDetails.set(firestoreData.data);
-
-          await this.indexedDbService.saveDataToIndexedDB('clans', 'topClansDetails', firestoreData.data, firestoreData.timestamp);
-          console.log(`✅ Данные из Firestore сохранены в IndexedDB.`);
-          return;
-        }
-      }
-      console.warn(`⚠ Данные устарели, загружаем свежие из API...`);
-
-      const topClans = await this.clanDataService.fetchTopClansDetails(this.topClansIds)
-        .then(data => Array.isArray(data) ? data : []);
-      if (!topClans.length) {
-        console.warn('⚠ Не удалось получить детали топ-кланов');
-        return;
-      }
-
-      const batchSize = 20;
-      const batches = [];
-      for (let i = 0; i < topClans.length; i += batchSize) {
-        const batch = topClans.slice(i, i + batchSize);
-        batches.push(
-          Promise.allSettled(
-            batch.map(async (clan) => {
-              const stats = await this.clanUtilsService.getClansStats(clan.members_ids);
-              clan.winRate = stats.winRate;
-              clan.avgDamage = stats.avgDamage;
-            })
-          )
-        );
-        await new Promise(resolve => setTimeout(resolve, 100)); // Короткая задержка для API
-      }
-      await Promise.all(batches);
-      topClans.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
-      this.topClansDetails.set(topClans);
-
-      await this.syncService.saveDataToAllStorages('clans', 'topClansDetails', topClans);
-      console.log('✅ topClansDetails сохранены во все БД');
     } catch (err: any) {
       console.error('❌ Ошибка в getTopClansDetails:', err.message);
       this.error.set(err.message);
