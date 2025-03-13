@@ -1,22 +1,25 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {NgForOf, NgIf, NgStyle} from '@angular/common';
+import {DecimalPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {ActivatedRoute} from '@angular/router';
 import {TankProfile} from '../../../../../models/tank/tank-full-info.model';
-import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {UtilsService} from '../../../../../shared/utils.service';
 import {getFlagUrl, getShellType, tankTypes, toRoman} from '../../../../../shared/helpers/tank-utils';
 import {user} from '@angular/fire/auth';
 import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
+import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player-tank-details',
   standalone: true,
   imports: [
-    NgIf,
+    DecimalPipe,
     ...MATERIAL_MODULES,
     NgStyle,
-    NgForOf
+    NgIf,
+    NgForOf,
+    TranslatePipe
   ],
   templateUrl: './player-tank-details.component.html',
   styleUrl: './player-tank-details.component.scss'

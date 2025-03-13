@@ -9,13 +9,13 @@ export function createTranslateLoader(http: HttpClient) {
 
 export function initTranslate(translate: TranslateService) {
   return () => {
-    const availableLangs: string[] = ['en', 'ru', 'ua'];
+    const availableLangs: string[] = ['en', 'ru', 'ua', 'es', 'de'];
     translate.addLangs(availableLangs);
     translate.setDefaultLang('en');
     const browserLang = localStorage.getItem('lang') || translate.getBrowserLang() || 'en';
 
     if (!availableLangs.includes(browserLang)) {
-      translate.use('en');
+      translate.use('ru');
     } else {
       translate.use(browserLang);
     }
@@ -27,20 +27,11 @@ export function provideTranslate(): ApplicationConfig {
     providers: [
       importProvidersFrom(
         TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient],
-          },
+          loader: {provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient],},
         })
       ),
-      TranslateStore, // Теперь `TranslateStore` корректно зарегистрирован
-      {
-        provide: APP_INITIALIZER,
-        useFactory: initTranslate,
-        deps: [TranslateService],
-        multi: true,
-      },
+      TranslateStore,
+      {provide: APP_INITIALIZER, useFactory: initTranslate, deps: [TranslateService], multi: true,},
     ],
   };
 }

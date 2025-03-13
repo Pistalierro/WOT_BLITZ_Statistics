@@ -2,7 +2,6 @@ import {inject, Injectable} from '@angular/core';
 import {AppDB, IndexedDbService} from './indexed-db.service';
 import {FirestoreStorageService} from './firestore-storage.service';
 
-/** Функция проверяет, "пустые" ли данные (пустой массив/объект/строка) */
 function isEmptyData(data: any): boolean {
   if (data == null) return true;
   if (Array.isArray(data) && data.length === 0) return true;
@@ -11,10 +10,7 @@ function isEmptyData(data: any): boolean {
   return false;
 }
 
-/** Возвращаем "пустые" данные, если ничего не нашли */
 function getEmptyData<T>(): T {
-  // Обычно хотим вернуть либо [] (если чаще ожидаем массив),
-  // либо {} if object. Можешь оставить [], чтобы точно не было .length ошибки
   return [] as unknown as T;
 }
 
@@ -32,13 +28,12 @@ export class SyncService {
     try {
       await this.indexedDb.saveDataToIndexedDB(store, key, data);
       await this.firestore.saveDataToFirestore(store, key.toString(), data);
-      // console.log(`✅ [Sync] '${store}'/'${key}' успешно сохранено везде.`);
+      console.log(`✅ [Sync] '${store}'/'${key}' успешно сохранено везде.`);
     } catch (err: any) {
       console.error(`❌ [Sync] Ошибка при saveDataToAllStorages('${store}', '${key}')`, err.message);
     }
   }
 
-  /** Загружаем, сначала из IndexedDB, если нет – из Firestore, если нет – API, иначе пустое  */
   async getDataFromAllStorages<T>(
     store: keyof AppDB,
     key: string | number,

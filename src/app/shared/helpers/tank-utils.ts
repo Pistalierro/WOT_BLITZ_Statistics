@@ -65,22 +65,21 @@ export function toRoman(num: number): string {
 }
 
 export function getShellType(type: string): string {
-  const shellTypes: Record<string, string> = {
-    armor_piercing: 'Бронебойный:',
-    armor_piercing_cr: 'Подкалиберный:',
-    high_explosive: 'Осколочно-фугасный:',
-    hollow_charge: 'Кумулятивный:',
-    hesh: 'Хэш-фугасный:',
-    premium_ap: 'Премиум бронебойный:',
-    premium_apcr: 'Премиум подкалиберный:',
-    premium_heat: 'Премиум кумулятивный:',
-    premium_he: 'Премиум фугасный:',
+  const map: Record<string, string> = {
+    'armor_piercing': 'TANKS_DETAILS.AMMO_ARMOR_PIERCING',
+    'armor_piercing_cr': 'TANKS_DETAILS.AMMO_APCR',
+    'high_explosive': 'TANKS_DETAILS.AMMO_HE',
+    'hollow_charge': 'TANKS_DETAILS.AMMO_HEAT',
+    'hesh': 'TANKS_DETAILS.AMMO_HESH',
+    'premium_ap': 'TANKS_DETAILS.AMMO_PREMIUM_AP',
+    'premium_apcr': 'TANKS_DETAILS.AMMO_PREMIUM_APCR',
+    'premium_heat': 'TANKS_DETAILS.AMMO_PREMIUM_HEAT',
+    'premium_he': 'TANKS_DETAILS.AMMO_PREMIUM_HE',
   };
-
-  const normalizedType = type.toLowerCase(); // Приводим к нижнему регистру
-
-  return shellTypes[normalizedType] || `Неизвестный тип (${type})`;
+  const normalizedType = type?.toLowerCase() || '';
+  return map[normalizedType] || 'TANKS_DETAILS.UNKNOWN_AMMO';
 }
+
 
 
 

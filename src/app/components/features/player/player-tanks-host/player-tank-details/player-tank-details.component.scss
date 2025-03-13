@@ -8,8 +8,8 @@
 
   &-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
-    gap: $gap-sm;
+    grid-template-columns: repeat(auto-fit, minmax(390px, max-content));
+    gap: $gap;
     margin-top: 20px;
   }
 
@@ -26,6 +26,7 @@
       text-transform: uppercase;
       margin-top: $gap-sm;
       font-size: 1.5rem;
+      margin-bottom: $gap;
     }
 
     &-header {
@@ -87,8 +88,6 @@
           top: $gap-sm;
         }
       }
-
-
     }
 
     &-image {
@@ -105,64 +104,29 @@
       }
     }
 
-    &-content {
-      &__title {
-        text-align: center;
-        font-family: $font-header;
-        margin-bottom: 20px;
-      }
+  }
 
-      &-row {
-        display: flex;
-        gap: $gap;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: $gap;
-
-        &__title {
-          margin: 0;
-          flex: 1;
-          align-items: center;
-          justify-content: start;
-        }
-
-        &__value {
-          margin: 0;
-          text-align: right;
-          display: flex;
-          align-items: center; // Выравнивание по вертикали
-          justify-content: end;
-        }
-
-        &__image {
-          height: $gap-sm * 3;
-        }
-      }
-
-      &-ammo {
-        &__title {
-          display: block;
-          text-align: center;
-          font-family: $font-header;
-          margin-bottom: $gap;
-        }
-      }
+  .content {
+    &-item {
+      margin-bottom: $gap-sm;
     }
-  }
-}
 
-.content {
-  &-item {
-    margin-bottom: 10px;
-  }
+    &__title {
+      text-align: center;
+      font-family: $font-header;
+      margin-bottom: $gap;
+    }
 
-  &-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    &-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: $color-gray-medium !important;
+      font-size: 1.2rem !important;
 
-    &__progress {
-      margin-top: -5px;
+      &__progress {
+        margin-top: -10px;
+      }
     }
   }
 }

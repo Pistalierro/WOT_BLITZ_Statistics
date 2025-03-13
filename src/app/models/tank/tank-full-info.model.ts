@@ -38,7 +38,7 @@ export interface TankProfile {
   speed_forward: number; // Скорость вперёд
   suspension: Suspension; // Ходовая часть
   suspension_id: number; // ID ходовой части
-  turret: Turret | null; // 🆕 Башня (может отсутствовать)
+  turret: Turret; // 🆕 Башня (может отсутствовать)
   turret_id: number | null; // 🆕 ID башни (может быть `null`)
 }
 
@@ -95,8 +95,8 @@ export interface Turret {
   name: string; // Название башни
   weight: number; // Масса башни
   view_range: number; // Обзор (м)
-  traverse_left_arc?: number; // 🆕 УГН влево
-  traverse_right_arc?: number; // 🆕 УГН вправо
+  traverse_left_arc: number; // УГН влево
+  traverse_right_arc: number; // УГН вправо
   hp: number; // Прочность башни
   traverse_speed: number; // Скорость поворота башни
   tier: number; // Уровень башни
