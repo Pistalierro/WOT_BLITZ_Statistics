@@ -73,6 +73,29 @@
       "TYPE": "Tipo"
     }
   },
+  "TANK_STATS": {
+    "BATTLES": "Batallas",
+    "BATTLES_PLAYED": "Batallas jugadas:",
+    "WINS": "Victorias",
+    "LOSSES": "Derrotas",
+    "SURVIVED": "Supervivencia en batallas",
+    "KILL_RATIO": "Ratio de destrucción",
+    "DAMAGE_RECEIVED": "Ratio de daño",
+    "ACCURACY": "Precisión de disparo",
+    "MARK_OF_MASTERY": "Insignia de maestría \"Maestro\"",
+    "AVG_XP": "Experiencia promedio por batalla",
+    "AVG_DAMAGE": "Daño promedio por batalla",
+    "AVG_DAMAGE_RECEIVED": "Daño recibido promedio",
+    "SPOTTED": "Vehículos enemigos detectados",
+    "AVG_FRAGS": "Vehículos enemigos destruidos",
+    "MAX_KILLS": "Máximo destruidos",
+    "MAX_XP": "Experiencia máxima",
+    "WIN_RATE": "Porcentaje de victorias",
+    "AVG_BATTLES": "Promedio de batallas",
+    "AVG_WINS": "Promedio de victorias",
+    "AVG_DMG": "Daño prom.",
+    "AVG_XP_BATTLE": "Exp. prom."
+  },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Daño medio por nivel",
     "BATTLES_BY_TIER": "Batallas por nivel",
@@ -86,12 +109,19 @@
     "SORT": {
       "NATION": "Nación",
       "TIER": "Nivel",
-      "TYPE": "Tipo"
+      "TYPE": "Tipo",
+      "WIN_RATE": "Porcentaje de victorias",
+      "BATTLES": "Batallas",
+      "ACCURACY": "Precisión",
+      "AVG_XP": "Experiencia media por batalla",
+      "AVG_DAMAGE": "Daño medio por batalla",
+      "LAST_BATTLE_TIME": "Última batalla"
     },
     "TABLE": {
       "WIN_RATE": "Porcentaje de victorias",
       "BATTLES": "Batallas",
       "DAMAGE": "Daño",
+      "XP": "XP",
       "NO_IMAGE": "Sin imagen"
     }
   },

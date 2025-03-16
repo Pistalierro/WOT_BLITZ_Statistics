@@ -45,8 +45,6 @@ export function getFlagUrl(nation: string): string {
   return flagUrls[nation] || 'unknown';
 }
 
-export const COLUMNS_NAMES: string[] = ['mainInfo', 'battles', 'win_rate', 'damage'];
-
 export function toRoman(num: number): string {
   const romanNumerals: { [key: number]: string } = {
     1: 'I',

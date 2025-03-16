@@ -34,43 +34,87 @@
             </span>
             </div>
           </th>
-          <td *matCellDef="let row" class="main-info-cell" mat-cell>
-            <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(row.nation) + ')'}" class="flag-background">
-              <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tier-label">{{ toRoman(row.tier) }}</div>
-              <img [alt]="row.type" [src]="tankTypes(row.type, row)" class="class-icon"/>
+          <td *matCellDef="let tank" class="main-info-cell" mat-cell>
+            <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}" class="flag-background">
+              <div [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tier-label">{{ toRoman(tank.tier) }}</div>
+              <img [alt]="tank.type" [src]="tankTypes(tank.type, tank)" class="class-icon"/>
               <div class="flag-content">
-                <img *ngIf="row.images?.preview; else noImage" [alt]="row.name" [src]="sanitizeUrl(row.images.preview)"
+                <img *ngIf="tank.images?.preview; else noImage" [alt]="tank.name" [src]="sanitizeUrl(tank.images.preview)"
                      class="tank-icon-centered"/>
                 <ng-template #noImage><span class="no-image">{{ 'TANKS_STATS.TABLE.NO_IMAGE' | translate }}</span></ng-template>
               </div>
-              <div [ngStyle]="{'color': utilsService.getTankColor(row)}" class="tank-name">{{ row.name }}</div>
+              <div [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="tank-name">{{ tank.name }}</div>
             </div>
-          </td>
-        </ng-container>
-
-        <!-- Win_Rate Column -->
-        <ng-container matColumnDef="win_rate">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            <mat-icon>emoji_flags</mat-icon>
-          </th>
-          <td *matCellDef="let row" [ngClass]="utilsService.getWinRateColor((row.all.wins / row.all.battles) * 100)"
-              class="win-rate" mat-cell>
-            {{ row.all.battles > 0 ? ((row.all.wins / row.all.battles) * 100 | number: '1.0-0') : '0' }}%
           </td>
         </ng-container>
 
         <!-- Battles Column -->
         <ng-container matColumnDef="battles">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.BATTLES' | translate" mat-header-cell mat-sort-header>
             <span class="material-symbols-outlined">swords</span>
           </th>
-          <td *matCellDef="let row" class="battles" mat-cell> {{ row.all.battles }}</td>
+          <td *matCellDef="let tank" class="battles" mat-cell> {{ tank.all.battles }}</td>
+        </ng-container>
+
+        <!-- Win_Rate Column -->
+        <ng-container matColumnDef="win_rate">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.WIN_RATE' | translate" mat-header-cell mat-sort-header>
+            <mat-icon>emoji_flags</mat-icon>
+          </th>
+          <td *matCellDef="let tank" [ngClass]="utilsService.getWinRateColor(tank.winRate)" class="win-rate" mat-cell>
+            {{ tank.all.battles > 0 ? (tank.winRate | number: '1.0-0') : '0' }}%
+          </td>
+        </ng-container>
+
+        <!-- Accuracy Column -->
+        <ng-container matColumnDef="accuracy">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.ACCURACY' | translate" mat-header-cell mat-sort-header>
+            <span class="material-symbols-outlined">
+              <mat-icon>my_location</mat-icon>
+            </span>
+          </th>
+          <td *matCellDef="let tank" class="accuracy" mat-cell> {{ tank.accuracy | number: '1.0-0' }}%</td>
+        </ng-container>
+
+        <!-- Last Battle Column -->
+        <ng-container matColumnDef="lastBattle">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.LAST_BATTLE_TIME' | translate" mat-header-cell mat-sort-header>
+            <span class="material-symbols-outlined">
+              <mat-icon>history</mat-icon>
+            </span>
+          </th>
+          <td *matCellDef="let tank" class="last-battle" mat-cell> {{ tank.last_battle_time * 1000 | date: 'dd.MM.yy' }}</td>
+        </ng-container>
+
+        <!-- Master Column -->
+        <ng-container matColumnDef="master">
+          <th *matHeaderCellDef [matTooltip]="'TANK_STATS.MARK_OF_MASTERY' | translate" mat-header-cell>
+            <mat-icon>workspace_premium</mat-icon>
+          </th>
+          <td *matCellDef="let tank" class="master-cell" mat-cell>
+            <ng-container *ngIf="tank.mark_of_mastery === 4; else crossIcon">
+              <img alt="master" class="master-icon" src="/images/achievements/markOfMastery.png">
+            </ng-container>
+            <ng-template #crossIcon>
+              <span class="red-cross">❌</span>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <!-- XP Column -->
+        <ng-container matColumnDef="avgXp">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.AVG_XP' | translate" mat-header-cell mat-sort-header>
+            {{ 'TANKS_STATS.TABLE.XP' | translate }}
+          </th>
+          <td *matCellDef="let tank" class="damage" mat-cell> {{ tank.avg_xp | number: '1.0-0' }}</td>
         </ng-container>
 
         <!-- Damage Column -->
-        <ng-container matColumnDef="damage">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}</th>
-          <td *matCellDef="let row" class="damage" mat-cell> {{ (row.all.damage_dealt / row.all.battles) | number: '1.0-0' }}</td>
+        <ng-container matColumnDef="avgDamage">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.AVG_DAMAGE' | translate" mat-header-cell mat-sort-header>
+            {{ 'TANKS_STATS.TABLE.DAMAGE' | translate }}
+          </th>
+          <td *matCellDef="let tank" class="damage" mat-cell> {{ tank.avg_damage | number: '1.0-0' }}</td>
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" class="sticky-header" mat-header-row></tr>
@@ -78,10 +122,11 @@
             mat-row></tr>
 
         <tr *matNoDataRow class="mat-row">
-          <td class="mat-cell" colspan="4">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>
+          <td class="mat-cell" colspan="8">{{ 'TANKS_STATS.NO_DATA' | translate: {value: input.value} }}</td>
         </tr>
       </table>
     </div>
-    <mat-paginator [pageSizeOptions]="[25, 50, 100]" [pageSize]="50" aria-label="Select page of users"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[25, 50, 100, dataSource.data.length]" [pageSize]="dataSource.data.length"
+                   aria-label="Select page of users"></mat-paginator>
   </div>
 </div>

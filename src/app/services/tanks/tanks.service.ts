@@ -17,6 +17,7 @@ import {TanksDataService} from './tanks-data.service';
 export class TanksService {
   tanksList = signal<Tank[]>([]);
   tankFullInfo = signal<TankProfile | null>(null);
+  selectedTankData = signal<Tank | null>(null);
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
   battlesByTier = signal<BattlesByTier>({});
@@ -86,24 +87,42 @@ export class TanksService {
         return;
       }
 
-      const mergedTanks: Tank[] = statsData.map(stat => {
-        const localTank = jsonTanksList.find(tank => tank.tank_id === stat.tank_id) || {} as TankData;
+      const mergedTanks: Tank[] = statsData
+        .filter(tank => tank.all.battles > 0 && tank.all.damage_dealt)
+        .map(stat => {
+          const localTank = jsonTanksList.find(tank => tank.tank_id === stat.tank_id) || {} as TankData;
 
-        return {
-          tank_id: stat.tank_id,
-          name: localTank.name ?? 'Unknown',
-          nation: localTank.nation ?? 'unknown',
-          tier: localTank.tier ?? 0,
-          type: localTank.type ?? 'unknown',
-          images: {
-            preview: localTank.images?.normal || '/images/tanks/default_tank.webp',
-            normal: localTank.images?.normal || '/images/tanks/default_tank.webp',
-          },
-          is_premium: localTank.is_premium ?? false,
-          is_collectible: localTank.is_collectible ?? false,
-          all: stat.all || {battles: 0, wins: 0, damage_dealt: 0, max_frags: 0},
-        };
-      });
+          return {
+            tank_id: stat.tank_id,
+            name: localTank.name ?? 'Unknown',
+            nation: localTank.nation ?? 'unknown',
+            tier: localTank.tier ?? 0,
+            type: localTank.type ?? 'unknown',
+            mark_of_mastery: stat.mark_of_mastery ?? 0,
+            last_battle_time: stat.last_battle_time ?? 0,
+            images: {
+              preview: localTank.images?.normal || '/images/tanks/default_tank.webp',
+              normal: localTank.images?.normal || '/images/tanks/default_tank.webp',
+            },
+            is_premium: localTank.is_premium ?? false,
+            is_collectible: localTank.is_collectible ?? false,
+            all: {
+              xp: stat.all?.xp ?? 0,
+              battles: stat.all?.battles ?? 0,
+              wins: stat.all?.wins ?? 0,
+              losses: stat.all?.losses ?? 0,
+              damage_dealt: stat.all?.damage_dealt ?? 0,
+              max_frags: stat.all?.max_frags ?? 0,
+              survived_battles: stat.all?.survived_battles ?? 0,
+              frags: stat.all.frags ?? 0,
+              damage_received: stat.all.damage_received ?? 0,
+              shots: stat.all.shots ?? 0,
+              hits: stat.all.hits ?? 0,
+              spotted: stat.all.spotted ?? 0,
+              max_xp: stat.all.max_xp ?? 0
+            }
+          };
+        });
 
       if (!mergedTanks.length) {
         console.warn('⚠ [TanksDataService] mergedTanks пуст, не сохраняем в tanksList.');
@@ -123,6 +142,8 @@ export class TanksService {
       const tankFullInfo = await this.tanksDataService.getTankProfile(tankId);
       if (!tankFullInfo) return null;
 
+      await this.getSelectedTanksStatistics(tankId);
+
       this.tankFullInfo.set(tankFullInfo);
       await this.syncService.saveDataToAllStorages('tanks', 'tankFullInfo', tankFullInfo);
 
@@ -132,6 +153,30 @@ export class TanksService {
       return null;
     }
   }
+
+  async getSelectedTanksStatistics(tankId: number): Promise<void> {
+    try {
+      const playerTankList = this.tanksList();
+
+      if (!playerTankList) {
+        console.log('❌ Отсутствует список танков у игрока');
+        return;
+      }
+
+      const selectedTankStatistics = playerTankList.find(tank => tank.tank_id === tankId);
+
+      if (!selectedTankStatistics) {
+        console.log(`⚠️ Не найден танк с ID ${tankId}`);
+        return;
+      }
+      console.log(selectedTankStatistics);
+      this.selectedTankData.set(selectedTankStatistics);
+      await this.syncService.saveDataToAllStorages('tanks', 'selectedTankStatistics', selectedTankStatistics);
+    } catch (error: any) {
+      console.error('❌ Ошибка получения данных выбранного танка:', error);
+    }
+  }
+
 
   async findMissingTanks(): Promise<void> {
     try {

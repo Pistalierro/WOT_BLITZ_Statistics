@@ -1,5 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {DecimalPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
+import {Component, computed, inject, OnInit} from '@angular/core';
+import {DecimalPipe, NgClass, NgForOf, NgIf, NgStyle} from '@angular/common';
 import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {ActivatedRoute} from '@angular/router';
 import {TankProfile} from '../../../../../models/tank/tank-full-info.model';
@@ -9,6 +9,7 @@ import {user} from '@angular/fire/auth';
 import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {TranslatePipe} from '@ngx-translate/core';
+import {calculateAverageStats, calculateGeneralStats} from '../../../../../mock/tank-utils';
 
 @Component({
   selector: 'app-player-tank-details',
@@ -19,7 +20,8 @@ import {TranslatePipe} from '@ngx-translate/core';
     NgStyle,
     NgIf,
     NgForOf,
-    TranslatePipe
+    TranslatePipe,
+    NgClass
   ],
   templateUrl: './player-tank-details.component.html',
   styleUrl: './player-tank-details.component.scss'
@@ -28,8 +30,23 @@ export class PlayerTankDetailsComponent implements OnInit {
   statsPercent: Record<string, number> = {};
   tank!: TankProfile;
   tanksService = inject(TanksService);
+  selectedTank = this.tanksService.selectedTankData;
   tanksDataService = inject(TanksDataService);
   utilsService = inject(UtilsService);
+
+  generalStats = computed(() => {
+    const tank = this.selectedTank();
+    if (!tank) return [];
+    return calculateGeneralStats(tank);
+  });
+
+  averageStats = computed(() => {
+    const tank = this.selectedTank();
+    if (!tank) return [];
+
+    return calculateAverageStats(tank);
+  });
+  
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
   protected readonly getFlagUrl = getFlagUrl;

@@ -265,6 +265,7 @@
     }
 
     .battles,
+    .accuracy,
     .damage,
     .win-rate {
       @include md-min {
@@ -392,6 +393,17 @@
 
   .mat-mdc-icon-button[disabled] .mat-mdc-paginator-icon {
     fill: $color-gray-dark;
+  }
+}
+
+.master {
+  &-icon {
+    height: $gap-x2;
+    object-fit: contain;
+  }
+
+  .red-cross {
+    font-size: 1.5rem !important;
   }
 }
 

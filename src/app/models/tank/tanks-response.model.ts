@@ -6,21 +6,37 @@ export interface TankStatsResponse {
 }
 
 export interface TankStats {
+  last_battle_time: number;
+  mark_of_mastery: number;
   tank_id: number;
   all: {
+    max_xp: number;
+    spotted: number;
+    frags: number;
+    losses: number;
+    xp: number;
     battles: number;
     wins: number;
     damage_dealt: number;
     max_frags: number;
+    survived_battles: number;
+    damage_received: number;
+    shots: number;
+    hits: number;
   };
 }
 
 export interface Tank {
+  last_battle_time: number;
+  avg_damage?: number;
+  accuracy?: number;
+  winRate?: number;
   tank_id: number;
   name: string;
   nation: string;
   tier: number;
   type: string;
+  mark_of_mastery: number;
   images?: {
     preview: string;
     normal: string;
@@ -28,10 +44,19 @@ export interface Tank {
   is_premium: boolean;
   is_collectible: boolean;
   all: {
+    max_xp: number;
+    spotted: number;
+    hits: number;
+    shots: number;
+    frags: number;
+    survived_battles: number;
+    losses: number;
+    xp: number;
     battles: number;
     wins: number;
     damage_dealt: number;
     max_frags: number;
+    damage_received: number;
   };
 }
 

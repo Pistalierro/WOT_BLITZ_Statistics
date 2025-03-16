@@ -48,7 +48,6 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
           }));
       }
     });
-
   }
 
   get clanPlayersListArray() {
@@ -56,26 +55,6 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // this.breakpointObserver.observe([
-    //   '(max-width: 1200px)',
-    //   '(max-width: 768px)',
-    //   '(max-width: 576px)',
-    // ]).subscribe(result => {
-    //   if (result.breakpoints['(max-width: 576px)']) {
-    //     this.displayedColumns = ['nickname', 'battles', 'avgDamage', 'winRate'];
-    //     this.isMobile = true;
-    //   } else if (result.breakpoints['(max-width: 768px)']) {
-    //     this.displayedColumns = ['nickname', 'battles', 'accuracy', 'avgDamage', 'winRate'];
-    //     this.isMobile = false;
-    //   } else if (result.breakpoints['(max-width: 1200px)']) {
-    //     this.displayedColumns = ['nickname', 'created_at', 'battles', 'accuracy', 'avgDamage', 'winRate'];
-    //     this.isMobile = false;
-    //   } else {
-    //     this.displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
-    //   }
-    //   this.cdRef.detectChanges();
-    // });
-
     this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium]).subscribe(result => {
       if (result.breakpoints[Breakpoints.XSmall]) {
         this.displayedColumns = ['nickname', 'battles', 'avgDamage', 'winRate'];

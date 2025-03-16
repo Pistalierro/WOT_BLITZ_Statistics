@@ -1,9 +1,69 @@
-<div *ngIf="tanksService.tankFullInfo() as tank" class="container">
-  <h3 [ngStyle]="{'color': utilsService.getTankColor(tank)}" class="container-title">
-    {{ tank.name }}
-  </h3>
+<div class="container">
+  <section *ngIf="tanksService.selectedTankData() as tankStats" class="tank-statistics">
 
-  <section class="tank-characteristics container-grid">
+    <h2 [ngStyle]="{'color': utilsService.getTankColor(tankStats)}" class="container-title">{{ tankStats.name }}</h2>
+    <h3>Статистика</h3>
+    <div class="stats-cards-container">
+
+      <mat-card class="stats-card">
+        <mat-card-title class="stats-card__title">{{ 'TANK_STATS.BATTLES' | translate }}</mat-card-title>
+        <mat-card-content class="stats-card__content">{{ tankStats.all.battles |number }}</mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-title class="stats-card__title">{{ 'TANK_STATS.WINS' | translate }}</mat-card-title>
+        <mat-card-content
+          [ngClass]="utilsService.getWinRateColor((tankStats.all.wins / tankStats.all.battles) * 100)" class="stats-card__content">
+          {{ (tankStats.all.wins / tankStats.all.battles) * 100 |number: '1.2-2' }}%
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-title class="stats-card__title">{{ 'TANK_STATS.AVG_DMG' | translate }}</mat-card-title>
+        <mat-card-content class="stats-card__content">
+          {{ (tankStats.all.damage_dealt / tankStats.all.battles) |number: '1.0-0' }}
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-title class="stats-card__title">{{ 'TANK_STATS.AVG_XP_BATTLE' | translate }}</mat-card-title>
+        <mat-card-content class="stats-card__content">
+          {{ (tankStats.all.xp / tankStats.all.battles) |number: '1.0-0' }}
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="stats-tables">
+      <div class="stats-table-container">
+        <h3 class="stats-table__title">Общие показатели</h3>
+        <mat-table [dataSource]="generalStats()" class="stats-table mat-elevation-z2">
+          <ng-container matColumnDef="name">
+            <mat-cell *matCellDef="let stat" class="stats-table__name">{{ stat.name | translate }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell *matCellDef="let stat" class="stats-table__value">{{ stat.value }}</mat-cell>
+          </ng-container>
+          <mat-row *matRowDef="let row; columns: ['name', 'value'];"></mat-row>
+        </mat-table>
+      </div>
+
+      <div class="stats-table-container">
+        <h3 class="stats-table__title">Средние показатели за бой</h3>
+        <mat-table [dataSource]="averageStats()" class="stats-table mat-elevation-z2">
+          <ng-container matColumnDef="name">
+            <mat-cell *matCellDef="let stat" class="stats-table__name">{{ stat.name | translate }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-cell *matCellDef="let stat" class="stats-table__value">{{ stat.value }}</mat-cell>
+          </ng-container>
+          <mat-row *matRowDef="let row; columns: ['name', 'value'];"></mat-row>
+        </mat-table>
+      </div>
+    </div>
+  </section>
+
+  <h3>Характеристики</h3>
+  <section *ngIf="tanksService.tankFullInfo() as tank" class="tank-characteristics container-grid">
 
     <!-- 🔹 Общие характеристики -->
     <article class="tank-summary">
@@ -12,15 +72,11 @@
           <div [ngStyle]="{'background-image': 'url(' + getFlagUrl(tank.nation) + ')'}"
                class="card-header__background">
             <img [alt]="tank.name" [src]="tank.images.normal" class="card-header__image">
-            <p [style.color]="utilsService.getTankColor(tank) + ' !important'"
-               class="card-header__item card-header__item--tier">
+            <p [style.color]="utilsService.getTankColor(tank) + ' !important'" class="card-header__item card-header__item--tier">
               {{ toRoman(tank.tier) }}
             </p>
-            <img [alt]="tank.type"
-                 [src]="tankTypes(tank.type, tank)"
-                 class="card-header__item card-header__item--type">
-            <p [style.color]="utilsService.getTankColor(tank) + ' !important'"
-               class="card-header__item card-header__item--name">
+            <img [alt]="tank.type" [src]="tankTypes(tank.type, tank)" class="card-header__item card-header__item--type">
+            <p [style.color]="utilsService.getTankColor(tank) + ' !important'" class="card-header__item card-header__item--name">
               {{ tank.name }}
             </p>
           </div>
@@ -38,116 +94,63 @@
 
           <div class="content-item">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.DAMAGE' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.shells[0].damage }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.DAMAGE' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.shells[0].damage }}</p>
             </div>
-            <mat-progress-bar [value]="statsPercent['damage']"
-                              class="content-row__progress"
-                              mode="determinate">
-            </mat-progress-bar>
+            <mat-progress-bar [value]="statsPercent['damage']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
 
           <div class="content-item">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.FIRE_RATE' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.gun.fire_rate }}{{ 'TANKS_DETAILS.SHOOTS_IN_SECOND' | translate }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.FIRE_RATE' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.gun.fire_rate }}{{ 'TANKS_DETAILS.SHOOTS_IN_SECOND' | translate }}</p>
             </div>
-            <mat-progress-bar [value]="statsPercent['fire_rate']"
-                              class="content-row__progress"
-                              mode="determinate">
-            </mat-progress-bar>
+            <mat-progress-bar [value]="statsPercent['fire_rate']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
 
           <div class="content-item">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.PENETRATION' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.shells[0].penetration }}{{ 'TANKS_DETAILS.MILLIMETERS' | translate }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.PENETRATION' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.shells[0].penetration }}{{ 'TANKS_DETAILS.MILLIMETERS' | translate }}</p>
             </div>
-            <mat-progress-bar [value]="statsPercent['penetration']"
-                              class="content-row__progress"
-                              mode="determinate">
-            </mat-progress-bar>
+            <mat-progress-bar [value]="statsPercent['penetration']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
 
           <div class="content-item">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.SPEED' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.SPEED' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}</p>
             </div>
-            <mat-progress-bar [value]="statsPercent['speed']"
-                              class="content-row__progress"
-                              mode="determinate">
-            </mat-progress-bar>
+            <mat-progress-bar [value]="statsPercent['speed']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
 
           <div class="content-item">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.TRAVERSE_SPEED' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.suspension.traverse_speed }}°
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.TRAVERSE_SPEED' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.suspension.traverse_speed }}°</p>
             </div>
-            <mat-progress-bar [value]="statsPercent['traverse']"
-                              class="content-row__progress"
-                              mode="determinate">
-            </mat-progress-bar>
+            <mat-progress-bar [value]="statsPercent['traverse']" class="content-row__progress" mode="determinate"></mat-progress-bar>
           </div>
 
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.WEIGHT' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.weight | number }}{{ 'TANKS_DETAILS.KILOGRAM' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.WEIGHT' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.weight | number }}{{ 'TANKS_DETAILS.KILOGRAM' | translate }}</p>
           </div>
 
           <!-- Ещё раз скорость поворота? Оставлю, хотя выше уже было -->
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.TRAVERSE_SPEED' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.suspension.traverse_speed }}°
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.TRAVERSE_SPEED' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.suspension.traverse_speed }}°</p>
           </div>
 
-          <p class="content__title">
-            {{ 'TANKS_DETAILS.MAX_SPEED' | translate }}
-          </p>
+          <p class="content__title">{{ 'TANKS_DETAILS.MAX_SPEED' | translate }}</p>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.FORWARD_SPEED' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.FORWARD_SPEED' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.BACKWARD_SPEED' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.BACKWARD_SPEED' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.speed_forward }}{{ 'TANKS_DETAILS.KILOMETERS_IN_HOUR' | translate }}</p>
           </div>
         </mat-card-content>
       </mat-card>
@@ -156,51 +159,30 @@
     <!-- 🔹 Стрельба -->
     <article class="tank-gun">
       <mat-card appearance="outlined" class="card">
-        <mat-card-title class="card-title">
-          {{ 'TANKS_DETAILS.FIREPOWER' | translate }}
-        </mat-card-title>
-
+        <mat-card-title class="card-title">{{ 'TANKS_DETAILS.FIREPOWER' | translate }}</mat-card-title>
         <mat-card-content class="card-content">
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.GUN' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.name }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.gun.name }}</p>
           </div>
 
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.CALIBER' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.caliber }}{{ 'TANKS_DETAILS.MILLIMETERS' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.CALIBER' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.gun.caliber }}{{ 'TANKS_DETAILS.MILLIMETERS' | translate }}</p>
           </div>
 
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.DPM' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ (tank.gun.fire_rate * tank.shells[0].damage) | number: '1.0-0' }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.DPM' | translate }}:</p>
+            <p class="content-row content-row--value">{{ (tank.gun.fire_rate * tank.shells[0].damage) | number: '1.0-0' }}</p>
           </div>
 
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.AIM_TIME' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.aim_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.AIM_TIME' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.gun.aim_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}</p>
           </div>
 
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.DISPERSION' | translate }}:
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.DISPERSION' | translate }}:</p>
             <p class="content-row content-row--value">
               {{ tank.gun.dispersion }}{{ 'TANKS_DETAILS.METER' | translate }}
             </p>
@@ -208,54 +190,33 @@
 
           <div class="content-row">
             <p class="content-row content-row--tile">
-              {{
-                tank.gun.clip_capacity > 1
-                  ? ('TANKS_DETAILS.CLIP_RELOAD_CAPACITY' | translate)
-                  : ('TANKS_DETAILS.RELOAD_TIME' | translate)
-              }}:
+              {{ tank.gun.clip_capacity > 1 ? ('TANKS_DETAILS.CLIP_RELOAD_CAPACITY' | translate) : ('TANKS_DETAILS.RELOAD_TIME' | translate) }}
+              :
             </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.reload_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}
-            </p>
+            <p class="content-row content-row--value">{{ tank.gun.reload_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}</p>
           </div>
 
           <div *ngIf="tank.gun.clip_capacity > 1">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.CLIP_CAPACITY' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.gun.clip_capacity }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.CLIP_CAPACITY' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.gun.clip_capacity }}</p>
             </div>
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.CLIP_RELOAD_TIME' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.gun.clip_reload_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.CLIP_RELOAD_TIME' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.gun.clip_reload_time }}{{ 'TANKS_DETAILS.SECOND' | translate }}</p>
             </div>
           </div>
 
           <div *ngIf="tank.turret_id !== null && tank.turret.traverse_left_arc > 90 && tank.turret.traverse_right_arc > 90"
                class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.TURRET_TRAVERSE_SPEED' | translate }}:
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.turret.traverse_speed }}°
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.TURRET_TRAVERSE_SPEED' | translate }}:</p>
+            <p class="content-row content-row--value">{{ tank.turret.traverse_speed }}°</p>
           </div>
 
           <div *ngIf="tank.turret_id !== null && tank.turret.traverse_left_arc <= 90 && tank.turret.traverse_right_arc <= 90">
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.GUN_ARC' | translate }}:
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.turret.traverse_left_arc * 2 }}°
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN_ARC' | translate }}:</p>
+              <p class="content-row content-row--value">{{ tank.turret.traverse_left_arc * 2 }}°</p>
             </div>
           </div>
 
@@ -264,68 +225,38 @@
             {{ 'TANKS_DETAILS.AVG_DAMAGE' | translate }}
           </p>
           <div *ngFor="let shell of tank.shells" class="content-row">
-            <p class="content-row content-row--tile">
-              {{ getShellType(shell.type) | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ shell.damage }}
-            </p>
+            <p class="content-row content-row--tile">{{ getShellType(shell.type) | translate }}</p>
+            <p class="content-row content-row--value">{{ shell.damage }}</p>
           </div>
 
           <!-- Пробитие (мм.) -->
-          <p class="content__title">
-            {{ 'TANKS_DETAILS.PENETRATION_MM' | translate }}
-          </p>
+          <p class="content__title">{{ 'TANKS_DETAILS.PENETRATION_MM' | translate }}</p>
           <div *ngFor="let shell of tank.shells" class="content-row">
-            <p class="content-row content-row--tile">
-              {{ getShellType(shell.type) | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ shell.penetration }}
-            </p>
+            <p class="content-row content-row--tile">{{ getShellType(shell.type) | translate }}</p>
+            <p class="content-row content-row--value">{{ shell.penetration }}</p>
           </div>
 
           <!-- Угол вертикальной наводки -->
-          <p class="content__title">
-            {{ 'TANKS_DETAILS.VERTICAL_GUN_ARC' | translate }}
-          </p>
+          <p class="content__title">{{ 'TANKS_DETAILS.VERTICAL_GUN_ARC' | translate }}</p>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.GUN_ARC_UP' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.move_up_arc }}°
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN_ARC_UP' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.gun.move_up_arc }}°</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.GUN_ARC_DOWN' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.gun.move_down_arc }}°
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN_ARC_DOWN' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.gun.move_down_arc }}°</p>
           </div>
 
           <!-- Угол горизонтальной наводки, если танк без башни -->
           <div *ngIf="tank.turret_id === null">
-            <p class="content__title">
-              {{ 'TANKS_DETAILS.GUN_ARC_HORIZONTAL' | translate }}
-            </p>
+            <p class="content__title">{{ 'TANKS_DETAILS.GUN_ARC_HORIZONTAL' | translate }}</p>
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.GUN_ARC_LEFT' | translate }}
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.turret.traverse_left_arc }}°
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN_ARC_LEFT' | translate }}</p>
+              <p class="content-row content-row--value">{{ tank.turret.traverse_left_arc }}°</p>
             </div>
             <div class="content-row">
-              <p class="content-row content-row--tile">
-                {{ 'TANKS_DETAILS.GUN_ARC_RIGHT' | translate }}
-              </p>
-              <p class="content-row content-row--value">
-                {{ tank.turret.traverse_right_arc }}°
-              </p>
+              <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.GUN_ARC_RIGHT' | translate }}</p>
+              <p class="content-row content-row--value">{{ tank.turret.traverse_right_arc }}°</p>
             </div>
           </div>
         </mat-card-content>
@@ -338,94 +269,55 @@
         <mat-card-title class="card-title">
           {{ 'TANKS_DETAILS.SURVIVABILITY' | translate }}
         </mat-card-title>
-
         <mat-card-content class="card-content">
-
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.HP' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.hp | number }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.HP' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.hp | number }}</p>
           </div>
 
-          <p class="content__title">
-            {{ 'TANKS_DETAILS.TURRET_ARMOR' | translate }}
-          </p>
+          <p class="content__title">{{ 'TANKS_DETAILS.TURRET_ARMOR' | translate }}</p>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.FRONT' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.FRONT' | translate }}</p>
             <p class="content-row content-row--value">
               {{ tank.armor.turret.front }}
             </p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.SIDES' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.armor.turret.sides }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.SIDES' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.armor.turret.sides }}</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.REAR' | translate }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.REAR' | translate }}</p>
             <p class="content-row content-row--value">
               {{ tank.armor.turret.rear }}
             </p>
           </div>
 
-          <p class="content__title">
-            {{ 'TANKS_DETAILS.HULL_ARMOR' | translate }}
-          </p>
+          <p class="content__title">{{ 'TANKS_DETAILS.HULL_ARMOR' | translate }}</p>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.FRONT' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.armor.hull.front }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.FRONT' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.armor.hull.front }}</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.SIDES' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.armor.hull.sides }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.SIDES' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.armor.hull.sides }}</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.REAR' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.armor.hull.rear }}
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.REAR' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.armor.hull.rear }}</p>
           </div>
 
           <p class="content__title">
             {{ 'TANKS_DETAILS.EXTRA_STATS' | translate }}
           </p>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.FIRE_CHANCE' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.engine.fire_chance * 100 }}%
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.FIRE_CHANCE' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.engine.fire_chance * 100 }}%</p>
           </div>
           <div class="content-row">
-            <p class="content-row content-row--tile">
-              {{ 'TANKS_DETAILS.VIEW_RANGE' | translate }}
-            </p>
-            <p class="content-row content-row--value">
-              {{ tank.turret.view_range }}м.
-            </p>
+            <p class="content-row content-row--tile">{{ 'TANKS_DETAILS.VIEW_RANGE' | translate }}</p>
+            <p class="content-row content-row--value">{{ tank.turret.view_range }}м.</p>
           </div>
-
         </mat-card-content>
       </mat-card>
     </article>

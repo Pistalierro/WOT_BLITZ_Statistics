@@ -1,18 +1,18 @@
-import {AfterViewInit, Component, effect, inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, effect, inject, OnInit, ViewChild} from '@angular/core';
 import {TanksService} from '../../../../../services/tanks/tanks.service';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Tank} from '../../../../../models/tank/tanks-response.model';
-import {DecimalPipe, NgClass, NgIf, NgStyle} from '@angular/common';
-import {COLUMNS_NAMES, getFlagUrl, tankTypes, toRoman} from '../../../../../shared/helpers/tank-utils';
+import {DatePipe, DecimalPipe, NgClass, NgIf, NgStyle} from '@angular/common';
+import {getFlagUrl, tankTypes, toRoman} from '../../../../../shared/helpers/tank-utils';
 import {AuthService} from '../../../../../services/auth.service';
 import {sanitizeUrl} from '../../../../../shared/helpers/utils';
 import {TranslatePipe} from '@ngx-translate/core';
-import {TanksDataService} from '../../../../../services/tanks/tanks-data.service';
 import {UtilsService} from '../../../../../shared/utils.service';
 import {Router} from '@angular/router';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-player-tanks-list',
@@ -23,56 +23,79 @@ import {Router} from '@angular/router';
     NgIf,
     NgStyle,
     TranslatePipe,
-    NgClass
+    NgClass,
+    DatePipe
   ],
   templateUrl: './player-tanks-list.component.html',
   styleUrl: './player-tanks-list.component.scss'
 })
-export class PlayerTanksListComponent implements AfterViewInit {
-  displayedColumns: string[] = COLUMNS_NAMES;
+export class PlayerTanksListComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['mainInfo', 'battles', 'win_rate', 'accuracy', 'avgXp', 'lastBattle', 'avgDamage'];
   dataSource = new MatTableDataSource<Tank>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   utilsService = inject(UtilsService);
+  hasMastery = false;
   protected tanksService = inject(TanksService);
   protected authService = inject(AuthService);
   protected readonly getFlagUrl = getFlagUrl;
   protected readonly toRoman = toRoman;
   protected readonly tankTypes = tankTypes;
   protected readonly sanitizeUrl = sanitizeUrl;
-  private tanksDataService = inject(TanksDataService);
+  private breakpointObserver = inject(BreakpointObserver);
   private router = inject(Router);
 
   constructor() {
     effect(() => {
       const tankList = this.tanksService.tanksList();
-      if (tankList) {
-        this.dataSource.data = tankList;
+      if (tankList.length) {
+        this.dataSource.data = tankList.map(tank => ({
+          ...tank,
+          winRate: tank.all.battles ? ((tank.all.wins / tank.all.battles) * 100) : 0,
+          accuracy: tank.all.shots ? ((tank.all.hits / tank.all.shots) * 100) : 0,
+          avg_xp: (tank.all.xp / tank.all.battles),
+          avg_damage: tank.all.battles ? (tank.all.damage_dealt / tank.all.battles) : 0,
+        }));
+
+        setTimeout(() => {
+          if (this.sort) {
+            this.dataSource.sort = this.sort;
+            this.dataSource.sort.sortChange.emit();
+          }
+          if (this.paginator) this.dataSource.paginator = this.paginator;
+        });
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).subscribe(result => {
+      if (result.breakpoints[Breakpoints.XSmall]) {
+        this.displayedColumns = ['mainInfo', 'battles', 'win_rate', 'avgDamage'];
+      } else if (result.breakpoints[Breakpoints.Small]) {
+        this.displayedColumns = ['mainInfo', 'battles', 'win_rate', 'accuracy', 'avgDamage'];
+      } else {
+        this.displayedColumns = ['mainInfo', 'master', 'battles', 'win_rate', 'accuracy', 'lastBattle', 'avgXp', 'avgDamage'];
       }
     });
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-
     this.dataSource.sortingDataAccessor = (tank, sortHeaderId) => {
       switch (sortHeaderId) {
-        case 'nation':
-          return tank.nation;
-        case 'tier':
-          return tank.tier;
-        case 'name':
-          return tank.name;
-        case 'win_rate':
-          return tank.all.battles ? (tank.all.wins / tank.all.battles) * 100 : 0;
         case 'battles':
-          return tank.all.battles;
-        case 'damage':
-          return tank.all.battles ? tank.all.damage_dealt / tank.all.battles : 0;
+          return Number(tank.all.battles);
+        case 'win_rate':
+          return Number(tank.winRate) || 0;
+        case 'avgXp':
+          return Number(tank.winRate) || 0;
+        case 'avgDamage':
+          return Number(tank.avg_damage) || 0;
+        case 'lastBattle':
+          return Number(tank.last_battle_time);
         default:
-          return (tank as any)[sortHeaderId];
+          return (tank as any)[sortHeaderId] || 0;
       }
     };
   }

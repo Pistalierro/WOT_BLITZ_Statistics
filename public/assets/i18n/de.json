@@ -73,6 +73,29 @@
       "TYPE": "Typ"
     }
   },
+  "TANK_STATS": {
+    "BATTLES": "Gefechte",
+    "BATTLES_PLAYED": "Gespielte Gefechte:",
+    "WINS": "Siege",
+    "LOSSES": "Niederlagen",
+    "SURVIVED": "Überlebt in Gefechten",
+    "KILL_RATIO": "Zerstörungsverhältnis",
+    "DAMAGE_RECEIVED": "Schadensverhältnis",
+    "ACCURACY": "Trefferquote",
+    "MARK_OF_MASTERY": "Fahrzeugbeherrschung „Meister“",
+    "AVG_XP": "Durchschnittliche EP pro Gefecht",
+    "AVG_DAMAGE": "Durchschnittlicher Schaden pro Gefecht",
+    "AVG_DAMAGE_RECEIVED": "Durchschnittlicher erhaltener Schaden",
+    "SPOTTED": "Entdeckte Gegnerfahrzeuge",
+    "AVG_FRAGS": "Zerstörte Gegnerfahrzeuge",
+    "MAX_KILLS": "Maximal zerstört",
+    "MAX_XP": "Maximale EP",
+    "WIN_RATE": "Siegquote",
+    "AVG_BATTLES": "Durchschnittliche Gefechte",
+    "AVG_WINS": "Durchschnittliche Siege",
+    "AVG_DMG": "Durchschn./Schaden",
+    "AVG_XP_BATTLE": "Durchschn./EP"
+  },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Durchschnittlicher Schaden nach Stufe",
     "BATTLES_BY_TIER": "Schlachten nach Stufe",
@@ -86,12 +109,19 @@
     "SORT": {
       "NATION": "Nation",
       "TIER": "Stufe",
-      "TYPE": "Typ"
+      "TYPE": "Typ",
+      "WIN_RATE": "Siegquote",
+      "BATTLES": "Gefecht(e)",
+      "ACCURACY": "Schussgenauigkeit",
+      "AVG_XP": "Durchschnittliche Erfahrung pro Gefecht",
+      "AVG_DAMAGE": "Durchschnittlicher Schaden pro Gefecht",
+      "LAST_BATTLE_TIME": "Letztes Gefecht"
     },
     "TABLE": {
       "WIN_RATE": "Siegquote",
       "BATTLES": "Schlachten",
       "DAMAGE": "Ø Schd",
+      "XP": "EP",
       "NO_IMAGE": "Kein Bild"
     }
   },

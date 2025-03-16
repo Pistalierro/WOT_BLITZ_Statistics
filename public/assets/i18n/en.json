@@ -73,6 +73,29 @@
       "TYPE": "Type"
     }
   },
+  "TANK_STATS": {
+    "BATTLES": "Battles",
+    "BATTLES_PLAYED": "Battles played:",
+    "WINS": "Wins",
+    "LOSSES": "Losses",
+    "SURVIVED": "Survived in battles",
+    "KILL_RATIO": "Kill ratio",
+    "DAMAGE_RECEIVED": "Damage ratio",
+    "ACCURACY": "Accuracy",
+    "MARK_OF_MASTERY": "Mastery badge \"Master\"",
+    "AVG_XP": "Average XP per battle",
+    "AVG_DAMAGE": "Average damage per battle",
+    "AVG_DAMAGE_RECEIVED": "Average damage received",
+    "SPOTTED": "Enemy tanks spotted",
+    "AVG_FRAGS": "Enemy tanks destroyed",
+    "MAX_KILLS": "Maximum destroyed",
+    "MAX_XP": "Maximum XP",
+    "WIN_RATE": "Win rate",
+    "AVG_BATTLES": "Average battles",
+    "AVG_WINS": "Average wins",
+    "AVG_DMG": "Avg./Damage",
+    "AVG_XP_BATTLE": "Avg./XP"
+  },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Average damage by tier",
     "BATTLES_BY_TIER": "Battles by tier",
@@ -86,12 +109,19 @@
     "SORT": {
       "NATION": "Nation",
       "TIER": "Tier",
-      "TYPE": "Type"
+      "TYPE": "Type",
+      "WIN_RATE": "Win Rate",
+      "BATTLES": "Battles",
+      "ACCURACY": "Accuracy",
+      "AVG_XP": "Average XP per Battle",
+      "AVG_DAMAGE": "Average Damage per Battle",
+      "LAST_BATTLE_TIME": "Last Battle Time"
     },
     "TABLE": {
       "WIN_RATE": "Win rate",
       "BATTLES": "Battles",
       "DAMAGE": "Dmg",
+      "XP": "XP",
       "NO_IMAGE": "No image"
     }
   },
