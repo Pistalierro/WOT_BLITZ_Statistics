@@ -74,7 +74,7 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
       if (result.breakpoints[Breakpoints.XSmall]) {
         this.displayedColumns = ['mainInfo', 'battles', 'win_rate', 'avgDamage'];
       } else if (result.breakpoints[Breakpoints.Small]) {
-        this.displayedColumns = ['mainInfo', 'battles', 'win_rate', 'accuracy', 'avgDamage'];
+        this.displayedColumns = ['mainInfo', 'master', 'battles', 'win_rate', 'accuracy', 'avgDamage'];
       } else {
         this.displayedColumns = ['mainInfo', 'master', 'battles', 'win_rate', 'accuracy', 'lastBattle', 'avgXp', 'avgDamage'];
       }
