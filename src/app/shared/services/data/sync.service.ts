@@ -42,10 +42,8 @@ export class SyncService {
     maxAgeHours: number = 12,
   ): Promise<T> {
     try {
-      // 1) Проверяем IndexedDB
       const fromIndexedDb = await this.indexedDb.getDataFromIndexedDB<T>(store, key);
       if (fromIndexedDb && !isEmptyData(fromIndexedDb.data)) {
-        console.log(`✅ [Sync] '${key}' получены из IndexedDB (store='${store}'), ts=${fromIndexedDb.timestamp}`);
         if (isFreshNeeded) {
           if (this.isDataFresh(fromIndexedDb.timestamp, maxAgeHours)) {
             console.log(`⏰ [Sync] '${key}' в IndexedDB свежие – возвращаем.`);

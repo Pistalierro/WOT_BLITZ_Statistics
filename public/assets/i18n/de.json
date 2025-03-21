@@ -115,7 +115,8 @@
       "ACCURACY": "Schussgenauigkeit",
       "AVG_XP": "Durchschnittliche Erfahrung pro Gefecht",
       "AVG_DAMAGE": "Durchschnittlicher Schaden pro Gefecht",
-      "LAST_BATTLE_TIME": "Letztes Gefecht"
+      "LAST_BATTLE_TIME": "Letztes Gefecht",
+      "WN8": "WN8-Wertung"
     },
     "TABLE": {
       "WIN_RATE": "Siegquote",

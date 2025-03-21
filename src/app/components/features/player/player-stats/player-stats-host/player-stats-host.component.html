@@ -35,6 +35,12 @@
           <span [ngClass]="utilsService.getWinRateColor((player.statistics.all.wins / player.statistics.all.battles) * 100)">%</span>
         </div>
         <div [@fadeScale] class="stats">
+          <span class="stats-key">WN8:&nbsp;</span>
+          <span *ngIf="player.statistics.all.wn8" [appOdometer]="player.statistics.all.wn8"
+                [ngClass]="utilsService.getWn8Class(player.statistics.all.wn8)">
+            {{ player.statistics.all.wn8 | number: '1.0-0' }}</span>
+        </div>
+        <div [@fadeScale] class="stats">
           <span class="stats-key">{{ 'PLAYER_STATS.STATS.AVG_DAMAGE' | translate }}:&nbsp;</span>
           <span [appOdometer]="(player.statistics.all.damage_dealt / player.statistics.all.battles)">
             {{ player.statistics.all.damage_dealt / player.statistics.all.battles }}

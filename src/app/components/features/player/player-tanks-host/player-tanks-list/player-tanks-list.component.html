@@ -56,6 +56,14 @@
           <td *matCellDef="let tank" class="battles" mat-cell> {{ tank.all.battles }}</td>
         </ng-container>
 
+        <!-- WN8 Column -->
+        <ng-container matColumnDef="wn8">
+          <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.WN8' | translate" mat-header-cell mat-sort-header>WN8</th>
+          <td *matCellDef="let tank" [ngClass]="utilsService.getWn8Class(tank.all.wn8)" mat-cell>
+            {{ tank.all.wn8 }}
+          </td>
+        </ng-container>
+
         <!-- Win_Rate Column -->
         <ng-container matColumnDef="win_rate">
           <th *matHeaderCellDef [matTooltip]="'TANKS_STATS.SORT.WIN_RATE' | translate" mat-header-cell mat-sort-header>

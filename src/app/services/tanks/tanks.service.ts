@@ -7,14 +7,15 @@ import {
   Tank,
   TankData
 } from '../../models/tank/tanks-response.model';
-import {PlayerStoreService} from '../player/player-store.service';
 import {SyncService} from '../../shared/services/data/sync.service';
 import {TankProfile} from '../../models/tank/tank-full-info.model';
 import {TanksDataService} from './tanks-data.service';
+import {PlayerStoreService} from '../player/player-store.service';
+import {WN8Service} from '../wn8.service';
 
 @Injectable({providedIn: 'root'})
-
 export class TanksService {
+
   tanksList = signal<Tank[]>([]);
   tankFullInfo = signal<TankProfile | null>(null);
   selectedTankData = signal<Tank | null>(null);
@@ -25,16 +26,20 @@ export class TanksService {
   winRateByTier = signal<BattlesByWinRate>({});
   avgDamageByTier = signal<BattlesByWinAvgDamage>({});
   totalBattles = signal<number>(0);
+  accountIdSignal = signal<number | null>(null);
   jsonTanksList: TankData[] = [];
 
-  private playerStore = inject(PlayerStoreService);
+
   private syncService = inject(SyncService);
   private tanksDataService = inject(TanksDataService);
+  private playerStoreService = inject(PlayerStoreService);
+  private wn8Service = inject(WN8Service);
 
   constructor() {
     void this.initData();
+
     effect(() => {
-      const accountId = this.playerStore.accountIdSignal();
+      const accountId = this.playerStoreService.accountIdSignal();
       if (accountId) {
         queueMicrotask(() => {
           void this.getTanksData(accountId);
@@ -76,11 +81,6 @@ export class TanksService {
         return;
       }
 
-      if (!jsonTanksList.length) {
-        console.error('❌ [TanksDataService] jsonTanksList пуст, останавливаемся.');
-        return;
-      }
-
       const statsData = await this.tanksDataService.getPlayerTanksStats(accountId);
       if (!statsData.length) {
         console.warn('⚠ [TanksDataService] statsData пуст, не создаём mergedTanks.');
@@ -90,22 +90,23 @@ export class TanksService {
       const mergedTanks: Tank[] = statsData
         .filter(tank => tank.all.battles > 0 && tank.all.damage_dealt)
         .map(stat => {
-          const localTank = jsonTanksList.find(tank => tank.tank_id === stat.tank_id) || {} as TankData;
+          const localTank = jsonTanksList.find(t => t.tank_id === stat.tank_id);
 
-          return {
+          // Сначала собираем полноценный объект танка:
+          const tank: Tank = {
             tank_id: stat.tank_id,
-            name: localTank.name ?? 'Unknown',
-            nation: localTank.nation ?? 'unknown',
-            tier: localTank.tier ?? 0,
-            type: localTank.type ?? 'unknown',
+            name: localTank?.name ?? 'Unknown',
+            nation: localTank?.nation ?? 'unknown',
+            tier: localTank?.tier ?? 0,
+            type: localTank?.type ?? 'unknown',
             mark_of_mastery: stat.mark_of_mastery ?? 0,
             last_battle_time: stat.last_battle_time ?? 0,
+            is_premium: localTank?.is_premium ?? false,
+            is_collectible: localTank?.is_collectible ?? false,
             images: {
-              preview: localTank.images?.normal || '/images/tanks/default_tank.webp',
-              normal: localTank.images?.normal || '/images/tanks/default_tank.webp',
+              preview: localTank?.images?.normal || '/images/tanks/default_tank.webp',
+              normal: localTank?.images?.normal || '/images/tanks/default_tank.webp',
             },
-            is_premium: localTank.is_premium ?? false,
-            is_collectible: localTank.is_collectible ?? false,
             all: {
               xp: stat.all?.xp ?? 0,
               battles: stat.all?.battles ?? 0,
@@ -114,15 +115,28 @@ export class TanksService {
               damage_dealt: stat.all?.damage_dealt ?? 0,
               max_frags: stat.all?.max_frags ?? 0,
               survived_battles: stat.all?.survived_battles ?? 0,
-              frags: stat.all.frags ?? 0,
-              damage_received: stat.all.damage_received ?? 0,
-              shots: stat.all.shots ?? 0,
-              hits: stat.all.hits ?? 0,
-              spotted: stat.all.spotted ?? 0,
-              max_xp: stat.all.max_xp ?? 0
+              frags: stat.all?.frags ?? 0,
+              damage_received: stat.all?.damage_received ?? 0,
+              shots: stat.all?.shots ?? 0,
+              hits: stat.all?.hits ?? 0,
+              spotted: stat.all?.spotted ?? 0,
+              max_xp: stat.all?.max_xp ?? 0,
+              dropped_capture_points: stat.all?.dropped_capture_points ?? 0,
+            }
+          };
+
+          const wn8 = this.wn8Service.calculateWn8ForTank(tank);
+
+          // Добавляем wn8 в поле all
+          return {
+            ...tank,
+            all: {
+              ...tank.all,
+              wn8
             }
           };
         });
+
 
       if (!mergedTanks.length) {
         console.warn('⚠ [TanksDataService] mergedTanks пуст, не сохраняем в tanksList.');
@@ -170,13 +184,13 @@ export class TanksService {
         return;
       }
       console.log(selectedTankStatistics);
+
       this.selectedTankData.set(selectedTankStatistics);
       await this.syncService.saveDataToAllStorages('tanks', 'selectedTankStatistics', selectedTankStatistics);
     } catch (error: any) {
       console.error('❌ Ошибка получения данных выбранного танка:', error);
     }
   }
-
 
   async findMissingTanks(): Promise<void> {
     try {
@@ -188,8 +202,6 @@ export class TanksService {
 
       console.log(`🚨 [TanksService] Найдено ${missingTanks.length} танков 10 уровня, отсутствующих в API Wargaming:`);
       console.table(missingTanks);
-
-      // 🔹 (Опционально) Сохраняем список отсутствующих танков 10 уровня в локальное хранилище
       await this.syncService.saveDataToAllStorages('tanks', 'missingTanksTier10', missingTanks);
 
     } catch (err: any) {
@@ -218,7 +230,11 @@ export class TanksService {
       battlesByTier[tier] ??= 0;
     }
 
-    const {winRateByTier, avgDamageByTier} = this.tanksDataService.calculateWinRateAndAvgDamage(battlesByTier, winsByTier, damageByTier);
+    const {winRateByTier, avgDamageByTier} = this.tanksDataService.calculateWinRateAndAvgDamage(
+      battlesByTier,
+      winsByTier,
+      damageByTier
+    );
 
     this.battlesByTier.set(battlesByTier);
     this.battlesByType.set(battlesByType);
@@ -234,19 +250,12 @@ export class TanksService {
         this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'playerTanksList'),
         this.syncService.getDataFromAllStorages<TankProfile>('tanks', 'tankFullInfo'),
       ]);
-
-      // ✅ Проверяем, что jsonTanksList действительно массив, иначе делаем []
       this.jsonTanksList = Array.isArray(jsonTanksList) ? jsonTanksList : [];
-
-      // ✅ Проверяем, что playerTanksList не null перед установкой
       this.tanksList.set(Array.isArray(playerTanksList) ? playerTanksList : []);
-
-      // ✅ Просто устанавливаем tankFullInfo, тут null - ок
       this.tankFullInfo.set(tankFullInfo ?? null);
 
     } catch (error: any) {
       console.error('❌ Ошибка при инициализации данных:', error.message);
     }
   }
-
 }

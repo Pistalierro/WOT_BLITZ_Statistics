@@ -13,12 +13,16 @@ interface IStoreRecord {
 export class AppDB extends Dexie {
   clans!: Table<IStoreRecord, string | number>;
   tanks!: Table<IStoreRecord, string | number>;
+  jsonData!: Table<IStoreRecord, string | number>;
+  wn8_approx!: Table<IStoreRecord, string | number>;
 
   constructor() {
     super('AppDB');
     this.version(1).stores({
       clans: '&key',
       tanks: '&key',
+      jsonData: '&key',
+      wn8_approx: '&key',
     });
   }
 }
@@ -72,7 +76,6 @@ export class IndexedDbService {
       const record = await table.get(key);
 
       if (!record) {
-        // console.warn(`⚠ [IndexedDB] Нет данных в '${store}'/'${key}'`);
         return null;
       }
       return {

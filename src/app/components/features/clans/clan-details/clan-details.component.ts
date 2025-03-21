@@ -44,7 +44,7 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
             battles: player.statistics.all.battles,
             avgDamage: player.statistics.all.damage_dealt / player.statistics.all.battles,
             accuracy: (player.statistics.all.hits / player.statistics.all.shots) * 100,
-            winRate: (player.statistics.all.wins / player.statistics.all.battles) * 100
+            winRate: (player.statistics.all.wins / player.statistics.all.battles) * 100,
           }));
       }
     });

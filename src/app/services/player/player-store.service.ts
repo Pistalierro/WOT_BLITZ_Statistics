@@ -9,12 +9,12 @@ import {
   PlayerInfoResponse,
   PlayerSearchResponse
 } from '../../models/player/player-response.model';
+import {WN8Service} from '../wn8.service';
+import {SyncService} from '../../shared/services/data/sync.service';
+import {Tank} from '../../models/tank/tanks-response.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class PlayerStoreService {
-
   nicknameSignal = signal<string | null>(null);
   accountIdSignal = signal<number | null>(null);
   playerDataSignal = signal<PlayerData | null>(null);
@@ -22,13 +22,15 @@ export class PlayerStoreService {
   errorSignal = signal<string | null>(null);
 
   private http = inject(HttpClient);
+  private syncService = inject(SyncService);
+  private wn8Service = inject(WN8Service);
 
   async getPlayerData(nickname: string): Promise<void> {
     if (!nickname) return;
 
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.playerDataSignal.set(null); // Очищаем старые данные
+    this.playerDataSignal.set(null);
 
     try {
       const url = `${apiConfig.baseUrl}/account/list/?application_id=${apiConfig.applicationId}&search=${nickname}`;
@@ -61,6 +63,7 @@ export class PlayerStoreService {
       console.log('ID игрока отсутствует');
       return;
     }
+
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
@@ -79,9 +82,27 @@ export class PlayerStoreService {
         return;
       }
 
+      // 3) Грузим массив танков игрока (из 'tanks', 'playerTanksList')
+      let tankList = await this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'playerTanksList');
+      if (!Array.isArray(tankList)) {
+        tankList = [];
+      }
+
+      const wn8 = this.wn8Service.calculateWn8ForAccount(tankList);
       const playerData = res.data[accountId];
       const clanData = await this.getPlayersClan(accountId);
-      const mergedData: PlayerData = {...playerData, clan: clanData || undefined};
+
+      const mergedData: PlayerData = {
+        ...playerData,
+        clan: clanData || undefined,
+        statistics: {
+          ...playerData.statistics,
+          all: {
+            ...playerData.statistics.all,
+            wn8
+          }
+        }
+      };
       this.playerDataSignal.set(mergedData);
     } catch (error: any) {
       this.errorSignal.set(`Ошибка получения данных: ${error.message}`);
@@ -91,6 +112,9 @@ export class PlayerStoreService {
     }
   }
 
+  /**
+   * Получаем данные о клане игрока
+   */
   async getPlayersClan(accountId: number): Promise<{ name: string, tag: string } | null> {
     if (!accountId) return null;
 

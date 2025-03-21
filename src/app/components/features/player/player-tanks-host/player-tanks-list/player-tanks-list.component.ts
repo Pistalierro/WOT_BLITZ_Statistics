@@ -30,7 +30,7 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
   styleUrl: './player-tanks-list.component.scss'
 })
 export class PlayerTanksListComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['mainInfo', 'battles', 'win_rate', 'accuracy', 'avgXp', 'lastBattle', 'avgDamage'];
+  displayedColumns: string[] = ['mainInfo', 'battles', 'wn8', 'win_rate', 'accuracy', 'avgXp', 'lastBattle', 'avgDamage'];
   dataSource = new MatTableDataSource<Tank>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -74,9 +74,9 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
       if (result.breakpoints[Breakpoints.XSmall]) {
         this.displayedColumns = ['mainInfo', 'battles', 'win_rate', 'avgDamage'];
       } else if (result.breakpoints[Breakpoints.Small]) {
-        this.displayedColumns = ['mainInfo', 'master', 'battles', 'win_rate', 'accuracy', 'avgDamage'];
+        this.displayedColumns = ['mainInfo', 'battles', 'wn8', 'win_rate', 'avgDamage'];
       } else {
-        this.displayedColumns = ['mainInfo', 'master', 'battles', 'win_rate', 'accuracy', 'lastBattle', 'avgXp', 'avgDamage'];
+        this.displayedColumns = ['mainInfo', 'master', 'battles', 'wn8', 'win_rate', 'accuracy', 'lastBattle', 'avgXp', 'avgDamage'];
       }
     });
   }
@@ -94,6 +94,8 @@ export class PlayerTanksListComponent implements OnInit, AfterViewInit {
           return Number(tank.avg_damage) || 0;
         case 'lastBattle':
           return Number(tank.last_battle_time);
+        case 'wn8':
+          return Number(tank.all.wn8);
         default:
           return (tank as any)[sortHeaderId] || 0;
       }

@@ -1,5 +1,5 @@
-import {Component, inject} from '@angular/core';
-import {DatePipe, NgClass, NgIf} from '@angular/common';
+import {Component, inject, OnInit} from '@angular/core';
+import {DatePipe, DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {ANIMATIONS} from '../../../../../shared/helpers/animations';
 import {UtilsService} from '../../../../../shared/utils.service';
@@ -9,7 +9,7 @@ import {PlayerStoreService} from '../../../../../services/player/player-store.se
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {OdometerDirective} from '../../../../../shared/directives/odometer.directive';
 import {TranslatePipe} from '@ngx-translate/core';
-
+import {WN8Service} from '../../../../../services/wn8.service';
 
 @Component({
   selector: 'app-player-stats-host',
@@ -24,18 +24,20 @@ import {TranslatePipe} from '@ngx-translate/core';
     RouterLinkActive,
     RouterOutlet,
     OdometerDirective,
-    TranslatePipe
+    TranslatePipe,
+    DecimalPipe
   ],
   styleUrls: ['./player-stats-host.component.scss'],
   animations: [ANIMATIONS.fadeIn, ANIMATIONS.slideIn]
 })
-export class PlayerStatsHostComponent {
+export class PlayerStatsHostComponent implements OnInit {
   utilsService = inject(UtilsService);
   tanksService = inject(TanksService);
-  // Теперь все данные приходят напрямую из сервиса, без ручного вызова методов
-  battlesByTier = this.tanksService.battlesByTier;
-  battlesByType = this.tanksService.battlesByType;
-  totalBattles = this.tanksService.totalBattles;
   protected authService = inject(AuthService);
   protected playerStore = inject(PlayerStoreService);
+  private wn8Service = inject(WN8Service);
+
+  ngOnInit() {
+    
+  }
 }

@@ -65,6 +65,7 @@ export interface PlayerData {
   nickname: string; // Ник игрока
   statistics: { // Статистика
     all: {
+      wn8?: number;
       battles: number;
       wins: number;
       losses?: number;

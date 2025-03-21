@@ -90,4 +90,18 @@ export class UtilsService {
       traverse: this.calculateScaledPercentages({1: maxValues['traverse'] || 1}, 100),
     };
   }
+
+  getWn8Class(wn8: number): string {
+    if (wn8 < 300) return 'wn8-very-bad';
+    else if (wn8 < 600) return 'wn8-bad';
+    else if (wn8 < 900) return 'wn8-below-avg';
+    else if (wn8 < 1200) return 'wn8-average';
+    else if (wn8 < 1600) return 'wn8-above-avg';
+    else if (wn8 < 2000) return 'wn8-good';
+    else if (wn8 < 2450) return 'wn8-great';
+    else if (wn8 < 2900) return 'wn8-unicum';
+    else return 'wn8-super-unicum';
+  }
 }
+
+

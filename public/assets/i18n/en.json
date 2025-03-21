@@ -115,7 +115,8 @@
       "ACCURACY": "Accuracy",
       "AVG_XP": "Average XP per Battle",
       "AVG_DAMAGE": "Average Damage per Battle",
-      "LAST_BATTLE_TIME": "Last Battle Time"
+      "LAST_BATTLE_TIME": "Last Battle Time",
+      "WN8": "WN8 Rating"
     },
     "TABLE": {
       "WIN_RATE": "Win rate",

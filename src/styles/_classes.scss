@@ -79,6 +79,44 @@
   }
 }
 
+.wn8 {
+  &-very-bad {
+    color: #c0392b !important;
+  }
+
+  &-bad {
+    color: #e74c3c !important;
+  }
+
+  &-below-avg {
+    color: #e67e22 !important;
+  }
+
+  &-average {
+    color: #f1c40f !important;
+  }
+
+  &-above-avg {
+    color: #2ecc71 !important;
+  }
+
+  &-good {
+    color: #27ae60 !important;
+  }
+
+  &-great {
+    color: #3498db !important;
+  }
+
+  &-unicum {
+    color: #2980b9 !important;
+  }
+
+  &-super-unicum {
+    color: #8e44ad !important;
+  }
+}
+
 .premium {
   color: gold !important;
   font-weight: bold;

@@ -6,10 +6,12 @@ export interface TankStatsResponse {
 }
 
 export interface TankStats {
+  dropped_capture_points: number;
   last_battle_time: number;
   mark_of_mastery: number;
   tank_id: number;
   all: {
+    dropped_capture_points: number;
     max_xp: number;
     spotted: number;
     frags: number;
@@ -44,6 +46,8 @@ export interface Tank {
   is_premium: boolean;
   is_collectible: boolean;
   all: {
+    wn8?: number;
+    dropped_capture_points: number;
     max_xp: number;
     spotted: number;
     hits: number;
@@ -108,6 +112,30 @@ export interface TankData {
   is_collectible?: boolean;
 }
 
+export interface ExpTankStats {
+  IDNum: number;
+  expDef: number;
+  expFrag: number;
+  expSpot: number;
+  expDamage: number;
+  expWinRate: number;
+}
+
+
+export interface AggregatedStats {
+  battles: number;
+  totalDmg: number;
+  totalSpot: number;
+  totalFrags: number;
+  totalDef: number;
+  totalWins: number;
+
+  sumExpDamage: number;
+  sumExpSpot: number;
+  sumExpFrag: number;
+  sumExpDef: number;
+  sumExpWins: number;
+}
 
 export type BattlesByTier = Record<number, number>;
 export type BattlesByType = Record<string, number>;

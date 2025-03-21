@@ -115,7 +115,8 @@
       "ACCURACY": "Precisión",
       "AVG_XP": "Experiencia media por batalla",
       "AVG_DAMAGE": "Daño medio por batalla",
-      "LAST_BATTLE_TIME": "Última batalla"
+      "LAST_BATTLE_TIME": "Última batalla",
+      "WN8": "Puntuación WN8"
     },
     "TABLE": {
       "WIN_RATE": "Porcentaje de victorias",
