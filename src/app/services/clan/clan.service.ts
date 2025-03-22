@@ -5,10 +5,12 @@ import {ClanDataService} from './clan-data.service';
 import {apiConfig} from '../../app.config';
 import {lastValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {PlayerInfoResponse} from '../../models/player/player-response.model';
+import {PlayerData, PlayerInfoResponse} from '../../models/player/player-response.model';
 import {SyncService} from '../../shared/services/data/sync.service';
 import {FirestoreStorageService} from '../../shared/services/data/firestore-storage.service';
 import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
+import {WN8Service} from '../wn8.service';
+import {TanksService} from '../tanks/tanks.service';
 
 
 @Injectable({
@@ -23,7 +25,7 @@ export class ClanService {
   topClansDetails = signal<ExtendedClanDetails [] | null>(null);
   totalPages = 0;
   clanDetails = signal<ExtendedClanDetails | null>(null);
-  clanPlayersList = signal<any[] | null>(null);
+  clanPlayersList = signal<PlayerData[] | null>(null);
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
   private firestoreService = inject(FirestoreStorageService);
@@ -31,6 +33,8 @@ export class ClanService {
   private clanDataService = inject(ClanDataService);
   private syncService = inject(SyncService);
   private http = inject(HttpClient);
+  private wn8Service = inject(WN8Service);
+  private tanksService = inject(TanksService);
 
   constructor() {
     void this.initData();

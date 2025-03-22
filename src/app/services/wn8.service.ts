@@ -1,12 +1,10 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {SyncService} from '../shared/services/data/sync.service';
 import {AggregatedStats, ExpTankStats, Tank} from '../models/tank/tanks-response.model';
 import {FirestoreStorageService} from '../shared/services/data/firestore-storage.service';
 
 @Injectable({providedIn: 'root'})
 export class WN8Service {
   loading = signal<boolean>(false);
-  private syncService = inject(SyncService);
   private firestoreService = inject(FirestoreStorageService);
   private blitzExpectedSignal = signal<ExpTankStats[]>([]);
 

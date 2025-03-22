@@ -59,11 +59,11 @@ export interface ClanInfoResponse {
 
 
 export interface PlayerData {
-  account_id: number; // ID игрока
-  created_at: number; // Дата создания аккаунта
-  last_battle_time?: number; // Последний бой (может отсутствовать)
-  nickname: string; // Ник игрока
-  statistics: { // Статистика
+  account_id: number;
+  created_at: number;
+  last_battle_time?: number;
+  nickname: string;
+  statistics: {
     all: {
       wn8?: number;
       battles: number;
@@ -77,7 +77,7 @@ export interface PlayerData {
       max_xp?: number;
     };
   };
-  clan?: { // Клан (если есть)
+  clan?: {
     name: string;
     tag: string;
   };

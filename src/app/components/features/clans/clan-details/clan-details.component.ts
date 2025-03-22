@@ -4,13 +4,13 @@ import {DatePipe, DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {ClanService} from '../../../../services/clan/clan.service';
 import {Router} from '@angular/router';
 import {MatTableDataSource} from '@angular/material/table';
-import {ExtendedClanDetails} from '../../../../models/clan/clan-response.model';
 import {UtilsService} from '../../../../shared/utils.service';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {ANIMATIONS} from '../../../../shared/helpers/animations';
 import {MatSort} from '@angular/material/sort';
 import {PlayerStoreService} from '../../../../services/player/player-store.service';
 import {TranslatePipe} from '@ngx-translate/core';
+import {PlayerData} from '../../../../models/player/player-response.model';
 
 @Component({
   selector: 'app-clan-details',
@@ -25,7 +25,7 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
   clanService = inject(ClanService);
   utilsService = inject(UtilsService);
   router = inject(Router);
-  dataSource = new MatTableDataSource<ExtendedClanDetails>([]);
+  dataSource = new MatTableDataSource<PlayerData>([]);
   displayedColumns = ['nickname', 'created_at', 'last_battle_time', 'battles', 'accuracy', 'avgDamage', 'winRate'];
   isMobile: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
@@ -45,6 +45,7 @@ export class ClanDetailsComponent implements OnInit, AfterViewInit {
             avgDamage: player.statistics.all.damage_dealt / player.statistics.all.battles,
             accuracy: (player.statistics.all.hits / player.statistics.all.shots) * 100,
             winRate: (player.statistics.all.wins / player.statistics.all.battles) * 100,
+            wn8: player.statistics.all.wn8
           }));
       }
     });
