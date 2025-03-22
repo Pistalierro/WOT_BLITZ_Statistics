@@ -239,6 +239,19 @@
     "LOGIN_ACTION": "Iniciar sesión",
     "REGISTER_ACTION": "Registrarse"
   },
+  "CLANS": {
+    "SEARCH_TITLE": "Buscar todos los clanes",
+    "SEARCH_LABEL": "Buscar todos los clanes",
+    "SEARCH_PLACEHOLDER": "Introduce el nombre del clan",
+    "TOP_CLANS": "TOP-100 Clanes",
+    "FILTER_LABEL": "Filtro de clanes",
+    "FILTER_PLACEHOLDER": "Introduce una búsqueda...",
+    "NAME": "Nombre",
+    "TAG": "Etiqueta del clan",
+    "LEADER": "Líder del clan",
+    "AVG_DAMAGE": "Daño Ø",
+    "NO_RESULTS": "No hay datos que coincidan con el filtro \"{{ value }}\""
+  },
   "COMMON": {
     "BACK": "Volver"
   },

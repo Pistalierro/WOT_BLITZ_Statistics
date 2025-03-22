@@ -241,13 +241,13 @@
     "SEARCH_TITLE": "Alle Clans durchsuchen",
     "SEARCH_LABEL": "Alle Clans durchsuchen",
     "SEARCH_PLACEHOLDER": "Clannamen eingeben",
-    "TOP_CLANS": "TOP-50 Clans",
+    "TOP_CLANS": "TOP-100 Clans",
     "FILTER_LABEL": "Clan-Filter",
     "FILTER_PLACEHOLDER": "Suchbegriff eingeben...",
     "NAME": "Name",
     "TAG": "Clan-Tag",
     "LEADER": "Clanführer",
-    "AVG_DAMAGE": "Durchschn. Schaden",
+    "AVG_DAMAGE": "Ø Schaden",
     "NO_RESULTS": "Keine passenden Daten im Filter \"{{ value }}\""
   },
   "COMMON": {

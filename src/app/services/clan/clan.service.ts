@@ -7,10 +7,7 @@ import {lastValueFrom} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {PlayerData, PlayerInfoResponse} from '../../models/player/player-response.model';
 import {SyncService} from '../../shared/services/data/sync.service';
-import {FirestoreStorageService} from '../../shared/services/data/firestore-storage.service';
 import {IndexedDbService} from '../../shared/services/data/indexed-db.service';
-import {WN8Service} from '../wn8.service';
-import {TanksService} from '../tanks/tanks.service';
 
 
 @Injectable({
@@ -28,13 +25,10 @@ export class ClanService {
   clanPlayersList = signal<PlayerData[] | null>(null);
   private limit = 100;
   private clanUtilsService = inject(ClanUtilsService);
-  private firestoreService = inject(FirestoreStorageService);
   private indexedDbService = inject(IndexedDbService);
   private clanDataService = inject(ClanDataService);
   private syncService = inject(SyncService);
   private http = inject(HttpClient);
-  private wn8Service = inject(WN8Service);
-  private tanksService = inject(TanksService);
 
   constructor() {
     void this.initData();
@@ -101,7 +95,7 @@ export class ClanService {
         return;
       }
 
-      const batchSize = 20;
+      const batchSize = 100;
       for (let i = 0; i < allClans.length; i += batchSize) {
         const batch = allClans.slice(i, i + batchSize);
         await Promise.all(
@@ -133,7 +127,7 @@ export class ClanService {
 
       const top100ByDamage = validClans
         .sort((a, b) => (b.avgDamage ?? 0) - (a.avgDamage ?? 0))
-        .slice(0, 100);
+        .slice(0, 200);
 
       if (!top100ByDamage.length) {
         console.warn('⚠ После фильтрации по avgDamage > 0 нет кланов');
@@ -141,11 +135,11 @@ export class ClanService {
         return;
       }
 
-      const top50ByWinRate = top100ByDamage
+      const top100ByWinRate = top100ByDamage
         .sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0))
-        .slice(0, 50);
+        .slice(0, 100);
 
-      this.topClansIds = top50ByWinRate.map(clan => clan.clan_id);
+      this.topClansIds = top100ByWinRate.map(clan => clan.clan_id);
       console.log('📌 Топ-50 кланов:', this.topClansIds);
       await this.syncService.saveDataToAllStorages('clans', 'topClansIds', this.topClansIds);
     } catch (err: any) {
