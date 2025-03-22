@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, effect, inject} from '@angular/core';
 import {DatePipe, DecimalPipe, NgClass, NgIf} from '@angular/common';
 import {MATERIAL_MODULES} from '../../../../../shared/helpers/material-providers';
 import {ANIMATIONS} from '../../../../../shared/helpers/animations';
@@ -30,14 +30,37 @@ import {WN8Service} from '../../../../../services/wn8.service';
   styleUrls: ['./player-stats-host.component.scss'],
   animations: [ANIMATIONS.fadeIn, ANIMATIONS.slideIn]
 })
-export class PlayerStatsHostComponent implements OnInit {
+export class PlayerStatsHostComponent {
   utilsService = inject(UtilsService);
   tanksService = inject(TanksService);
   protected authService = inject(AuthService);
   protected playerStore = inject(PlayerStoreService);
   private wn8Service = inject(WN8Service);
 
-  ngOnInit() {
-    
+  constructor() {
+    effect(() => {
+      const playerData = this.playerStore.playerDataSignal();
+      const tanksList = this.tanksService.tanksList();
+      const isWn8Ready = !this.wn8Service.loading();
+
+      if (playerData && tanksList.length && isWn8Ready) {
+        const wn8 = this.wn8Service.calculateWn8ForAccount(tanksList);
+        const alreadySet = playerData.statistics?.all?.wn8 === wn8;
+        if (!alreadySet) {
+          const updatedPlayerData = {
+            ...playerData,
+            statistics: {
+              ...playerData.statistics,
+              all: {
+                ...playerData.statistics.all,
+                wn8
+              }
+            }
+          };
+          this.playerStore.playerDataSignal.set(updatedPlayerData);
+        }
+      }
+    }, {allowSignalWrites: true});
   }
+
 }

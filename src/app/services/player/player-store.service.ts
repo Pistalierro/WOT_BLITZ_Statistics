@@ -82,7 +82,6 @@ export class PlayerStoreService {
         return;
       }
 
-      // 3) Грузим массив танков игрока (из 'tanks', 'playerTanksList')
       let tankList = await this.syncService.getDataFromAllStorages<Tank[]>('tanks', 'playerTanksList');
       if (!Array.isArray(tankList)) {
         tankList = [];
@@ -112,9 +111,6 @@ export class PlayerStoreService {
     }
   }
 
-  /**
-   * Получаем данные о клане игрока
-   */
   async getPlayersClan(accountId: number): Promise<{ name: string, tag: string } | null> {
     if (!accountId) return null;
 

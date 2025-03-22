@@ -3,23 +3,15 @@ import {onSchedule, ScheduleOptions} from 'firebase-functions/v2/scheduler';
 import logger from 'firebase-functions/logger';
 import admin from 'firebase-admin';
 import fetch from 'node-fetch';
+import {ExpTankStats} from '../../src/app/models/tank/tanks-response.model.js';
 
-export interface ExpTankStats {
-  IDNum: number;
-  expDef: number;
-  expFrag: number;
-  expSpot: number;
-  expDamage: number;
-  expWinRate: number;
-}
 
 admin.initializeApp();
 
-const JSON_URL = 'https://www.blitzstars.com/api/tankaverages.json';
 
 async function updateJsonData() {
   try {
-    const response = await fetch(JSON_URL);
+    const response = await fetch('https://www.blitzstars.com/api/tankaverages.json');
     const json = (await response.json()) as any[];
 
     const data: ExpTankStats[] = json.map((tank) => ({
@@ -38,7 +30,6 @@ async function updateJsonData() {
     logger.error('Error updating JSON data:', error);
   }
 }
-
 
 export const manualUpdate = onRequest(
   {region: 'europe-west3'} as HttpsOptions,

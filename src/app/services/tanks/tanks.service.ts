@@ -92,7 +92,6 @@ export class TanksService {
         .map(stat => {
           const localTank = jsonTanksList.find(t => t.tank_id === stat.tank_id);
 
-          // Сначала собираем полноценный объект танка:
           const tank: Tank = {
             tank_id: stat.tank_id,
             name: localTank?.name ?? 'Unknown',
@@ -127,7 +126,6 @@ export class TanksService {
 
           const wn8 = this.wn8Service.calculateWn8ForTank(tank);
 
-          // Добавляем wn8 в поле all
           return {
             ...tank,
             all: {
