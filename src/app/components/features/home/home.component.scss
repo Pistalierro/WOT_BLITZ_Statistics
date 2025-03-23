@@ -255,13 +255,32 @@
       }
 
       &-logo {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        margin-bottom: $gap;
 
         &__image {
           height: 80px;
+          margin-bottom: $gap-sm;
+        }
+
+        &__link {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
+
+        p {
+          transition: color 0.25s ease-in-out, text-shadow 0.25s ease-in-out;
+          user-select: none;
+        }
+
+        &:hover p {
+          color: $color-gray;
+          @extend %text-shadow-light;
         }
       }
     }
