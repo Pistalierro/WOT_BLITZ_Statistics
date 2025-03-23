@@ -10,15 +10,8 @@ html, body {
 }
 
 app-root, .mat-sidenav-container {
-  height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.content-container {
-  flex: 1;
-  overflow: auto;
-  /* или как вам нужно */
 }
 
 * {
@@ -29,6 +22,11 @@ body {
   margin: 0;
   font-family: $font-main !important;
   font-size: $font-size;
+}
+
+a {
+  text-decoration: none;
+  color: $color-gray-dark;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -7,124 +7,127 @@
 .container {
   @extend %container;
 
-  .welcome {
-    &-section {
-      text-align: center;
-      margin-bottom: $gap-x2;
-      color: $color-gray;
-    }
+  .main {
 
-    &-title {
-      margin-bottom: 30px;
-      @include lg-min {
-        font-size: 2.5rem !important;
-      }
-      @include lg-md {
-        font-size: 2rem !important;
-      }
-      @include md-sm {
-        font-size: 1.5rem !important;
-      }
-      @include sm {
-        font-size: 1.15rem !important;
-      }
-    }
-
-    &-content {
-      &__title {
-        line-height: 1.2em;
-        margin-bottom: $gap;
+    .welcome {
+      &-section {
+        text-align: center;
+        margin-bottom: $gap-x2;
+        color: $color-gray;
       }
 
-      &__description {
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-
-      &__list {
-        margin-bottom: $gap-sm *3;
-      }
-
-      &__item {
-        @include md-min {
-          font-size: 1.5rem !important;
+      &-title {
+        margin-bottom: 30px;
+        @include lg-min {
+          font-size: 2.5rem !important;
+        }
+        @include lg-md {
+          font-size: 2rem !important;
         }
         @include md-sm {
-          font-size: 1.25rem !important;
+          font-size: 1.5rem !important;
         }
         @include sm {
-          font-size: 1rem !important;
+          font-size: 1.15rem !important;
         }
-        margin-bottom: $gap;
-        text-align: left;
-        font-weight: 100;
       }
 
-      &__sub {
-        font-family: $font-header;
-        line-height: 1.2em;
+      &-content {
+        &__title {
+          line-height: 1.2em;
+          margin-bottom: $gap;
+        }
+
+        &__description {
+          width: 100%;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        &__list {
+          margin-bottom: $gap-sm *3;
+        }
+
+        &__item {
+          @include md-min {
+            font-size: 1.5rem !important;
+          }
+          @include md-sm {
+            font-size: 1.25rem !important;
+          }
+          @include sm {
+            font-size: 1rem !important;
+          }
+          margin-bottom: $gap;
+          text-align: left;
+          font-weight: 100;
+        }
+
+        &__sub {
+          font-family: $font-header;
+          line-height: 1.2em;
+        }
       }
     }
-  }
 
-  .stats-section {
-    display: grid;
-    @include md-min {
-      grid-template-columns: repeat(2, 1fr);
-      gap: $gap-sm * 3;
-    }
-    @include md {
-      grid-template-columns: 1fr;
-      gap: $gap;
-    }
-
-    .stat-card {
-      height: 100%;
-      background-color: $color-dark;
-      opacity: 0.75;
-      min-height: $gap-sm * 15;
-      color: $color-gray;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.25s ease-in-out;
-
-      &:hover {
-        transform: scale(1.05);
+    .stats-section {
+      display: grid;
+      @include md-min {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $gap-sm * 3;
+      }
+      @include md {
+        grid-template-columns: 1fr;
+        gap: $gap;
       }
 
-      &__link {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
+      .stat-card {
+        height: 100%;
+        background-color: $color-dark;
+        opacity: 0.75;
+        min-height: $gap-sm * 15;
+        color: $color-gray;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.25s ease-in-out;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+
+        &__link {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
+
+        mat-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: start;
+
+          mat-icon {
+            font-size: 2rem;
+            color: $color-accent;
+          }
+        }
+
+        .mat-card-title {
+          color: $color-light !important;
+        }
       }
 
-      mat-card-header {
+      mat-card-content {
+        height: 100%;
         display: flex;
-        justify-content: space-between;
-        align-items: start;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
 
-        mat-icon {
-          font-size: 2rem;
-          color: $color-accent;
+        strong {
+          line-height: 1.2em;
+          font-weight: 400;
         }
-      }
-
-      .mat-card-title {
-        color: $color-light !important;
-      }
-    }
-
-    mat-card-content {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-
-      strong {
-        line-height: 1.2em;
-        font-weight: 400;
       }
     }
   }
@@ -172,6 +175,95 @@
     }
     @include md {
       font-size: 0.75rem;
+    }
+  }
+}
+
+.partners {
+  &-grid {
+    display: grid;
+    align-items: center;
+    justify-content: space-evenly;
+    @include lg-min {
+      grid-template-columns: repeat(3, 250px);
+    }
+    @include lg-md {
+      grid-template-columns: repeat(3, 200px);
+    }
+    @include md {
+      grid-template-columns: 1fr;
+      gap: $gap;
+    }
+  }
+
+  &-section {
+    margin-bottom: $gap-x2;
+
+
+    &__title {
+      text-align: center;
+    }
+
+    .partner {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: column;
+
+      .contact {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: $gap-sm;
+        font-size: 1.2rem;
+
+        &:hover {
+          .contact-text {
+            color: $color-gray-light;
+            @extend %text-shadow-light;
+          }
+        }
+
+        &-link__overlay {
+          position: absolute;
+          inset: 0;
+        }
+
+        &-icon {
+          &__svg {
+            height: 24px;
+
+            &--telegram {
+              fill: #26A5E4;
+            }
+
+            &--youtube {
+              fill: #FF0000;
+            }
+
+            &--discord {
+              fill: #5865F2;
+            }
+          }
+        }
+
+        &-text {
+          color: $color-gray-medium;
+          transition: color 0.25s ease-in-out, text-shadow 0.25s ease-in-out;
+        }
+      }
+
+      &-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        &__image {
+          height: 80px;
+        }
+      }
     }
   }
 }

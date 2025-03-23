@@ -50,7 +50,8 @@
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over" position="end">
+  <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over"
+               position="end">
     <nav class="mobile-navigation">
       <button (click)="closeSidenav()" mat-button routerLink="/home">{{ 'NAV.HOME' | translate }}</button>
       <button (click)="closeSidenav()" mat-button routerLink="/players">{{ 'NAV.PLAYERS' | translate }}</button>
@@ -88,4 +89,5 @@
   <div class="content-container">
     <router-outlet></router-outlet>
   </div>
+  <app-footer></app-footer>
 </mat-sidenav-container>

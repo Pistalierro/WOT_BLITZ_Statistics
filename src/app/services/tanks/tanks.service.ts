@@ -157,6 +157,7 @@ export class TanksService {
       await this.getSelectedTanksStatistics(tankId);
 
       this.tankFullInfo.set(tankFullInfo);
+      console.log(tankFullInfo);
       await this.syncService.saveDataToAllStorages('tanks', 'tankFullInfo', tankFullInfo);
 
       return tankFullInfo;

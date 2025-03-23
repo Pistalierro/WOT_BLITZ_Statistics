@@ -10,7 +10,7 @@
         </div>
         <div *ngIf="player.clan" [@fadeScale] class="stats">
           <span class="stats-key">{{ 'PLAYER_STATS.STATS.CLAN' | translate }}:</span>
-          <span> {{ player.clan.name }} [{{ player.clan.tag }}]</span>
+          <span> [{{ player.clan.tag }}]</span>
         </div>
         <div [@fadeScale] class="stats">
           <span class="stats-key">{{ 'PLAYER_STATS.STATS.CREATED_AT' | translate }}:</span>

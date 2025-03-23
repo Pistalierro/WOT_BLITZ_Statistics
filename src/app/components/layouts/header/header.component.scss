@@ -110,8 +110,10 @@ mat-toolbar {
   }
 }
 
+
 .sidenav {
-  height: 100%;
+  height: calc(100vh - 300px);
+  //height: 100%;
   width: $gap-x5 * 2.5;
   background-color: $color-deep-dark;
   color: $color-light;
@@ -132,8 +134,8 @@ mat-toolbar {
 
 .content-container {
   position: relative;
-  min-height: calc(100vh - 220px);
-  height: 100%;
+  min-height: calc(100vh - 260px);
+  //height: 100%;
   padding-top: $gap-x2;
   padding-bottom: $gap-x2;
   background-color: $color-dark;
@@ -151,23 +153,6 @@ mat-toolbar {
     z-index: -1;
   }
 }
-
-//.user-info {
-//  display: flex;
-//  align-items: center;
-//  flex-direction: column;
-//  justify-content: space-between; // Раздвигаем ник и кнопку выхода
-//  width: 100%; // Занимаем всю ширину контейнера
-//  padding: 10px 0;
-//
-//  .user-nickname {
-//    width: 100%;
-//    font-size: 1rem;
-//    font-weight: bold;
-//    color: $color-light;
-//    text-align: center;
-//  }
-//}
 
 .user {
   &-info {
@@ -195,13 +180,6 @@ button > mat-icon {
   width: 100%;
   margin-bottom: 0 !important;
 }
-
-//.user-nickname {
-//  font-size: 0.85rem;
-//  font-weight: bold;
-//  color: $color-light;
-//  text-align: center;
-//}
 
 .language-select {
   display: flex;

@@ -8,11 +8,12 @@ import {AuthComponent} from '../../features/auth/auth.component';
 import {AuthService} from '../../../services/auth.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {LANGUAGES} from '../../../mock/languages';
+import {FooterComponent} from '../footer/footer.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive, TranslatePipe, NgForOf],
+  imports: [...MATERIAL_MODULES, RouterLink, RouterOutlet, NgIf, RouterLinkActive, TranslatePipe, NgForOf, FooterComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -21,7 +22,6 @@ export class HeaderComponent {
   readonly authService = inject(AuthService);
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isSidenavOpen: boolean = false;
-  user$ = this.authService.userSignal;
   nickname$ = this.authService.nicknameSignal;
   languages = LANGUAGES;
   private translate = inject(TranslateService);

@@ -4,40 +4,43 @@
 @use "../../../../styles/mixins/mixins-media" as *;
 
 .footer {
-  margin-top: 60px;
-  padding: 20px 0;
+  min-height: 100px;
   height: 100%;
-  max-height: 100px;
   width: 100%;
   background-color: $color-deep-dark;
 
-  &-container {
+  &__container {
     @extend %container;
-    height: 100%;
+    padding: $gap-x2 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+  }
 
-    span {
-      color: $color-gray-dark;
-      @include md-min {
-        font-size: 1.25rem;
-      }
-      @include md-sm {
-        font-size: 1.15rem;
-      }
-      @include sm {
-        font-size: 1rem;
-      }
-      text-align: center;
-
-      &:first-child {
-        color: $color-gray;
-        font-family: $font-header;
-      }
-
+  &__link {
+    @include md-min {
+      font-size: 1.5rem;
+      margin-bottom: $gap;
     }
+    @include md-sm {
+      font-size: 1.25rem;
+      margin-bottom: $gap-xs * 3;
+    }
+    @include sm {
+      font-size: 1rem;
+      margin-bottom: $gap-sm;
+    }
+    user-select: none;
+    transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+
+    &:hover {
+      color: $color-light;
+      @extend %text-shadow-light;
+    }
+  }
+
+  &__description {
+    color: $color-gray-medium !important;
   }
 }

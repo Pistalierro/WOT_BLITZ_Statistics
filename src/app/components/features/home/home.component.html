@@ -1,79 +1,155 @@
 <div class="container">
-  <section class="welcome-section">
-    <h1 class="welcome-title">{{ 'HOME.WELCOME' | translate }}</h1>
-    <div class="welcome-content">
-      <p class="welcome-content__title">{{ 'HOME.DESCRIPTION.TITLE' | translate }}</p>
-      <div class="welcome-content__description">
-        <ul class="welcome-content__list">
-          <li *ngFor="let item of ('HOME.DESCRIPTION.LIST' | translate)" class="welcome-content__item">{{ item }}</li>
-        </ul>
-      </div>
-      <p class="welcome-content__sub">
-        {{ 'HOME.DESCRIPTION.SUB' | translate }}
-      </p>
+  <div class="container-grid">
+    <div class="main">
+      <section class="welcome-section">
+        <h1 class="welcome-title">{{ 'HOME.WELCOME' | translate }}</h1>
+        <div class="welcome-content">
+          <p class="welcome-content__title">{{ 'HOME.DESCRIPTION.TITLE' | translate }}</p>
+          <div class="welcome-content__description">
+            <ul class="welcome-content__list">
+              <li *ngFor="let item of ('HOME.DESCRIPTION.LIST' | translate)" class="welcome-content__item">{{ item }}</li>
+            </ul>
+          </div>
+          <p class="welcome-content__sub">
+            {{ 'HOME.DESCRIPTION.SUB' | translate }}
+          </p>
+        </div>
+      </section>
+
+      <section class="partners-section">
+        <h3 class="partners-section__title">Партнеры</h3>
+        <div class="partners-grid">
+
+          <div class="partner partner--pyroblast">
+
+            <div class="partner-logo">
+              <img alt="pyroblast" class="partner-logo__image" src="/images/partners/pyroblast.webp">
+              <p class="partner-logo__description">PYROBLAST</p>
+            </div>
+
+            <div class="contact contact--youtube">
+              <a aria-label="Youtube" class="contact-link__overlay" href="https://www.youtube.com/@pyroblastwotb" target="_blank"></a>
+              <div class="contact-icon">
+                <svg class="contact-icon__svg contact-icon__svg--youtube" role="img" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <title>Youtube</title>
+                  <path
+                    d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+              </div>
+              <span class="contact-text">Youtube</span>
+            </div>
+
+            <div class="contact contact--telegram">
+              <a aria-label="Telegram" class="contact-link__overlay" href="https://t.me/pyroblastwotb" target="_blank"></a>
+              <div class="contact-icon">
+                <svg class="contact-icon__svg contact-icon__svg--telegram" role="img" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <title>Telegram</title>
+                  <path
+                    d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+              </div>
+              <span class="contact-text">t.me/pyroblastwotb</span>
+            </div>
+          </div>
+
+          <div class="partner partner--s-will">
+
+            <div class="partner-logo">
+              <img alt="s-will" class="partner-logo__image" src="/images/partners/s-will.webp">
+              <p class="partner-logo__description">[S_WILL]</p>
+            </div>
+
+            <div class="contact contact--discord">
+              <a aria-label="Discord" class="contact-link__overlay" href="https://discord.com/invite/GtFBeYZjR6" target="_blank"></a>
+              <div class="contact-icon">
+                <svg class="contact-icon__svg contact-icon__svg--discord" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <title>Discord</title>
+                  <path
+                    d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                </svg>
+              </div>
+              <span class="contact-text">Дискорд</span>
+            </div>
+          </div>
+
+          <div class="partner partner--oleni">
+
+            <div class="partner-logo">
+              <img alt="s-will" class="partner-logo__image" src="/images/partners/oleni.webp">
+              <p class="partner-logo__description">[OLENI]</p>
+            </div>
+
+            <div class="contact contact--discord">
+              <a aria-label="Discord" class="contact-link__overlay" href="https://discord.com/invite/gv5Swdm6v3" target="_blank"></a>
+              <div class="contact-icon">
+                <svg class="contact-icon__svg contact-icon__svg--discord" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <title>Discord</title>
+                  <path
+                    d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                </svg>
+              </div>
+              <span class="contact-text">Дискорд</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-section">
+        <article @slideUp class="players">
+          <mat-card class="stat-card">
+            <a class="stat-card__link" routerLink="/players"></a>
+            <mat-card-header>
+              <h3 class="mat-card-title">{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</h3>
+              <mat-icon>stars</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ 'HOME.SEARCH_PLAYERS.DESCRIPTION' | translate }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </article>
+
+        <article @slideUp class="clans">
+          <mat-card class="stat-card">
+            <a class="stat-card__link" routerLink="/clans"></a>
+            <mat-card-header>
+              <h3 class="mat-card-title">{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</h3>
+              <mat-icon>groups</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ 'HOME.SEARCH_CLANS.DESCRIPTION' | translate }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </article>
+
+        <article @slideUp class="session">
+          <mat-card class="stat-card">
+            <a class="stat-card__link" routerLink="/session"></a>
+            <mat-card-header>
+              <h3 class="mat-card-title">{{ 'HOME.SESSION.TITLE' | translate }}</h3>
+              <mat-icon>insights</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ 'HOME.SESSION.DESCRIPTION' | translate }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </article>
+
+        <article @slideUp class="tanks">
+          <mat-card class="stat-card">
+            <a class="stat-card__link" routerLink="/players/tanks"></a>
+            <mat-card-header>
+              <h3 class="mat-card-title">{{ 'HOME.TANKS.TITLE' | translate }}</h3>
+              <mat-icon>build</mat-icon>
+            </mat-card-header>
+            <mat-card-content>
+              <strong>{{ 'HOME.TANKS.DESCRIPTION' | translate }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </article>
+      </section>
     </div>
-  </section>
+  </div>
 
-  <section class="stats-section">
-    <article @slideUp class="players">
-      <mat-card class="stat-card">
-        <a class="stat-card__link" routerLink="/players"></a>
-        <mat-card-header>
-          <h3 class="mat-card-title">{{ 'HOME.SEARCH_PLAYERS.TITLE' | translate }}</h3>
-          <mat-icon>stars</mat-icon>
-        </mat-card-header>
-        <mat-card-content>
-          <strong>{{ 'HOME.SEARCH_PLAYERS.DESCRIPTION' | translate }}</strong>
-        </mat-card-content>
-      </mat-card>
-    </article>
-
-    <article @slideUp class="clans">
-      <mat-card class="stat-card">
-        <a class="stat-card__link" routerLink="/clans"></a>
-        <mat-card-header>
-          <h3 class="mat-card-title">{{ 'HOME.SEARCH_CLANS.TITLE' | translate }}</h3>
-          <mat-icon>groups</mat-icon>
-        </mat-card-header>
-        <mat-card-content>
-          <strong>{{ 'HOME.SEARCH_CLANS.DESCRIPTION' | translate }}</strong>
-        </mat-card-content>
-      </mat-card>
-    </article>
-
-    <article @slideUp class="session">
-      <mat-card class="stat-card">
-        <a class="stat-card__link" routerLink="/session"></a>
-        <mat-card-header>
-          <h3 class="mat-card-title">{{ 'HOME.SESSION.TITLE' | translate }}</h3>
-          <mat-icon>insights</mat-icon>
-        </mat-card-header>
-        <mat-card-content>
-          <strong>{{ 'HOME.SESSION.DESCRIPTION' | translate }}</strong>
-        </mat-card-content>
-      </mat-card>
-    </article>
-
-    <article @slideUp class="tanks">
-      <mat-card class="stat-card">
-        <a class="stat-card__link" routerLink="/players/tanks"></a>
-        <mat-card-header>
-          <h3 class="mat-card-title">{{ 'HOME.TANKS.TITLE' | translate }}</h3>
-          <mat-icon>insights</mat-icon>
-        </mat-card-header>
-        <mat-card-content>
-          <strong>{{ 'HOME.TANKS.DESCRIPTION' | translate }}</strong>
-        </mat-card-content>
-      </mat-card>
-    </article>
-  </section>
-
-  <!--  <section class="advantages">-->
-  <!--    <h2 class="advantages-title">{{ 'HOME.WHY_US.TITLE' | translate }}</h2>-->
-  <!--    <ul class="advantages-list">-->
-  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.STATS' | translate }}</li>-->
-  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.ANALYSIS' | translate }}</li>-->
-  <!--      <li class="advantages-item">{{ 'HOME.WHY_US.INTERFACE' | translate }}</li>-->
-  <!--    </ul>-->
-  <!--  </section>-->
 </div>
