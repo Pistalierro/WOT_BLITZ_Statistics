@@ -95,7 +95,9 @@
     "AVG_BATTLES": "Average battles",
     "AVG_WINS": "Average wins",
     "AVG_DMG": "Avg./Damage",
-    "AVG_XP_BATTLE": "Avg./XP"
+    "AVG_XP_BATTLE": "Avg./XP",
+    "GENERAL_STATS": "General Statistics",
+    "AVERAGE_STATS_PER_BATTLE": "Average Stats per Battle"
   },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Average damage by tier",

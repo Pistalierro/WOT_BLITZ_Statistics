@@ -95,7 +95,9 @@
     "AVG_BATTLES": "Середня кількість боїв",
     "AVG_WINS": "Середня кількість перемог",
     "AVG_DMG": "Сер./Шкода",
-    "AVG_XP_BATTLE": "Сер./Досвід"
+    "AVG_XP_BATTLE": "Сер./Досвід",
+    "GENERAL_STATS": "Загальні показники",
+    "AVERAGE_STATS_PER_BATTLE": "Середні показники за бій"
   },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Середній урон за рівнями",

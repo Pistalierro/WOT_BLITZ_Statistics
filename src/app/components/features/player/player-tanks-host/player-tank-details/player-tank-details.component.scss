@@ -201,6 +201,7 @@
     &-tables {
       width: 100%;
       display: grid;
+      align-items: start;
       @include lg-min {
         gap: $gap-x2;
         grid-template-columns: repeat(2, 1fr);
@@ -209,11 +210,13 @@
         gap: $gap;
         grid-template-columns: 1fr;
       }
-      align-items: center;
       justify-content: center;
     }
 
     &-table {
+      &-container {
+        align-content: start;
+      }
 
       &__title {
         text-align: center;
@@ -236,7 +239,6 @@
 
   .mat-mdc-table {
     width: 100%;
-
   }
 
 

@@ -95,7 +95,9 @@
     "AVG_BATTLES": "Durchschnittliche Gefechte",
     "AVG_WINS": "Durchschnittliche Siege",
     "AVG_DMG": "Ø Schaden",
-    "AVG_XP_BATTLE": "Ø Erfahrung"
+    "AVG_XP_BATTLE": "Ø Erfahrung",
+    "GENERAL_STATS": "Allgemeine Statistiken",
+    "AVERAGE_STATS_PER_BATTLE": "Durchschnittswerte pro Gefecht"
   },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Durchschnittlicher Schaden nach Stufe",

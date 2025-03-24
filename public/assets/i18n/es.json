@@ -95,7 +95,9 @@
     "AVG_BATTLES": "Promedio de batallas",
     "AVG_WINS": "Promedio de victorias",
     "AVG_DMG": "Daño prom.",
-    "AVG_XP_BATTLE": "Exp. prom."
+    "AVG_XP_BATTLE": "Exp. prom.",
+    "GENERAL_STATS": "Estadísticas generales",
+    "AVERAGE_STATS_PER_BATTLE": "Promedios por batalla"
   },
   "TANKS_STATS": {
     "AVG_DAMAGE_BY_TIER": "Daño medio por nivel",

@@ -182,7 +182,7 @@
 .partners {
   &-grid {
     display: grid;
-    align-items: center;
+    align-items: start;
     justify-content: space-evenly;
     @include lg-min {
       grid-template-columns: repeat(3, 250px);

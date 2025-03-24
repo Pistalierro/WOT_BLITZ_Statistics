@@ -35,7 +35,7 @@
 
     <div class="stats-tables">
       <div class="stats-table-container">
-        <h3 class="stats-table__title">Общие показатели</h3>
+        <h3 class="stats-table__title">{{ 'TANK_STATS.GENERAL_STATS' | translate }}</h3>
         <mat-table [dataSource]="generalStats()" class="stats-table mat-elevation-z2">
           <ng-container matColumnDef="name">
             <mat-cell *matCellDef="let stat" class="stats-table__name">{{ stat.name | translate }}</mat-cell>
@@ -48,7 +48,7 @@
       </div>
 
       <div class="stats-table-container">
-        <h3 class="stats-table__title">Средние показатели за бой</h3>
+        <h3 class="stats-table__title">{{ 'TANK_STATS.AVERAGE_STATS_PER_BATTLE' | translate }}</h3>
         <mat-table [dataSource]="averageStats()" class="stats-table mat-elevation-z2">
           <ng-container matColumnDef="name">
             <mat-cell *matCellDef="let stat" class="stats-table__name">{{ stat.name | translate }}</mat-cell>
