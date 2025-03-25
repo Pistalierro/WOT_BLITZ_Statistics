@@ -275,7 +275,9 @@
     "PLAYERS": "Гравці",
     "SESSION": "Сесія",
     "CLANS": "Клани",
-    "LANGUAGE": "Мова"
+    "LANGUAGE": "Мова",
+    "STATISTICS": "Статистика",
+    "ABOUT": "ПРО НАС"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Елементів на сторінці:",

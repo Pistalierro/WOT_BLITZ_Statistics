@@ -191,7 +191,8 @@ export class ClanService {
           arrFromApi.sort((a, b) => (b.winRate ?? 0) - (a.winRate ?? 0));
           return arrFromApi;
         },
-        true, 6
+        true,
+        6
       );
 
       if (!topClans || !topClans.length) {

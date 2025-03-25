@@ -277,7 +277,9 @@
     "PLAYERS": "Players",
     "SESSION": "Session",
     "CLANS": "Clans",
-    "LANGUAGE": "Language"
+    "LANGUAGE": "Language",
+    "STATISTICS": "STATISTICS",
+    "ABOUT": "ABOUT"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",

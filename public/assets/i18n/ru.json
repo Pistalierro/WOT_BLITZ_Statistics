@@ -277,7 +277,9 @@
     "PLAYERS": "Игроки",
     "SESSION": "Сессия",
     "CLANS": "Кланы",
-    "LANGUAGE": "Язык"
+    "LANGUAGE": "Язык",
+    "STATISTICS": "Статистика",
+    "ABOUT": "О нас"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Элементов на странице:",

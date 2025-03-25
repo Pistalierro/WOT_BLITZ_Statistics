@@ -60,6 +60,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'contacts',
+    loadComponent: () => import('./components/features/about/about.component')
+      .then(m => m.AboutComponent),
+  },
+  {
     path: 'tanks/:id',
     loadComponent: () => import('./components/features/player/player-tanks-host/player-tank-details/player-tank-details.component')
       .then(m => m.PlayerTankDetailsComponent),

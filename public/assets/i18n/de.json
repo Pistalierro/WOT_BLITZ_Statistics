@@ -267,7 +267,9 @@
     "PLAYERS": "Spieler",
     "SESSION": "Sitzung",
     "CLANS": "Clans",
-    "LANGUAGE": "Sprache"
+    "LANGUAGE": "Sprache",
+    "STATISTICS": "Statistiken",
+    "ABOUT": "ÜBER"
   },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Elemente pro Seite:",

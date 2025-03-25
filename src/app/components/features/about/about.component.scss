@@ -1,0 +1,136 @@
+@use "../../../../styles/mixins/extends" as *;
+@use "../../../../styles/mixins/mixins-media" as *;
+@use "../../../../styles/presets/variables" as *;
+@use "../../../../styles/presets/skin" as *;
+
+.container {
+  @extend %container;
+
+  .about {
+    &__container {
+      margin: $gap-x2 0;
+    }
+
+    &__logo {
+      display: flex;
+      gap: $gap-x2;
+
+      &-image {
+        height: 150px;
+      }
+
+      &-description {
+        font-size: 1.5rem;
+        line-height: 1.25em;
+        text-align: justify;
+      }
+    }
+
+    &__contacts {
+      margin: $gap 0;
+      display: flex;
+      gap: $gap;
+      align-items: center;
+      justify-content: center;
+
+      &-title {
+        margin-top: $gap-sm;
+        font-size: 1.5rem !important;
+
+      }
+    }
+  }
+
+  .development {
+
+    &__contacts {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap;
+    }
+
+    p {
+      line-height: 1.25;
+    }
+
+    &__subtitle {
+      margin-top: 20px;
+      font-size: 1.5rem;
+    }
+
+    &__subtitle {
+      text-align: right;
+      font-size: 1.25rem;
+    }
+  }
+
+  .section__title {
+    text-align: center;
+
+  }
+
+  .contact {
+    position: relative;
+    display: flex;
+    gap: $gap-sm;
+    align-items: center;
+
+    &:hover {
+      .contact-text {
+        color: $color-light;
+        @extend %text-shadow-light;
+      }
+    }
+
+    &-link__overlay {
+      position: absolute;
+      inset: 0;
+    }
+
+    &-icon {
+
+      .material-symbols-outlined {
+        color: $color-gray !important;
+        font-size: 1.75rem !important;
+      }
+
+      &__svg {
+        height: 32px;
+
+        &--email {
+          fill: #EA4335;
+        }
+
+        &--linkedin {
+          fill: #0A66C2
+        }
+
+        &--telegram {
+          fill: #26A5E4;
+        }
+
+        &--youtube {
+          fill: #FF0000;
+        }
+
+        &--discord {
+          fill: #5865F2;
+        }
+
+        &--website {
+          fill: $color-light
+        }
+      }
+    }
+
+    &-text {
+      color: $color-gray;
+      font-size: 1.25rem;
+      transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+      user-select: none;
+    }
+  }
+}
+
+

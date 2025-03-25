@@ -5,10 +5,20 @@
       <h1 class="site-title">WoT Blitz Statistics</h1>
     </div>
     <nav class="navigation">
-      <button mat-button routerLink="/home" routerLinkActive="active">{{ 'NAV.HOME' | translate }}</button>
-      <button mat-button routerLink="/players" routerLinkActive="active">{{ 'NAV.PLAYERS' | translate }}</button>
+      <button class="nav__btn" mat-button routerLink="/home" routerLinkActive="active">
+        <span class="material-symbols-outlined nav__btn-icon">home</span>
+      </button>
+      <mat-menu #statsMenu="matMenu">
+        <button [routerLink]="'/players'" mat-menu-item routerLinkActive="active">
+          {{ 'NAV.PLAYERS' | translate }}
+        </button>
+        <button [routerLink]="'/clans'" mat-menu-item routerLinkActive="active">
+          {{ 'NAV.CLANS' | translate }}
+        </button>
+      </mat-menu>
+      <button [matMenuTriggerFor]="statsMenu" mat-button>{{ 'NAV.STATISTICS' | translate }}</button>
       <button mat-button routerLink="/session" routerLinkActive="active">{{ 'NAV.SESSION' | translate }}</button>
-      <button mat-button routerLink="/clans" routerLinkActive="active">{{ 'NAV.CLANS' | translate }}</button>
+      <button mat-button routerLink="/contacts" routerLinkActive="active">{{ 'NAV.ABOUT' | translate }}</button>
 
       <div class="user">
         <ng-container *ngIf="nickname$(); else loginButton">
@@ -35,7 +45,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-
     </nav>
 
     <button (click)="toggleSidenav()" aria-label="Toggle menu" class="hamburger-menu" mat-icon-button>
@@ -53,7 +62,9 @@
   <mat-sidenav #sidenav (closedStart)="onSidenavClose()" class="sidenav" mode="over"
                position="end">
     <nav class="mobile-navigation">
-      <button (click)="closeSidenav()" mat-button routerLink="/home">{{ 'NAV.HOME' | translate }}</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/home">
+        <span class="material-symbols-outlined">home</span>
+      </button>
       <button (click)="closeSidenav()" mat-button routerLink="/players">{{ 'NAV.PLAYERS' | translate }}</button>
       <button (click)="closeSidenav()" mat-button routerLink="/session">{{ 'NAV.SESSION' | translate }}</button>
       <button (click)="closeSidenav()" mat-button routerLink="/clans">{{ 'NAV.CLANS' | translate }}</button>
