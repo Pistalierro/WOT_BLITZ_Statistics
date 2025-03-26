@@ -271,6 +271,16 @@
     "STATISTICS": "Statistiken",
     "ABOUT": "ÜBER"
   },
+  "ABOUT": {
+    "TITLE": "Über uns",
+    "TEXT": "Willkommen vom Clan MERZO – das ist nicht nur ein Team von Gleichgesinnten, sondern eine Community von Panzerfahrern, die das Spiel besser, spannender und effektiver machen wollen. Wir glauben, dass Entwicklung mit Wissen beginnt, und Wissen bedeutet Daten. Genau deshalb haben wir diese Anwendung entwickelt – damit jeder Spieler ein praktisches Werkzeug zur Analyse seiner Statistiken, seines Fortschritts und seiner Siege hat.",
+    "DEVELOPER_TITLE": "Entwicklung",
+    "DEVELOPER_TEXT_1": "Die App entstand aus einer einfachen Idee – einen praktischen Session-Tracker für WoT Blitz zu erstellen, der so sehr fehlte. Mit der Zeit entwickelte sie sich zu einem vollständigen Portal mit Spieleranalysen, Fahrzeugen, Clans und vielem mehr. Heute ist es eine vollwertige Statistik-Website – wot-blitz-statistics.web.app – und das Projekt wächst ständig weiter.",
+    "DEVELOPER_TEXT_2": "Besonderer Dank gilt dem Clan MERZO für Ideen, Beteiligung und Beitrag zur Projektentwicklung.",
+    "DEVELOPER_TEXT_3": "Wenn du Vorschläge, Feedback hast oder einfach plaudern möchtest – zögere nicht!",
+    "FOOTER": "Idee und Entwicklung: PISTALIERRO",
+    "SITE": "Website"
+  },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Elemente pro Seite:",
     "NEXT_PAGE": "Nächste Seite",

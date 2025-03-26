@@ -281,6 +281,16 @@
     "STATISTICS": "STATISTICS",
     "ABOUT": "ABOUT"
   },
+  "ABOUT": {
+    "TITLE": "About Us",
+    "TEXT": "Greetings from the MERZO clan — not just a team of like-minded players, but a community of tankers striving to make the game better, more exciting, and more effective. We believe progress starts with knowledge, and knowledge is data. That’s why we created this app — to give every player a convenient tool for analyzing their stats, growth, and victories.",
+    "DEVELOPER_TITLE": "Development",
+    "DEVELOPER_TEXT_1": "The app was born from a simple idea — to create a convenient session tracker for WoT Blitz, which was sorely missing. Over time, it evolved into a full-fledged portal with player analytics, vehicles, clans, and much more. Today, it’s a complete stats website — wot-blitz-statistics.web.app — and the project continues to grow actively.",
+    "DEVELOPER_TEXT_2": "Special thanks to the MERZO clan for their ideas, contributions, and support in the project’s development.",
+    "DEVELOPER_TEXT_3": "If you have suggestions, feedback, or just want to chat — don’t hesitate!",
+    "FOOTER": "Concept and development by PISTALIERRO",
+    "SITE": "Website"
+  },
   "PAGINATOR": {
     "ITEMS_PER_PAGE": "Items per page:",
     "NEXT_PAGE": "Next page",

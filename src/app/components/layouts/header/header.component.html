@@ -65,9 +65,17 @@
       <button (click)="closeSidenav()" mat-button routerLink="/home">
         <span class="material-symbols-outlined">home</span>
       </button>
-      <button (click)="closeSidenav()" mat-button routerLink="/players">{{ 'NAV.PLAYERS' | translate }}</button>
+      <mat-menu #statsMenu="matMenu">
+        <button [routerLink]="'/players'" mat-menu-item routerLinkActive="active">
+          {{ 'NAV.PLAYERS' | translate }}
+        </button>
+        <button [routerLink]="'/clans'" mat-menu-item routerLinkActive="active">
+          {{ 'NAV.CLANS' | translate }}
+        </button>
+      </mat-menu>
+      <button (menuClosed)="closeSidenav()" [matMenuTriggerFor]="statsMenu" mat-button>{{ 'NAV.STATISTICS' | translate }}</button>
       <button (click)="closeSidenav()" mat-button routerLink="/session">{{ 'NAV.SESSION' | translate }}</button>
-      <button (click)="closeSidenav()" mat-button routerLink="/clans">{{ 'NAV.CLANS' | translate }}</button>
+      <button (click)="closeSidenav()" mat-button routerLink="/contacts" routerLinkActive="active">{{ 'NAV.ABOUT' | translate }}</button>
 
       <div class="user">
         <ng-container *ngIf="nickname$(); else loginButton">

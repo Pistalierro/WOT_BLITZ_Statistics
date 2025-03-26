@@ -65,14 +65,17 @@ h3 {
 p,
 strong {
   color: $color-gray-dark !important;
-  @include md-min {
+  @include lg-min {
     font-size: 1.5rem !important;
   }
-  @include md-sm {
+  @include lg-md {
     font-size: 1.25rem !important;
   }
-  @include sm {
+  @include md-sm {
     font-size: 1rem !important;
+  }
+  @include sm {
+    font-size: 0.875rem !important;
   }
 }
 

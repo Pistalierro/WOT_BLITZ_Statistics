@@ -6,129 +6,132 @@
 .container {
   @extend %container;
 
-  .about {
+  .section {
+    background-color: rgba($color-deep-dark, 0.5);
+    padding: $gap;
+    margin-bottom: $gap;
+
+    &__title {
+      text-align: center;
+    }
+
     &__container {
-      margin: $gap-x2 0;
+      display: grid;
+      gap: $gap;
+      @include lg-min {
+        grid-template-columns: 1fr;
+      }
+      @include lg-md {
+        grid-template-columns: 1fr 250px;
+      }
+      @include md {
+        grid-template-columns: 1fr;
+      }
     }
 
     &__logo {
       display: flex;
-      gap: $gap-x2;
+      gap: $gap;
 
       &-image {
+        @include lg-min {
+          display: block;
+        }
+        @include lg {
+          display: none;
+        }
         height: 150px;
-      }
-
-      &-description {
-        font-size: 1.5rem;
-        line-height: 1.25em;
-        text-align: justify;
+        width: 150px;
       }
     }
 
-    &__contacts {
-      margin: $gap 0;
-      display: flex;
-      gap: $gap;
-      align-items: center;
-      justify-content: center;
-
-      &-title {
-        margin-top: $gap-sm;
-        font-size: 1.5rem !important;
-
+    &__content {
+      &-text {
+        p {
+          line-height: 1.25em;
+        }
       }
-    }
-  }
 
-  .development {
-
-    &__contacts {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $gap;
-    }
-
-    p {
-      line-height: 1.25;
+      &-contacts {
+        display: flex;
+        gap: $gap;
+        align-items: center;
+        @include lg-min {
+          justify-content: flex-end;
+          flex-direction: row;
+        }
+        @include lg {
+          justify-content: center;
+          flex-direction: column;
+        }
+      }
     }
 
     &__subtitle {
-      margin-top: 20px;
-      font-size: 1.5rem;
-    }
-
-    &__subtitle {
+      margin-top: $gap;
       text-align: right;
-      font-size: 1.25rem;
+      @include lg-min {
+        font-size: 1.2rem;
+      }
+      @include lg-md {
+        font-size: 1rem;
+      }
+      @include md {
+        font-size: 0.875rem;
+      }
     }
-  }
-
-  .section__title {
-    text-align: center;
-
   }
 
   .contact {
-    position: relative;
     display: flex;
     gap: $gap-sm;
     align-items: center;
+    justify-content: center;
+    position: relative;
 
     &:hover {
-      .contact-text {
+      .contact__text {
         color: $color-light;
         @extend %text-shadow-light;
       }
     }
 
-    &-link__overlay {
+    &__link {
       position: absolute;
       inset: 0;
+      z-index: 1;
+      cursor: pointer;
     }
 
-    &-icon {
+    &__icon {
+      height: 24px;
+      width: 24px;
 
-      .material-symbols-outlined {
-        color: $color-gray !important;
-        font-size: 1.75rem !important;
+      span {
+        font-size: 1.75rem;
+        color: $color-gray;
       }
 
-      &__svg {
-        height: 32px;
+      &--telegram {
+        fill: #26A5E4;
+        user-select: none;
+      }
 
-        &--email {
-          fill: #EA4335;
-        }
+      &--discord {
+        fill: #5865F2;
+      }
 
-        &--linkedin {
-          fill: #0A66C2
-        }
-
-        &--telegram {
-          fill: #26A5E4;
-        }
-
-        &--youtube {
-          fill: #FF0000;
-        }
-
-        &--discord {
-          fill: #5865F2;
-        }
-
-        &--website {
-          fill: $color-light
-        }
+      &--gmail {
+        fill: #EA4335;
       }
     }
 
-    &-text {
+    &__text {
       color: $color-gray;
-      font-size: 1.25rem;
+      cursor: pointer;
       transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
-      user-select: none;
+      text-wrap: nowrap;
+      font-size: 1.2rem !important;
     }
   }
 }
