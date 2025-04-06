@@ -2,11 +2,15 @@
   "name": "blitz-statistics",
   "version": "0.0.0",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
+  },
+  "overrides": {
+    "chokidar": "3.6.0"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +44,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "npm-force-resolutions": "^0.0.10",
     "typescript": "~5.5.2"
   }
 }
