@@ -9,7 +9,7 @@ export function createTranslateLoader(http: HttpClient) {
 
 export function initTranslate(translate: TranslateService) {
   return () => {
-    const availableLangs: string[] = ['en', 'ru', 'ua', 'es', 'de'];
+    const availableLangs: string[] = ['ru', 'ua', 'en', 'es', 'de'];
     translate.addLangs(availableLangs);
     translate.setDefaultLang('en');
     const browserLang = localStorage.getItem('lang') || translate.getBrowserLang() || 'en';

@@ -184,21 +184,23 @@
     display: grid;
     align-items: start;
     justify-content: space-evenly;
+    width: 100%;
     @include lg-min {
-      grid-template-columns: repeat(3, 250px);
+      gap: $gap;
+      grid-template-columns: repeat(3, 1fr);
     }
     @include lg-md {
+      gap: $gap;
       grid-template-columns: repeat(3, 200px);
     }
     @include md {
+      gap: $gap-x2;
       grid-template-columns: 1fr;
-      gap: $gap;
     }
   }
 
   &-section {
     margin-bottom: $gap-x2;
-
 
     &__title {
       text-align: center;
@@ -225,9 +227,11 @@
           }
         }
 
-        &-link__overlay {
-          position: absolute;
-          inset: 0;
+        &-link {
+          &__overlay {
+            position: absolute;
+            inset: 0;
+          }
         }
 
         &-icon {
@@ -272,15 +276,25 @@
           inset: 0;
           z-index: 1;
         }
+      }
 
-        p {
-          transition: color 0.25s ease-in-out, text-shadow 0.25s ease-in-out;
-          user-select: none;
+      &-link {
+        &__list {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: $gap-sm;
+          font-size: 1rem;
         }
+      }
 
-        &:hover p {
-          color: $color-gray;
-          @extend %text-shadow-light;
+      &-item {
+        &__link {
+          transition: color 0.25s ease-in-out, text-shadow 0.25s ease-in-out;
+
+          &:hover {
+            color: $color-light;
+            @extend %text-shadow-light;
+          }
         }
       }
     }
